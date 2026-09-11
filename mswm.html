@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fa" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MSWM | Diagonal Banner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #08080f;
+            font-family: 'Rajdhani', sans-serif;
+            padding: 20px;
+        }
+
+        .banner {
+            max-width: 1000px;
+            width: 100%;
+            height: 240px;
+            background: linear-gradient(135deg, #0d0d1a 40%, #1a1040 40%, #1a1040 60%, #0d0d1a 60%);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 60px rgba(80, 30, 200, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(168, 85, 247, 0.08), transparent 60%);
+            pointer-events: none;
+        }
+
+        .banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #a855f7, #ec4899, #a855f7, transparent);
+            box-shadow: 0 0 30px #a855f740;
+        }
+
+        /* ===== بخش چپ (عنوان) ===== */
+        .left-section {
+            z-index: 2;
+            text-align: left;
+        }
+
+        .main-title-diag {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 3.2rem;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #ffffff, #c084fc, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+
+        .sub-title-diag {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            letter-spacing: 6px;
+            font-weight: 600;
+        }
+
+        .sub-title-diag span {
+            color: #fbbf24;
+        }
+
+        /* ===== بخش راست (آدرس + ساعت بزرگ) ===== */
+        .right-section {
+            z-index: 2;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .address-diag {
+            font-size: 1rem;
+            color: #cbd5e1;
+            letter-spacing: 2px;
+        }
+
+        .address-diag a {
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dashed rgba(168, 85, 247, 0.2);
+        }
+
+        /* ===== ساعت بزرگ با آیکون بروز ===== */
+        .datetime-diag {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 4px;
+        }
+
+        .datetime-diag .item-time {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 6px 24px;
+            border-radius: 40px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.05);
+        }
+
+        .datetime-diag .item-time .icon {
+            font-size: 1.6rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.2));
+        }
+
+        .datetime-diag .item-time .value {
+            color: #ffffff;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            min-width: 120px;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+        }
+
+        /* ===== فوتر با تاریخ بزرگتر ===== */
+        .footer-diag {
+            margin-top: 6px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .footer-diag .date-value {
+            color: #cbd5e1;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ===== واکنش‌گرایی ===== */
+        @media (max-width: 750px) {
+            .banner {
+                height: auto;
+                flex-direction: column;
+                padding: 28px 24px;
+                gap: 16px;
+                background: linear-gradient(135deg, #0d0d1a, #1a1040);
+            }
+            .left-section {
+                text-align: center;
+                width: 100%;
+            }
+            .right-section {
+                align-items: center;
+                width: 100%;
+            }
+            .datetime-diag {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .datetime-diag .item-time .value {
+                font-size: 1.6rem;
+                min-width: 100px;
+            }
+            .main-title-diag {
+                font-size: 2.4rem;
+            }
+            .footer-diag .date-value {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .main-title-diag {
+                font-size: 1.8rem;
+            }
+            .datetime-diag .item-time .value {
+                font-size: 1.3rem;
+                min-width: 80px;
+            }
+            .datetime-diag .item-time {
+                padding: 4px 16px;
+            }
+            .datetime-diag .item-time .icon {
+                font-size: 1.3rem;
+            }
+            .footer-diag .date-value {
+                font-size: 0.8rem;
+                padding: 2px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="banner">
+
+        <!-- ===== بخش چپ (عنوان) ===== -->
+        <div class="left-section">
+            <div class="main-title-diag">MSWM</div>
+            <div class="sub-title-diag"><span>✦</span> GAMING_VOICE <span>✦</span></div>
+        </div>
+
+        <!-- ===== بخش راست (آدرس + ساعت بزرگ + تاریخ) ===== -->
+        <div class="right-section">
+            <div class="address-diag">
+                <a href="https://MSWM.ir" target="_blank">MSWM.ir</a>
+            </div>
+
+            <div class="datetime-diag">
+                <div class="item-time">
+                    <span class="icon">⏰</span>
+                    <span class="value" id="diagTimeLTR">۰۰:۰۰</span>
+                </div>
+            </div>
+
+            <div class="footer-diag">
+                <span class="date-value" id="diagDateLTR">۱۴۰۵/۰۴/۱۹</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateDiagLTR() {
+            const now = new Date();
+
+            document.getElementById('diagDateLTR').textContent =
+                new Intl.DateTimeFormat('fa-IR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).format(now);
+
+            document.getElementById('diagTimeLTR').textContent =
+                new Intl.DateTimeFormat('fa-IR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).format(now);
+        }
+
+        updateDiagLTR();
+        setInterval(updateDiagLTR, 10000);
+    </script>
+
+</body>
+</html>
