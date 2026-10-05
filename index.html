@@ -171,6 +171,56 @@ button{cursor:pointer;border:0}
   #grid.has-spot .tile:not(.spot) .nm{display:none}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- Polish ---------- */
+#join{background:
+  radial-gradient(55% 45% at 88% 6%,rgba(46,196,182,.35),transparent 70%),
+  radial-gradient(45% 40% at 6% 96%,rgba(255,180,84,.26),transparent 70%),
+  radial-gradient(35% 30% at 50% 50%,rgba(155,140,255,.10),transparent 70%),
+  radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px) 0 0/26px 26px,var(--night)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;font-weight:800;font-size:1.1rem}
+.brand i{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--lake),#2a8cff);box-shadow:0 8px 24px rgba(46,196,182,.35)}
+.brand i .ic{width:20px;height:20px;color:#fff}
+.hero h1 .grad{background:linear-gradient(90deg,var(--lake),var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chips span{padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);font-size:.85rem;color:#cfe0e8}
+.faces i{animation:bob 4s ease-in-out infinite}
+.faces i:nth-child(2){animation-delay:.5s}.faces i:nth-child(3){animation-delay:1s}.faces i:nth-child(4){animation-delay:1.5s}
+@keyframes bob{50%{transform:translateY(-7px)}}
+.card{box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12)}
+.card input[type=text]:focus{border-color:var(--lake);outline:0;box-shadow:0 0 0 3px rgba(46,196,182,.25)}
+.primary{background:linear-gradient(135deg,var(--lake),#3fd6a6);box-shadow:0 10px 26px rgba(46,196,182,.35);transition:transform .15s,box-shadow .15s}
+.primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(46,196,182,.45)}
+
+#app{background:radial-gradient(70% 60% at 80% 0%,rgba(46,196,182,.13),transparent 70%),radial-gradient(60% 50% at 0% 100%,rgba(155,140,255,.13),transparent 70%),#0b1620}
+.tile{border-radius:20px;background:linear-gradient(160deg,#1d3347,#10202e);box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.06);animation:pop .25s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+.tile .av{box-shadow:0 0 0 8px rgba(255,255,255,.06),0 18px 40px rgba(0,0,0,.35)}
+.tile.speaking .av{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 16px rgba(46,196,182,.25),0 18px 40px rgba(0,0,0,.35)}}
+.tile .nm{display:flex;align-items:center;padding:4px 12px;background:rgba(10,20,30,.62)}
+.tools button,.zoombar{border:1px solid rgba(255,255,255,.1)}
+#top{padding:14px 18px}
+.pill{background:rgba(36,57,75,.8);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);transition:background .15s}
+button.pill:hover{background:#2f4a60}
+#timerPill time{font-variant-numeric:tabular-nums;color:var(--lake);font-weight:600}
+#bar{background:rgba(18,32,46,.8);box-shadow:0 18px 50px rgba(0,0,0,.45);padding:10px 16px;gap:10px}
+.rb{transition:transform .15s,background .15s}
+.rb:hover{transform:translateY(-3px)}
+.rb.leave{width:64px;border-radius:26px;background:linear-gradient(135deg,#ff6b6b,#e14646)}
+#chat,#peoplePanel,#settingsPanel{background:rgba(17,31,44,.97)}
+.m{box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.p{padding:8px 10px;border-radius:14px;transition:background .15s}
+.p:hover{background:rgba(255,255,255,.05)}
+
+.zoombar{display:none;position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:3;gap:2px;align-items:center;padding:4px;border-radius:99px;background:rgba(15,30,43,.8);backdrop-filter:blur(8px)}
+.tile.spot .zoombar{display:flex}
+.zoombar button{width:32px;height:32px;border-radius:50%;background:none;font-size:1.15rem;line-height:1}
+.zoombar button:hover{background:rgba(255,255,255,.14)}
+.zv{min-width:50px;text-align:center;font-size:.8rem}
+.tile.zoomed{cursor:grab}.tile.grabbing{cursor:grabbing}
+@media(max-width:760px){.rb.leave{width:56px;border-radius:22px}.chips{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
@@ -189,14 +239,17 @@ button{cursor:pointer;border:0}
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
   <symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
 <main id="join">
   <div class="wrap">
     <div class="hero">
-      <h1>با هر کسی، از هر جا، رو در رو حرف بزنید</h1>
+      <div class="brand"><i><svg class="ic"><use href="#i-cam"/></svg></i>تماس و چت</div>
+      <h1>با هر کسی، از هر جا، <span class="grad">رو در رو</span> حرف بزنید</h1>
       <p>یک نام برای اتاق انتخاب کنید و لینکش را بفرستید. بدون ثبت‌نام.</p>
+      <div class="chips"><span>بدون ثبت‌نام</span><span>تماس گروهی تا ۸ نفر</span><span>اشتراک صفحه</span></div>
       <div class="faces" aria-hidden="true"><i style="background:#2ec4b6">ن</i><i style="background:#ffb454">ر</i><i style="background:#ff8fa3">س</i><i style="background:#9b8cff">م</i></div>
     </div>
     <div class="card">
@@ -215,6 +268,7 @@ button{cursor:pointer;border:0}
   <section id="stage">
     <div id="top">
       <div class="t"><span id="roomTitle"></span><span id="meta"></span></div>
+      <span class="pill" id="timerPill"><time id="timer">00:00</time></span>
       <button class="pill" id="peopleBtn" aria-label="افراد"><svg class="ic"><use href="#i-users"/></svg><b id="pbadge">1</b></button>
       <button class="pill" id="settingsBtn" aria-label="تنظیمات"><svg class="ic"><use href="#i-gear"/></svg></button>
       <button class="pill" id="copy" aria-label="کپی لینک اتاق"><svg class="ic"><use href="#i-link"/></svg><span id="copyTxt">کپی لینک</span></button>
@@ -262,6 +316,8 @@ button{cursor:pointer;border:0}
       <label for="qSel">کیفیت تصویر</label>
       <select id="qSel"><option value="low">پایین (مناسب اینترنت ضعیف)</option><option value="mid">متوسط</option><option value="high">بالا</option></select>
       <label class="sw"><input type="checkbox" id="optMirror"> آینه‌ای بودن تصویر خودم</label>
+      <h3>عمومی</h3>
+      <label class="sw"><input type="checkbox" id="optSounds"> صدای ورود و خروج افراد</label>
     </div>
   </aside>
 </div>
@@ -287,7 +343,7 @@ const ICE = { iceServers: [
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
-let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, openRow = null, joinedAt = Date.now();
+let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, openRow = null, joinedAt = Date.now(), callStart = 0;
 const hushed = new Set(); // people I muted just for myself
 const sharers = new Set();
 let mySession = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -309,39 +365,77 @@ function fit(t) {
 }
 
 function applyZoom(t) {
-  const z = +t.dataset.z || 1;
-  t.querySelector('video').style.transform = (t.classList.contains('me') && !t.classList.contains('unmirror') ? 'scaleX(-1) ' : '') + 'scale(' + z + ')';
+  const z = +t.dataset.z || 1, px = +t.dataset.px || 0, py = +t.dataset.py || 0;
+  const mirror = t.classList.contains('me') && !t.classList.contains('unmirror') ? 'scaleX(-1) ' : '';
+  t.querySelector('video').style.transform = 'translate(' + px + 'px,' + py + 'px) ' + mirror + 'scale(' + z + ')';
 }
-function zoomBy(t, d) {
-  t.dataset.z = Math.min(4, Math.max(0.5, (+t.dataset.z || 1) + d));
-  applyZoom(t);
+function clampPan(t) {
+  const z = +t.dataset.z || 1, mx = (z - 1) * t.clientWidth / 2, my = (z - 1) * t.clientHeight / 2;
+  t.dataset.px = Math.max(-mx, Math.min(mx, +t.dataset.px || 0));
+  t.dataset.py = Math.max(-my, Math.min(my, +t.dataset.py || 0));
+}
+// Zooms 100%-400%; the point under (sx, sy) (measured from the tile centre) stays in place
+function zoomAt(t, nz, sx = 0, sy = 0) {
+  nz = Math.min(4, Math.max(1, nz));
+  const k = nz / (+t.dataset.z || 1);
+  t.dataset.px = sx - k * (sx - (+t.dataset.px || 0));
+  t.dataset.py = sy - k * (sy - (+t.dataset.py || 0));
+  t.dataset.z = nz;
+  clampPan(t); applyZoom(t);
+  t.classList.toggle('zoomed', nz > 1);
+  const zv = t.querySelector('.zv');
+  if (zv) zv.textContent = Math.round(nz * 100).toLocaleString('fa-IR') + '٪';
 }
 function setSpot(id) {
   const old = spotId;
   spotId = old === id ? null : id;
   const o = old && old !== spotId ? $('t-' + old) : null;
-  if (o) { o.dataset.z = 1; o.querySelector('video').style.transformOrigin = 'center'; applyZoom(o); }
+  if (o) zoomAt(o, 1);
   layout();
 }
 function bindTile(t, id) {
   t.dataset.z = 1;
-  t.querySelector('.tools').onclick = (e) => {
-    const b = e.target.closest('button'); if (!b) return;
-    const a = b.dataset.a;
-    if (a === 'spot') { setSpot(id); return; }
-    if (a === 'hush') { toggleHush(id); return; }
-    t.querySelector('video').style.transformOrigin = 'center';
-    zoomBy(t, a === 'in' ? 0.25 : -0.25);
-  };
-  // Mouse wheel zooms toward the cursor; double-click resets
+  t.querySelectorAll('button[aria-label]').forEach((b) => (b.title = b.getAttribute('aria-label')));
+  const onBar = (e) => e.target.closest('.tools,.zoombar');
+  t.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (b && onBar(e)) {
+      const a = b.dataset.a, z = +t.dataset.z || 1;
+      if (a === 'spot') setSpot(id);
+      else if (a === 'hush') toggleHush(id);
+      else if (a === 'full') { if (document.fullscreenElement) document.exitFullscreen(); else if (t.requestFullscreen) t.requestFullscreen(); }
+      else if (a === 'in') zoomAt(t, z + 0.5);
+      else if (a === 'out') zoomAt(t, z - 0.5);
+      else if (a === 'reset') zoomAt(t, 1);
+      return;
+    }
+    if (onBar(e) || t.moved) { t.moved = false; return; }
+    setSpot(id); // click a tile to focus it, click again to go back
+  });
+  // Ctrl + wheel (or a trackpad pinch) zooms toward the cursor; plain scrolling is left alone
   t.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey || !t.classList.contains('spot')) return;
     e.preventDefault();
     const r = t.getBoundingClientRect();
-    t.querySelector('video').style.transformOrigin = ((e.clientX - r.left) / r.width * 100) + '% ' + ((e.clientY - r.top) / r.height * 100) + '%';
-    zoomBy(t, e.deltaY < 0 ? 0.15 : -0.15);
+    zoomAt(t, (+t.dataset.z || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2);
   }, { passive: false });
-  // Click a tile to focus it; the others become small thumbnails. Click again to go back.
-  t.addEventListener('click', (e) => { if (!e.target.closest('.tools')) setSpot(id); });
+  // Drag to move around while zoomed in
+  let drag = null;
+  t.addEventListener('pointerdown', (e) => {
+    t.moved = false;
+    if (e.button !== 0 || (+t.dataset.z || 1) <= 1 || onBar(e)) return;
+    drag = { x: e.clientX, y: e.clientY, px: +t.dataset.px || 0, py: +t.dataset.py || 0 };
+    t.setPointerCapture(e.pointerId); t.classList.add('grabbing');
+  });
+  t.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) t.moved = true;
+    t.dataset.px = drag.px + dx; t.dataset.py = drag.py + dy;
+    clampPan(t); applyZoom(t);
+  });
+  const end = () => { drag = null; t.classList.remove('grabbing'); };
+  t.addEventListener('pointerup', end); t.addEventListener('pointercancel', end);
 }
 
 function layout() {
@@ -366,10 +460,10 @@ function tile(id, name, stream, isLocal) {
     t = document.createElement('div');
     t.className = 'tile' + (isLocal ? ' me' : ''); t.id = 't-' + id;
     t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span><svg class="ic mi"><use href="#i-mic"/><path d="M2 2l20 20"/></svg><svg class="ic hm"><use href="#i-vol"/><path d="M2 2l20 20"/></svg>'
-      + '<div class="tools"><button data-a="in" aria-label="بزرگ‌نمایی"><svg class="ic"><use href="#i-zin"/></svg></button>'
-      + '<button data-a="out" aria-label="کوچک‌نمایی"><svg class="ic"><use href="#i-zout"/></svg></button>'
-      + '<button data-a="spot" aria-label="نمایش بزرگ"><svg class="ic"><use href="#i-max"/></svg></button>'
-      + '<button data-a="hush" aria-label="بی‌صدا کردن برای خودم"><svg class="ic"><use href="#i-vol"/><path class="sl" d="M2 2l20 20"/></svg></button></div>';
+      + '<div class="tools"><button data-a="spot" aria-label="تثبیت و بزرگ کردن"><svg class="ic"><use href="#i-max"/></svg></button>'
+      + '<button data-a="full" aria-label="تمام‌صفحه"><svg class="ic"><use href="#i-full"/></svg></button>'
+      + '<button data-a="hush" aria-label="بی‌صدا کردن برای خودم"><svg class="ic"><use href="#i-vol"/><path class="sl" d="M2 2l20 20"/></svg></button></div>'
+      + '<div class="zoombar"><button data-a="out" aria-label="کوچک‌نمایی">−</button><span class="zv">۱۰۰٪</span><button data-a="in" aria-label="بزرگ‌نمایی">+</button><button data-a="reset" aria-label="اندازه اصلی">⟲</button></div>';
     bindTile(t, id);
     $('grid').appendChild(t);
   }
@@ -568,7 +662,7 @@ async function join() {
     if (key === myId) return;
     const name = (newPresences[0] && newPresences[0].name) || 'مهمان';
     const known = (currentPresences && currentPresences.length) || pcs[key]; // a status update, not a new person
-    if (ready && !known) eventLine({ type: 'join', id: key, name, t: Date.now() });
+    if (ready && !known) { eventLine({ type: 'join', id: key, name, t: Date.now() }); playSound('join'); }
     if (myId > key && !pcs[key]) call(key, name);
     if (screenTrack) announceShare(true); // tell newcomers that a screen is being shared
   });
@@ -578,6 +672,7 @@ async function join() {
     if (st && st.length) return; // just a status update
     removePeer(key);
     eventLine({ type: 'leave', id: key, name: (leftPresences[0] && leftPresences[0].name) || 'مهمان', t: Date.now() });
+    playSound('leave');
   });
   ch.on('presence', { event: 'sync' }, async () => {
     if (!tracked || checked) return;
@@ -607,7 +702,7 @@ async function join() {
     }
     ready = true; joined = true;
     eventLine({ type: 'join', id: myId, name: myName, t: Date.now() });
-    logEvent('join');
+    logEvent('join'); callStart = Date.now(); playSound('join');
   });
 
   timer = setTimeout(() => fail('timeout'), 12000);
@@ -750,12 +845,30 @@ function applyStates() {
 const AC = window.AudioContext || window.webkitAudioContext;
 let actx;
 const meters = {};
-function watchSpeaker(id, stream) {
-  if (!AC || meters[id] || !stream.getAudioTracks().length) return;
+const getCtx = () => {
   actx = actx || new AC();
   if (actx.state === 'suspended') actx.resume().catch(() => {});
-  const an = actx.createAnalyser(); an.fftSize = 512;
-  actx.createMediaStreamSource(stream).connect(an); // not connected to the speakers, so no echo
+  return actx;
+};
+// Two short synthesized sounds: rising for join, falling for leave
+function playSound(kind) {
+  if (!AC || !S.sounds) return;
+  const c = getCtx(), t0 = c.currentTime;
+  (kind === 'join' ? [523.25, 783.99] : [659.25, 392.0]).forEach((f, i) => {
+    const o = c.createOscillator(), g = c.createGain(), s = t0 + i * 0.12;
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, s);
+    g.gain.exponentialRampToValueAtTime(0.18, s + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, s + 0.24);
+    o.connect(g); g.connect(c.destination);
+    o.start(s); o.stop(s + 0.26);
+  });
+}
+function watchSpeaker(id, stream) {
+  if (!AC || meters[id] || !stream.getAudioTracks().length) return;
+  const c = getCtx();
+  const an = c.createAnalyser(); an.fftSize = 512;
+  c.createMediaStreamSource(stream).connect(an); // not connected to the speakers, so no echo
   meters[id] = { an, data: new Uint8Array(an.fftSize), last: 0, on: false };
 }
 function setSpeaking(id, on) {
@@ -878,7 +991,7 @@ function checkSuccession() {
 
 // ---------- Settings (saved in this browser) ----------
 const S = Object.assign(
-  { mic: '', cam: '', sens: 50, ns: true, ec: true, agc: true, q: 'mid', mirror: true },
+  { mic: '', cam: '', sens: 50, ns: true, ec: true, agc: true, q: 'mid', mirror: true, sounds: true },
   (() => { try { return JSON.parse(localStorage.getItem('cc-settings')) || {}; } catch { return {}; } })()
 );
 const saveS = () => { try { localStorage.setItem('cc-settings', JSON.stringify(S)); } catch {} };
@@ -943,7 +1056,7 @@ async function renderDevices() {
 }
 function syncSettingsUI() {
   $('sens').value = S.sens; $('optNs').checked = S.ns; $('optEc').checked = S.ec;
-  $('optAgc').checked = S.agc; $('optMirror').checked = S.mirror; $('qSel').value = S.q;
+  $('optAgc').checked = S.agc; $('optMirror').checked = S.mirror; $('optSounds').checked = S.sounds; $('qSel').value = S.q;
   updateMarker();
 }
 
@@ -982,8 +1095,15 @@ $('sens').onchange = () => { saveS(); trackMe(); };
   $(id).onchange = (e) => { S[k] = e.target.checked; saveS(); applyMic(); };
 });
 $('optMirror').onchange = (e) => { S.mirror = e.target.checked; saveS(); syncMirror(); };
+$('optSounds').onchange = (e) => { S.sounds = e.target.checked; saveS(); if (S.sounds) playSound('join'); };
 if (navigator.mediaDevices) navigator.mediaDevices.ondevicechange = renderDevices;
 syncSettingsUI();
+document.querySelectorAll('button[aria-label]').forEach((b) => (b.title = b.getAttribute('aria-label')));
+setInterval(() => { // call timer
+  if (!joined) return;
+  const s = Math.floor((Date.now() - callStart) / 1000), p = (n) => String(n).padStart(2, '0');
+  $('timer').textContent = (s >= 3600 ? Math.floor(s / 3600) + ':' : '') + p(Math.floor(s % 3600 / 60)) + ':' + p(s % 60);
+}, 1000);
 $('people').onclick = (e) => {
   const b = e.target.closest('button[data-act]'); if (!b) return;
   const id = b.closest('.p').dataset.id, act = b.dataset.act;
