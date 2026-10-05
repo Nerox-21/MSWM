@@ -79,6 +79,8 @@ button{cursor:pointer;border:0}
 #grid.has-spot .tile:not(.spot){grid-column:2}
 #grid.has-spot .tile:not(.spot) .tools{display:none}
 .tile{cursor:pointer}
+.tile[data-state="new"] .nm::after,.tile[data-state="checking"] .nm::after{content:" — در حال اتصال"}
+.tile[data-state="failed"] .nm::after,.tile[data-state="disconnected"] .nm::after{content:" — اتصال برقرار نشد";color:#ff9d9d}
 #grid.has-spot .tile:not(.spot) .nm{font-size:.7rem;padding:2px 8px;bottom:6px;right:6px}
 
 /* ---------- Chat ---------- */
@@ -188,9 +190,15 @@ const SUPABASE_ANON_KEY = 'sb_publishable__6iqYESMfzjNeukvnh_Zww_THGAbnKB';
 // =====================================================================
 const MAX_PER_ROOM = 8;
 const $ = (id) => document.getElementById(id);
-const ICE = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-// For strict networks add a TURN server above:
-// { urls: 'turn:YOUR_SERVER:3478', username: '...', credential: '...' }
+// Optional TURN server: needed when two people cannot connect directly (different networks, filtering).
+// Fill these from your TURN provider (e.g. Metered Open Relay or Cloudflare Realtime TURN).
+const TURN_URLS = [];            // e.g. ['turn:YOUR_HOST:80', 'turn:YOUR_HOST:443?transport=tcp']
+const TURN_USERNAME = '';
+const TURN_CREDENTIAL = '';
+const ICE = { iceServers: [
+  { urls: ['stun:stun.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] },
+  ...(TURN_URLS.length ? [{ urls: TURN_URLS, username: TURN_USERNAME, credential: TURN_CREDENTIAL }] : [])
+] };
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
@@ -270,7 +278,12 @@ function tile(id, name, stream, isLocal) {
   t.querySelector('.nm').textContent = isLocal ? name + ' (شما)' : name;
   const v = t.querySelector('video');
   if (isLocal) v.muted = true;
-  if (stream) { v.srcObject = stream; t.classList.toggle('hasvideo', stream.getVideoTracks().length > 0); }
+  if (stream) {
+    v.srcObject = stream;
+    t.classList.toggle('hasvideo', stream.getVideoTracks().length > 0);
+    v.play().catch(() => {});
+  }
+  if (pcs[id]) t.dataset.state = pcs[id].iceConnectionState;
   layout();
 }
 
@@ -281,6 +294,7 @@ function makePC(id, name) {
   local.getTracks().forEach((t) => pc.addTrack(t, local));
   pc.onicecandidate = (e) => e.candidate && sendSignal(id, { candidate: e.candidate });
   pc.ontrack = (e) => tile(id, name, e.streams[0]);
+  pc.oniceconnectionstatechange = () => { const t = $('t-' + id); if (t) t.dataset.state = pc.iceConnectionState; };
   return pc;
 }
 
