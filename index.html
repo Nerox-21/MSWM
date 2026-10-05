@@ -37,7 +37,7 @@ button{cursor:pointer;border:0}
 /* ---------- Call screen ---------- */
 #app{display:none;position:fixed;inset:0;background:var(--night)}
 #stage{position:absolute;inset:0;transition:inset .2s}
-#app.chat-open #stage{inset:0 0 0 340px}
+#app.chat-open #stage,#app.people-open #stage{inset:0 0 0 340px}
 #grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(var(--c,1),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:10px;padding:64px 12px 96px}
 .tile{position:relative;min-height:0;border-radius:18px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#1c3246,#122232)}
 .tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -86,23 +86,26 @@ button{cursor:pointer;border:0}
 .hint{color:var(--mute);font-size:.88rem;margin-top:-4px}
 .rb.on{background:var(--lake);color:var(--night)}
 .tile.screen video{object-fit:contain;background:#000}
-.tabs{display:flex;gap:4px}
-.tabs button{background:none;padding:6px 14px;border-radius:99px;font-weight:600;color:var(--mute)}
-.tabs button.on{background:var(--lift);color:var(--mist)}
-#people{display:none;flex:1;min-height:0;overflow-y:auto;padding:14px 16px;flex-direction:column;gap:10px}
-#chat.show-people #people{display:flex}
-#chat.show-people #msgs,#chat.show-people #send{display:none}
+#people{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
 .p{display:flex;align-items:center;gap:12px}
 .pav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--night);flex:none}
 .pnm{flex:1;min-width:0;overflow-wrap:anywhere}
-.p::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--lake);flex:none}
+.p::after{content:"";width:10px;height:10px;border-radius:50%;background:#3a4f60;flex:none;transition:background .15s}
+.p.speaking::after{background:var(--lake);box-shadow:0 0 0 4px rgba(46,196,182,.25)}
+.p.speaking .pav{box-shadow:0 0 0 3px var(--lake)}
+.pmi{width:18px;height:18px;color:var(--danger);flex:none}
+.tile .mi{display:none;position:absolute;bottom:10px;left:10px;width:30px;height:30px;padding:6px;border-radius:50%;background:rgba(239,91,91,.92);color:#fff;z-index:2}
+.tile.muted .mi{display:block}
+.tile.speaking{outline:3px solid var(--lake);outline-offset:-3px}
+.tile.speaking .nm::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--lake);margin-inline-end:6px}
+#grid.has-spot .tile:not(.spot) .mi{width:22px;height:22px;padding:4px;bottom:6px;left:6px}
 
 /* ---------- Chat ---------- */
-#chat{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
-#app.chat-open #chat{display:flex}
-#chat header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08)}
-#chat header button{background:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
-#chat header button:hover{background:var(--lift)}
+#chat,#peoplePanel{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
+#app.chat-open #chat,#app.people-open #peoplePanel{display:flex}
+#chat header,#peoplePanel header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08)}
+#chat header button,#peoplePanel header button{background:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+#chat header button:hover,#peoplePanel header button:hover{background:var(--lift)}
 #msgs{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .m{max-width:85%;padding:8px 13px;border-radius:14px 14px 14px 4px;background:var(--lift);overflow-wrap:anywhere;line-height:1.7}
 .m b{display:block;font-size:.76rem;color:var(--sun)}
@@ -121,8 +124,8 @@ button{cursor:pointer;border:0}
   .wrap{grid-template-columns:1fr;gap:20px}
   .hero p,.faces{display:none}
   .hero h1{font-size:1.7rem}
-  #app.chat-open #stage{inset:0}
-  #chat{top:auto;left:0;right:0;width:auto;height:70%;border-radius:22px 22px 0 0;border:0;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
+  #app.chat-open #stage,#app.people-open #stage{inset:0}
+  #chat,#peoplePanel{top:auto;left:0;right:0;width:auto;height:70%;border-radius:22px 22px 0 0;border:0;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
   #grid{padding:60px 8px 92px;gap:8px}
   #grid[data-n="2"]:not(.has-spot) .tile.me{width:92px;height:124px;bottom:96px;left:12px}
   .rb{width:48px;height:48px}
@@ -152,6 +155,7 @@ button{cursor:pointer;border:0}
   <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
   <symbol id="i-flip" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
@@ -177,7 +181,8 @@ button{cursor:pointer;border:0}
 <div id="app">
   <section id="stage">
     <div id="top">
-      <div class="t"><span id="roomTitle"></span><button id="meta" aria-label="نمایش افراد"></button></div>
+      <div class="t"><span id="roomTitle"></span><span id="meta"></span></div>
+      <button class="pill" id="peopleBtn" aria-label="افراد"><svg class="ic"><use href="#i-users"/></svg><b id="pbadge">1</b></button>
       <button class="pill" id="copy" aria-label="کپی لینک اتاق"><svg class="ic"><use href="#i-link"/></svg><span id="copyTxt">کپی لینک</span></button>
     </div>
     <div id="grid" data-n="1"></div>
@@ -191,13 +196,16 @@ button{cursor:pointer;border:0}
     </div>
   </section>
   <aside id="chat">
-    <header><div class="tabs"><button id="tabChat" class="on">گفتگو</button><button id="tabPeople">افراد <span id="pcount"></span></button></div><button id="closeChat" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
+    <header><span>گفتگو</span><button id="closeChat" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
     <div id="msgs"><div class="empty" id="empty">هنوز پیامی نیست.<br>اولین پیام را بفرستید.</div></div>
-    <div id="people"></div>
     <form id="send">
       <input id="text" type="text" maxlength="2000" placeholder="پیام بنویسید" autocomplete="off">
       <button aria-label="ارسال"><svg class="ic"><use href="#i-send"/></svg></button>
     </form>
+  </aside>
+  <aside id="peoplePanel">
+    <header><span>افراد <span id="pcount"></span></span><button id="closePeople" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
+    <div id="people"></div>
   </aside>
 </div>
 
@@ -221,7 +229,7 @@ const ICE = { iceServers: [
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
-let blank, camTrack = null, screenTrack = null;
+let blank, camTrack = null, screenTrack = null, micMuted = false;
 const sharers = new Set();
 let mySession = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 const pcs = {};
@@ -297,7 +305,7 @@ function tile(id, name, stream, isLocal) {
   if (!t) {
     t = document.createElement('div');
     t.className = 'tile' + (isLocal ? ' me' : ''); t.id = 't-' + id;
-    t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span>'
+    t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span><svg class="ic mi"><use href="#i-mic"/><path d="M2 2l20 20"/></svg>'
       + '<div class="tools"><button data-a="in" aria-label="بزرگ‌نمایی"><svg class="ic"><use href="#i-zin"/></svg></button>'
       + '<button data-a="out" aria-label="کوچک‌نمایی"><svg class="ic"><use href="#i-zout"/></svg></button>'
       + '<button data-a="spot" aria-label="نمایش بزرگ"><svg class="ic"><use href="#i-max"/></svg></button></div>';
@@ -321,6 +329,7 @@ function tile(id, name, stream, isLocal) {
   if (pcs[id]) t.dataset.state = pcs[id].iceConnectionState;
   if (sharers.has(id)) { t.classList.add('screen'); if (!spotId) spotId = id; }
   layout();
+  applyStates();
 }
 
 function makePC(id, name) {
@@ -329,7 +338,7 @@ function makePC(id, name) {
   pcs[id] = pc;
   local.getTracks().forEach((t) => pc.addTrack(t, local));
   pc.onicecandidate = (e) => e.candidate && sendSignal(id, { candidate: e.candidate });
-  pc.ontrack = (e) => tile(id, name, e.streams[0]);
+  pc.ontrack = (e) => { tile(id, name, e.streams[0]); watchSpeaker(id, e.streams[0]); };
   pc.oniceconnectionstatechange = () => { const t = $('t-' + id); if (t) t.dataset.state = pc.iceConnectionState; };
   return pc;
 }
@@ -338,7 +347,12 @@ async function flush(pc) {
   while (pc.pending.length) { try { await pc.addIceCandidate(pc.pending.shift()); } catch {} }
 }
 
+function setPeople(open) {
+  if (open) $('app').classList.remove('chat-open');
+  $('app').classList.toggle('people-open', open);
+}
 function setChat(open) {
+  if (open) $('app').classList.remove('people-open');
   $('app').classList.toggle('chat-open', open);
   if (open) { unread = 0; $('badge').style.display = 'none'; $('text').focus({ preventScroll: true }); }
 }
@@ -373,6 +387,7 @@ async function onSignal({ from, to, name, data }) {
 }
 
 function removePeer(id) {
+  delete meters[id];
   if (pcs[id]) { pcs[id].close(); delete pcs[id]; }
   const t = $('t-' + id); if (t) t.remove();
   layout();
@@ -481,15 +496,18 @@ async function join() {
   ch.on('presence', { event: 'sync' }, renderPeople);
 
   // Presence = who is in the room. The peer with the larger id starts the call.
-  ch.on('presence', { event: 'join' }, ({ key, newPresences }) => {
+  ch.on('presence', { event: 'join' }, ({ key, newPresences, currentPresences }) => {
     if (key === myId) return;
     const name = (newPresences[0] && newPresences[0].name) || 'مهمان';
-    if (ready) eventLine({ type: 'join', id: key, name, t: Date.now() });
+    const known = (currentPresences && currentPresences.length) || pcs[key]; // a status update, not a new person
+    if (ready && !known) eventLine({ type: 'join', id: key, name, t: Date.now() });
     if (myId > key && !pcs[key]) call(key, name);
     if (screenTrack) announceShare(true); // tell newcomers that a screen is being shared
   });
   ch.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
     if (key === myId) return;
+    const st = ch.presenceState()[key];
+    if (st && st.length) return; // just a status update
     removePeer(key);
     eventLine({ type: 'leave', id: key, name: (leftPresences[0] && leftPresences[0].name) || 'مهمان', t: Date.now() });
   });
@@ -505,7 +523,7 @@ async function join() {
     const sessions = Object.values(state).flat().map((m) => m.session).filter(Boolean).sort();
     if (sessions[0] && sessions[0] !== mySession) {
       mySession = sessions[0];
-      ch.track({ name: myName, session: mySession });
+      trackMe();
     }
     // Chat shows only events of the people who are here now (an empty room starts clean)
     if (Object.keys(state).length > 1) {
@@ -532,9 +550,10 @@ async function join() {
     $('app').style.display = 'block';
     $('roomTitle').textContent = myRoom;
     tile('me', myName, local, true);
+    watchSpeaker('me', local);
     if (innerWidth >= 760) setChat(true);
     tracked = true;
-    await ch.track({ name: myName, session: mySession });
+    await trackMe();
   });
 }
 
@@ -640,26 +659,65 @@ async function stopShare() {
   await setVideo();
 }
 
-function showTab(name) {
-  $('chat').classList.toggle('show-people', name === 'people');
-  $('tabChat').classList.toggle('on', name !== 'people');
-  $('tabPeople').classList.toggle('on', name === 'people');
+const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted });
+
+// Marks who has their microphone muted (shared through presence)
+function applyStates() {
+  if (!ch) return;
+  for (const [key, metas] of Object.entries(ch.presenceState())) {
+    const t = $('t-' + (key === myId ? 'me' : key));
+    if (t) t.classList.toggle('muted', !!(metas[0] && metas[0].muted));
+  }
 }
+
+// Detects who is talking by measuring the loudness of each audio stream
+const AC = window.AudioContext || window.webkitAudioContext;
+let actx;
+const meters = {};
+function watchSpeaker(id, stream) {
+  if (!AC || meters[id] || !stream.getAudioTracks().length) return;
+  actx = actx || new AC();
+  if (actx.state === 'suspended') actx.resume().catch(() => {});
+  const an = actx.createAnalyser(); an.fftSize = 512;
+  actx.createMediaStreamSource(stream).connect(an); // not connected to the speakers, so no echo
+  meters[id] = { an, data: new Uint8Array(an.fftSize), last: 0, on: false };
+}
+function setSpeaking(id, on) {
+  const t = $('t-' + id); if (t) t.classList.toggle('speaking', on);
+  const row = [...document.querySelectorAll('#people .p')].find((r) => r.dataset.id === id);
+  if (row) row.classList.toggle('speaking', on);
+}
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, m] of Object.entries(meters)) {
+    m.an.getByteTimeDomainData(m.data);
+    let peak = 0;
+    for (const x of m.data) peak = Math.max(peak, Math.abs(x - 128));
+    if (peak > 14) m.last = now;
+    const on = now - m.last < 500;
+    if (on !== m.on) { m.on = on; setSpeaking(id, on); }
+  }
+}, 120);
 
 function renderPeople() {
   if (!ch) return;
-  const list = Object.entries(ch.presenceState()).map(([id, v]) => ({ id, name: (v[0] && v[0].name) || 'مهمان' }));
-  list.sort((a, b) => (b.id === myId) - (a.id === myId) || a.name.localeCompare(b.name, 'fa'));
-  $('pcount').textContent = list.length;
+  const list = Object.entries(ch.presenceState()).map(([id, v]) => ({
+    id: id === myId ? 'me' : id, name: (v[0] && v[0].name) || 'مهمان', muted: !!(v[0] && v[0].muted)
+  }));
+  list.sort((a, b) => (b.id === 'me') - (a.id === 'me') || a.name.localeCompare(b.name, 'fa'));
+  $('pcount').textContent = $('pbadge').textContent = list.length;
   $('people').replaceChildren(...list.map((p) => {
-    const row = document.createElement('div'); row.className = 'p';
+    const row = document.createElement('div'); row.className = 'p'; row.dataset.id = p.id;
+    if (meters[p.id] && meters[p.id].on) row.classList.add('speaking');
     const av = document.createElement('span'); av.className = 'pav';
     av.textContent = p.name.trim().charAt(0); av.style.background = colorOf(p.name);
     const nm = document.createElement('span'); nm.className = 'pnm';
-    nm.textContent = p.name + (p.id === myId ? ' (شما)' : '');
+    nm.textContent = p.name + (p.id === 'me' ? ' (شما)' : '');
     row.append(av, nm);
+    if (p.muted) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi" aria-label="میکروفون بسته"><use href="#i-mic"/><path d="M2 2l20 20"/></svg>');
     return row;
   }));
+  applyStates();
 }
 
 function toggle(btn, kind) {
@@ -675,13 +733,17 @@ $('go').onclick = join;
 [$('room'), $('name')].forEach((el) =>
   el.addEventListener('keydown', (e) => { if (e.key === 'Enter') join(); })
 );
-$('mic').onclick = () => toggle($('mic'), 'audio');
+$('mic').onclick = () => {
+  toggle($('mic'), 'audio');
+  micMuted = !local.getAudioTracks()[0].enabled;
+  const me = $('t-me'); if (me) me.classList.toggle('muted', micMuted);
+  trackMe();
+};
 $('cam').onclick = toggleCamera;
 $('flip').onclick = flipCamera;
 $('share').onclick = toggleShare;
-$('tabChat').onclick = () => showTab('chat');
-$('tabPeople').onclick = () => showTab('people');
-$('meta').onclick = () => { setChat(true); showTab('people'); };
+$('peopleBtn').onclick = () => setPeople(!$('app').classList.contains('people-open'));
+$('closePeople').onclick = () => setPeople(false);
 if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && !isMobile()) $('share').style.display = '';
 $('chatBtn').onclick = () => setChat(!$('app').classList.contains('chat-open'));
 $('closeChat').onclick = () => setChat(false);
