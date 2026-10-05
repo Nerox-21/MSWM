@@ -37,7 +37,7 @@ button{cursor:pointer;border:0}
 /* ---------- Call screen ---------- */
 #app{display:none;position:fixed;inset:0;background:var(--night)}
 #stage{position:absolute;inset:0;transition:inset .2s}
-#app.chat-open #stage,#app.people-open #stage{inset:0 0 0 340px}
+#app.chat-open #stage,#app.people-open #stage,#app.settings-open #stage{inset:0 0 0 340px}
 #grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(var(--c,1),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:10px;padding:64px 12px 96px}
 .tile{position:relative;min-height:0;border-radius:18px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#1c3246,#122232)}
 .tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -100,12 +100,24 @@ button{cursor:pointer;border:0}
 .tile.speaking .nm::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--lake);margin-inline-end:6px}
 #grid.has-spot .tile:not(.spot) .mi{width:22px;height:22px;padding:4px;bottom:6px;left:6px}
 
+#settingsBody{flex:1;min-height:0;overflow-y:auto;padding:4px 16px 24px}
+#settingsBody h3{margin:20px 0 2px;font-size:1rem;font-weight:800}
+#settingsBody label{display:block;margin:12px 0 6px;font-size:.88rem;color:var(--mute)}
+#settingsBody select{width:100%;padding:10px 12px;border-radius:10px;border:0;background:var(--lift);color:var(--mist)}
+#settingsBody input[type=range]{width:100%;accent-color:var(--lake)}
+#settingsBody label.sw{display:flex;gap:10px;align-items:center;color:var(--mist);font-size:.95rem;cursor:pointer}
+#settingsBody label.sw input{width:18px;height:18px;accent-color:var(--lake)}
+.meter{position:relative;height:10px;border-radius:99px;background:var(--lift);overflow:hidden;direction:ltr}
+.meter i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lake);transition:width .08s}
+.meter b{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:23%}
+.note{color:var(--mute);font-size:.8rem;margin-top:4px;line-height:1.8}
+
 /* ---------- Chat ---------- */
-#chat,#peoplePanel{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
-#app.chat-open #chat,#app.people-open #peoplePanel{display:flex}
-#chat header,#peoplePanel header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08)}
-#chat header button,#peoplePanel header button{background:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
-#chat header button:hover,#peoplePanel header button:hover{background:var(--lift)}
+#chat,#peoplePanel,#settingsPanel{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
+#app.chat-open #chat,#app.people-open #peoplePanel,#app.settings-open #settingsPanel{display:flex}
+#chat header,#peoplePanel header,#settingsPanel header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08)}
+#chat header button,#peoplePanel header button,#settingsPanel header button{background:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+#chat header button:hover,#peoplePanel header button:hover,#settingsPanel header button:hover{background:var(--lift)}
 #msgs{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .m{max-width:85%;padding:8px 13px;border-radius:14px 14px 14px 4px;background:var(--lift);overflow-wrap:anywhere;line-height:1.7}
 .m b{display:block;font-size:.76rem;color:var(--sun)}
@@ -124,8 +136,8 @@ button{cursor:pointer;border:0}
   .wrap{grid-template-columns:1fr;gap:20px}
   .hero p,.faces{display:none}
   .hero h1{font-size:1.7rem}
-  #app.chat-open #stage,#app.people-open #stage{inset:0}
-  #chat,#peoplePanel{top:auto;left:0;right:0;width:auto;height:70%;border-radius:22px 22px 0 0;border:0;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
+  #app.chat-open #stage,#app.people-open #stage,#app.settings-open #stage{inset:0}
+  #chat,#peoplePanel,#settingsPanel{top:auto;left:0;right:0;width:auto;height:70%;border-radius:22px 22px 0 0;border:0;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
   #grid{padding:60px 8px 92px;gap:8px}
   #grid[data-n="2"]:not(.has-spot) .tile.me{width:92px;height:124px;bottom:96px;left:12px}
   .rb{width:48px;height:48px}
@@ -156,6 +168,7 @@ button{cursor:pointer;border:0}
   <symbol id="i-flip" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
@@ -183,6 +196,7 @@ button{cursor:pointer;border:0}
     <div id="top">
       <div class="t"><span id="roomTitle"></span><span id="meta"></span></div>
       <button class="pill" id="peopleBtn" aria-label="افراد"><svg class="ic"><use href="#i-users"/></svg><b id="pbadge">1</b></button>
+      <button class="pill" id="settingsBtn" aria-label="تنظیمات"><svg class="ic"><use href="#i-gear"/></svg></button>
       <button class="pill" id="copy" aria-label="کپی لینک اتاق"><svg class="ic"><use href="#i-link"/></svg><span id="copyTxt">کپی لینک</span></button>
     </div>
     <div id="grid" data-n="1"></div>
@@ -206,6 +220,28 @@ button{cursor:pointer;border:0}
   <aside id="peoplePanel">
     <header><span>افراد <span id="pcount"></span></span><button id="closePeople" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
     <div id="people"></div>
+  </aside>
+  <aside id="settingsPanel">
+    <header><span>تنظیمات</span><button id="closeSettings" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
+    <div id="settingsBody">
+      <h3>میکروفون</h3>
+      <label for="micSel">دستگاه</label>
+      <select id="micSel"></select>
+      <label>بلندی صدای شما</label>
+      <div class="meter"><i id="lvl"></i><b id="thrMark"></b></div>
+      <label for="sens">حساسیت تشخیص صحبت</label>
+      <input type="range" id="sens" min="0" max="100">
+      <p class="note">خط سفید روی نوار، مرز صحبت کردن است. وقتی صدای شما از آن رد شود، برای بقیه سبز می‌شوید. حساسیت را بیشتر کنید تا صدای آرام هم تشخیص داده شود.</p>
+      <label class="sw"><input type="checkbox" id="optNs"> حذف نویز</label>
+      <label class="sw"><input type="checkbox" id="optEc"> حذف اکو</label>
+      <label class="sw"><input type="checkbox" id="optAgc"> تنظیم خودکار بلندی صدا</label>
+      <h3>دوربین</h3>
+      <label for="camSel">دستگاه</label>
+      <select id="camSel"></select>
+      <label for="qSel">کیفیت تصویر</label>
+      <select id="qSel"><option value="low">پایین (مناسب اینترنت ضعیف)</option><option value="mid">متوسط</option><option value="high">بالا</option></select>
+      <label class="sw"><input type="checkbox" id="optMirror"> آینه‌ای بودن تصویر خودم</label>
+    </div>
   </aside>
 </div>
 
@@ -347,12 +383,16 @@ async function flush(pc) {
   while (pc.pending.length) { try { await pc.addIceCandidate(pc.pending.shift()); } catch {} }
 }
 
+function setSettings(open) {
+  if (open) { $('app').classList.remove('chat-open', 'people-open'); renderDevices(); }
+  $('app').classList.toggle('settings-open', open);
+}
 function setPeople(open) {
-  if (open) $('app').classList.remove('chat-open');
+  if (open) $('app').classList.remove('chat-open', 'settings-open');
   $('app').classList.toggle('people-open', open);
 }
 function setChat(open) {
-  if (open) $('app').classList.remove('people-open');
+  if (open) $('app').classList.remove('people-open', 'settings-open');
   $('app').classList.toggle('chat-open', open);
   if (open) { unread = 0; $('badge').style.display = 'none'; $('text').focus({ preventScroll: true }); }
 }
@@ -451,7 +491,7 @@ async function join() {
   }
   $('err').textContent = '';
   try {
-    local = await navigator.mediaDevices.getUserMedia({ audio: true });
+    local = await getMedia('audio');
     blank = blank || makeBlankTrack();
     local.addTrack(blank); // placeholder video, replaced by camera or screen later
   } catch (e) {
@@ -591,7 +631,7 @@ async function setVideo() {
 function syncMirror() {
   const t = $('t-me'); if (!t) return;
   const facing = screenTrack ? 'environment' : ((camTrack && camTrack.getSettings().facingMode) || 'user');
-  t.classList.toggle('unmirror', facing === 'environment');
+  t.classList.toggle('unmirror', facing === 'environment' || !S.mirror);
   applyZoom(t);
 }
 
@@ -608,11 +648,12 @@ async function toggleCamera() {
     return setVideo();
   }
   try {
-    camTrack = (await navigator.mediaDevices.getUserMedia({ video: true })).getVideoTracks()[0];
+    camTrack = (await getMedia('video')).getVideoTracks()[0];
   } catch { alert('دسترسی به دوربین داده نشد.'); return; }
   $('cam').classList.remove('off');
   await setVideo();
   setupFlip();
+  renderDevices();
 }
 
 async function flipCamera() {
@@ -634,6 +675,7 @@ async function flipCamera() {
     catch { alert('تعویض دوربین ممکن نشد.'); camTrack = null; $('cam').classList.add('off'); $('flip').style.display = 'none'; return setVideo(); }
   }
   camTrack = stream.getVideoTracks()[0];
+  S.cam = camTrack.getSettings().deviceId || ''; saveS(); renderDevices();
   await setVideo();
 }
 
@@ -659,14 +701,16 @@ async function stopShare() {
   await setVideo();
 }
 
-const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted });
+const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens });
 
 // Marks who has their microphone muted (shared through presence)
 function applyStates() {
   if (!ch) return;
   for (const [key, metas] of Object.entries(ch.presenceState())) {
-    const t = $('t-' + (key === myId ? 'me' : key));
-    if (t) t.classList.toggle('muted', !!(metas[0] && metas[0].muted));
+    const id = key === myId ? 'me' : key, m = metas[0] || {};
+    if (id !== 'me') peerSens[id] = typeof m.sens === 'number' ? m.sens : 50;
+    const t = $('t-' + id);
+    if (t) t.classList.toggle('muted', !!m.muted);
   }
 }
 
@@ -693,7 +737,8 @@ setInterval(() => {
     m.an.getByteTimeDomainData(m.data);
     let peak = 0;
     for (const x of m.data) peak = Math.max(peak, Math.abs(x - 128));
-    if (peak > 14) m.last = now;
+    if (id === 'me') { const l = $('lvl'); if (l) l.style.width = Math.min(100, peak / 60 * 100) + '%'; }
+    if (peak > thr(id)) m.last = now;
     const on = now - m.last < 500;
     if (on !== m.on) { m.on = on; setSpeaking(id, on); }
   }
@@ -720,6 +765,77 @@ function renderPeople() {
   applyStates();
 }
 
+// ---------- Settings (saved in this browser) ----------
+const S = Object.assign(
+  { mic: '', cam: '', sens: 50, ns: true, ec: true, agc: true, q: 'mid', mirror: true },
+  (() => { try { return JSON.parse(localStorage.getItem('cc-settings')) || {}; } catch { return {}; } })()
+);
+const saveS = () => { try { localStorage.setItem('cc-settings', JSON.stringify(S)); } catch {} };
+const QUALITY = { low: { width: 426, height: 240, frameRate: 15 }, mid: { width: 854, height: 480, frameRate: 24 }, high: { width: 1280, height: 720, frameRate: 30 } };
+const peerSens = {};
+// Each person's own sensitivity decides when they count as "speaking"
+const thr = (id) => Math.max(3, 34 - 0.4 * (id === 'me' ? S.sens : (peerSens[id] ?? 50)));
+const updateMarker = () => { $('thrMark').style.left = Math.min(100, thr('me') / 60 * 100) + '%'; };
+
+function mediaConstraints(kind, useDevice) {
+  if (kind === 'audio') {
+    return { audio: { ...(useDevice && S.mic ? { deviceId: { exact: S.mic } } : {}), noiseSuppression: S.ns, echoCancellation: S.ec, autoGainControl: S.agc } };
+  }
+  const q = QUALITY[S.q] || QUALITY.mid;
+  return { video: { ...(useDevice && S.cam ? { deviceId: { exact: S.cam } } : {}), width: { ideal: q.width }, height: { ideal: q.height }, frameRate: { ideal: q.frameRate } } };
+}
+// Tries the chosen device first; if it is gone, falls back to the default one
+async function getMedia(kind) {
+  try { return await navigator.mediaDevices.getUserMedia(mediaConstraints(kind, true)); }
+  catch (e) {
+    if ((kind === 'audio' ? S.mic : S.cam) && /Overconstrained|NotFound/.test(e.name)) return navigator.mediaDevices.getUserMedia(mediaConstraints(kind, false));
+    throw e;
+  }
+}
+
+async function applyMic() {
+  let s;
+  try { s = await getMedia('audio'); } catch { alert('دسترسی به این میکروفون ممکن نشد.'); return; }
+  const nt = s.getAudioTracks()[0], old = local.getAudioTracks()[0];
+  nt.enabled = !micMuted;
+  if (old) { local.removeTrack(old); old.stop(); }
+  local.addTrack(nt);
+  for (const pc of Object.values(pcs)) {
+    const snd = pc.getSenders().find((x) => x.track && x.track.kind === 'audio');
+    if (snd) { try { await snd.replaceTrack(nt); } catch {} }
+  }
+  delete meters.me; watchSpeaker('me', local);
+}
+async function applyCam() {
+  if (!camTrack) return;
+  camTrack.stop();
+  try { camTrack = (await getMedia('video')).getVideoTracks()[0]; }
+  catch { alert('تعویض دوربین ممکن نشد.'); camTrack = null; $('cam').classList.add('off'); $('flip').style.display = 'none'; }
+  await setVideo(); setupFlip();
+}
+function applyQuality() {
+  if (!camTrack) return;
+  const q = QUALITY[S.q];
+  camTrack.applyConstraints({ width: { ideal: q.width }, height: { ideal: q.height }, frameRate: { ideal: q.frameRate } }).catch(() => {});
+}
+
+async function renderDevices() {
+  let devs;
+  try { devs = await navigator.mediaDevices.enumerateDevices(); } catch { return; }
+  const fill = (sel, kind, cur, label) => {
+    const list = devs.filter((d) => d.kind === kind && d.deviceId);
+    sel.replaceChildren(new Option('پیش‌فرض', ''), ...list.map((d, i) => new Option(d.label || label + ' ' + (i + 1), d.deviceId)));
+    sel.value = list.some((d) => d.deviceId === cur) ? cur : '';
+  };
+  fill($('micSel'), 'audioinput', S.mic, 'میکروفون');
+  fill($('camSel'), 'videoinput', S.cam, 'دوربین');
+}
+function syncSettingsUI() {
+  $('sens').value = S.sens; $('optNs').checked = S.ns; $('optEc').checked = S.ec;
+  $('optAgc').checked = S.agc; $('optMirror').checked = S.mirror; $('qSel').value = S.q;
+  updateMarker();
+}
+
 function toggle(btn, kind) {
   const tracks = kind === 'audio' ? local.getAudioTracks() : local.getVideoTracks();
   if (!tracks.length) { btn.disabled = true; btn.style.opacity = .4; return; }
@@ -744,6 +860,19 @@ $('flip').onclick = flipCamera;
 $('share').onclick = toggleShare;
 $('peopleBtn').onclick = () => setPeople(!$('app').classList.contains('people-open'));
 $('closePeople').onclick = () => setPeople(false);
+$('settingsBtn').onclick = () => setSettings(!$('app').classList.contains('settings-open'));
+$('closeSettings').onclick = () => setSettings(false);
+$('micSel').onchange = (e) => { S.mic = e.target.value; saveS(); applyMic(); };
+$('camSel').onchange = (e) => { S.cam = e.target.value; saveS(); applyCam(); };
+$('qSel').onchange = (e) => { S.q = e.target.value; saveS(); applyQuality(); };
+$('sens').oninput = (e) => { S.sens = +e.target.value; updateMarker(); };
+$('sens').onchange = () => { saveS(); trackMe(); };
+[['optNs', 'ns'], ['optEc', 'ec'], ['optAgc', 'agc']].forEach(([id, k]) => {
+  $(id).onchange = (e) => { S[k] = e.target.checked; saveS(); applyMic(); };
+});
+$('optMirror').onchange = (e) => { S.mirror = e.target.checked; saveS(); syncMirror(); };
+if (navigator.mediaDevices) navigator.mediaDevices.ondevicechange = renderDevices;
+syncSettingsUI();
 if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && !isMobile()) $('share').style.display = '';
 $('chatBtn').onclick = () => setChat(!$('app').classList.contains('chat-open'));
 $('closeChat').onclick = () => setChat(false);
