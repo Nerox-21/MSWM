@@ -581,8 +581,9 @@ async function join() {
   });
   ch.on('presence', { event: 'sync' }, async () => {
     if (!tracked || checked) return;
-    checked = true;
     const state = ch.presenceState();
+    if (!state[myId]) return; // wait until our own presence is registered, otherwise the room list is incomplete
+    checked = true;
     if (Object.keys(state).length > MAX_PER_ROOM) {
       alert('ظرفیت این اتاق پر است.'); location.reload(); return;
     }
@@ -594,7 +595,7 @@ async function join() {
       trackMe();
     }
     // The first person in an empty room becomes its admin
-    if (Object.keys(state).length === 1) { iAmAdmin = true; trackMe(); renderPeople(); toast('شما مدیر این اتاق هستید.'); }
+    if (Object.keys(state).length === 1 && !Object.values(state).flat().some((m) => m.adm)) { iAmAdmin = true; trackMe(); renderPeople(); toast('شما مدیر این اتاق هستید.'); }
     // Chat shows only events of the people who are here now (an empty room starts clean)
     if (Object.keys(state).length > 1) {
       try {
