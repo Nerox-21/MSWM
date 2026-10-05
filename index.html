@@ -231,6 +231,16 @@ const colorOf = (s) => COLORS[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % 
 $('room').value = decodeURIComponent(location.hash.slice(1));
 $('name').value = localStorage.getItem('cc-name') || '';
 
+// Fill the tile when the video has a similar shape (little is cropped);
+// otherwise show the whole picture (e.g. a vertical phone video on a wide screen). Screens are never cropped.
+function fit(t) {
+  const v = t.querySelector('video');
+  if (!v.videoWidth || !t.clientHeight) return;
+  const va = v.videoWidth / v.videoHeight, ta = t.clientWidth / t.clientHeight;
+  const r = Math.max(va, ta) / Math.min(va, ta);
+  v.style.objectFit = (t.classList.contains('screen') || r > 1.4) ? 'contain' : 'cover';
+}
+
 function applyZoom(t) {
   const z = +t.dataset.z || 1;
   t.querySelector('video').style.transform = (t.classList.contains('me') && !t.classList.contains('unmirror') ? 'scaleX(-1) ' : '') + 'scale(' + z + ')';
@@ -302,7 +312,10 @@ function tile(id, name, stream, isLocal) {
   if (isLocal) v.muted = true;
   if (stream) {
     v.srcObject = stream;
-    if (!v.onresize) v.onresize = v.onloadedmetadata = () => t.classList.toggle('hasvideo', v.videoWidth > 64);
+    if (!v.onresize) {
+      v.onresize = v.onloadedmetadata = () => { t.classList.toggle('hasvideo', v.videoWidth > 64); fit(t); };
+      if (window.ResizeObserver) new ResizeObserver(() => fit(t)).observe(t); // tile size changes (layout, rotation)
+    }
     v.play().catch(() => {});
   }
   if (pcs[id]) t.dataset.state = pcs[id].iceConnectionState;
@@ -461,7 +474,7 @@ async function join() {
     if (payload.id === myId) return;
     payload.on ? sharers.add(payload.id) : sharers.delete(payload.id);
     const t = $('t-' + payload.id);
-    if (t) t.classList.toggle('screen', payload.on);
+    if (t) { t.classList.toggle('screen', payload.on); fit(t); }
     if (payload.on) { spotId = payload.id; layout(); }
     else if (spotId === payload.id) { spotId = null; layout(); }
   });
@@ -549,6 +562,7 @@ async function setVideo() {
   const t = $('t-me');
   if (t) {
     t.classList.toggle('screen', !!screenTrack);
+    fit(t);
     const v = t.querySelector('video'); v.srcObject = local; v.play().catch(() => {});
   }
   syncMirror();
