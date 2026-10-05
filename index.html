@@ -136,6 +136,7 @@ button{cursor:pointer;border:0}
   <symbol id="i-zin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></symbol>
   <symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M8 11h6"/></symbol>
   <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+  <symbol id="i-flip" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
@@ -168,6 +169,7 @@ button{cursor:pointer;border:0}
     <div id="bar">
       <button class="rb" id="mic" aria-label="میکروفون"><svg class="ic"><use href="#i-mic"/><path class="sl" d="M2 2l20 20"/></svg></button>
       <button class="rb" id="cam" aria-label="دوربین"><svg class="ic"><use href="#i-cam"/><path class="sl" d="M2 2l20 20"/></svg></button>
+      <button class="rb" id="flip" aria-label="تعویض دوربین" style="display:none"><svg class="ic"><use href="#i-flip"/></svg></button>
       <button class="rb" id="chatBtn" aria-label="چت"><svg class="ic"><use href="#i-chat"/></svg><span id="badge"></span></button>
       <button class="rb leave" id="leave" aria-label="ترک تماس"><svg class="ic"><use href="#i-phone"/></svg></button>
     </div>
@@ -202,6 +204,7 @@ const ICE = { iceServers: [
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
+let mySession = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 const pcs = {};
 const COLORS = ['#2ec4b6', '#ffb454', '#ff8fa3', '#9b8cff', '#7bd88f', '#5bb8ff'];
 const colorOf = (s) => COLORS[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORS.length];
@@ -211,7 +214,7 @@ $('name').value = localStorage.getItem('cc-name') || '';
 
 function applyZoom(t) {
   const z = +t.dataset.z || 1;
-  t.querySelector('video').style.transform = (t.classList.contains('me') ? 'scaleX(-1) ' : '') + 'scale(' + z + ')';
+  t.querySelector('video').style.transform = (t.classList.contains('me') && !t.classList.contains('unmirror') ? 'scaleX(-1) ' : '') + 'scale(' + z + ')';
 }
 function zoomBy(t, d) {
   t.dataset.z = Math.min(4, Math.max(0.5, (+t.dataset.z || 1) + d));
@@ -378,7 +381,7 @@ function logEvent(type, keepalive) {
   return fetch(SUPABASE_URL + '/rest/v1/events', {
     method: 'POST', keepalive: !!keepalive,
     headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-    body: JSON.stringify({ room: myRoom, name: myName, type })
+    body: JSON.stringify({ room: myRoom, name: myName, type, session: mySession })
   }).catch(() => {});
 }
 addEventListener('pagehide', () => { if (joined) logEvent('leave', true); });
@@ -445,11 +448,28 @@ async function join() {
     removePeer(key);
     eventLine({ type: 'leave', id: key, name: (leftPresences[0] && leftPresences[0].name) || 'مهمان', t: Date.now() });
   });
-  ch.on('presence', { event: 'sync' }, () => {
+  ch.on('presence', { event: 'sync' }, async () => {
     if (!tracked || checked) return;
     checked = true;
-    if (Object.keys(ch.presenceState()).length > MAX_PER_ROOM) {
+    const state = ch.presenceState();
+    if (Object.keys(state).length > MAX_PER_ROOM) {
       alert('ظرفیت این اتاق پر است.'); location.reload(); return;
+    }
+    // Everyone in the room shares one session id. The first person creates it;
+    // if two people start at the same moment, the smallest id wins.
+    const sessions = Object.values(state).flat().map((m) => m.session).filter(Boolean).sort();
+    if (sessions[0] && sessions[0] !== mySession) {
+      mySession = sessions[0];
+      ch.track({ name: myName, session: mySession });
+    }
+    // Chat shows only events of the people who are here now (an empty room starts clean)
+    if (Object.keys(state).length > 1) {
+      try {
+        const { data } = await sb.from('events').select('type,name,created_at')
+          .eq('room', myRoom).eq('session', mySession)
+          .order('created_at', { ascending: true }).limit(50);
+        (data || []).forEach((e) => eventLine({ type: e.type, id: '', name: e.name, t: Date.parse(e.created_at) }));
+      } catch {}
     }
     ready = true; joined = true;
     eventLine({ type: 'join', id: myId, name: myName, t: Date.now() });
@@ -468,15 +488,57 @@ async function join() {
     $('roomTitle').textContent = myRoom;
     tile('me', myName, local, true);
     if (innerWidth >= 760) setChat(true);
-    // Earlier join/leave events of this room, from the database
-    try {
-      const { data } = await sb.from('events').select('type,name,created_at')
-        .eq('room', myRoom).order('created_at', { ascending: false }).limit(30);
-      (data || []).reverse().forEach((e) => eventLine({ type: e.type, id: '', name: e.name, t: Date.parse(e.created_at) }));
-    } catch {}
     tracked = true;
-    await ch.track({ name: myName });
+    await ch.track({ name: myName, session: mySession });
+    setupFlip();
   });
+}
+
+const videoCams = async () => (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
+
+async function setupFlip() {
+  if (!local.getVideoTracks()[0]) return;
+  try { if ((await videoCams()).length > 1) $('flip').style.display = ''; } catch {}
+  syncMirror();
+}
+
+// The front camera is shown mirrored, the back camera is not
+function syncMirror() {
+  const vt = local.getVideoTracks()[0], t = $('t-me');
+  if (!vt || !t) return;
+  const facing = (vt.getSettings && vt.getSettings().facingMode) || 'user';
+  t.classList.toggle('unmirror', facing === 'environment');
+  applyZoom(t);
+}
+
+async function flipCamera() {
+  const old = local.getVideoTracks()[0];
+  if (!old) return;
+  const { deviceId: oldId, facingMode } = old.getSettings();
+  const wasOn = old.enabled;
+  old.stop(); // some phones cannot open two cameras at once
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: facingMode === 'environment' ? 'user' : 'environment' } } });
+    if (stream.getVideoTracks()[0].getSettings().deviceId === oldId) { // e.g. a computer with two webcams
+      stream.getTracks().forEach((t) => t.stop());
+      const cams = await videoCams();
+      const next = cams[(cams.findIndex((c) => c.deviceId === oldId) + 1) % cams.length];
+      stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: next.deviceId } } });
+    }
+  } catch (e) {
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: oldId ? { deviceId: { exact: oldId } } : true }); }
+    catch { alert('تعویض دوربین ممکن نشد.'); return; }
+  }
+  const nt = stream.getVideoTracks()[0];
+  nt.enabled = wasOn;
+  local.removeTrack(old); local.addTrack(nt);
+  for (const pc of Object.values(pcs)) {
+    const s = pc.getSenders().find((x) => x.track && x.track.kind === 'video');
+    if (s) { try { await s.replaceTrack(nt); } catch {} }
+  }
+  const v = $('t-me').querySelector('video'); v.srcObject = local; v.play().catch(() => {});
+  syncMirror();
 }
 
 function toggle(btn, kind) {
@@ -494,6 +556,7 @@ $('go').onclick = join;
 );
 $('mic').onclick = () => toggle($('mic'), 'audio');
 $('cam').onclick = () => toggle($('cam'), 'video');
+$('flip').onclick = flipCamera;
 $('chatBtn').onclick = () => setChat(!$('app').classList.contains('chat-open'));
 $('closeChat').onclick = () => setChat(false);
 $('copy').onclick = async () => {
