@@ -51,7 +51,7 @@ button{cursor:pointer;border:0}
 #top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:10px;padding:12px 16px;z-index:4;background:linear-gradient(rgba(15,30,43,.85),transparent)}
 #top .t{flex:1;min-width:0}
 #roomTitle{display:block;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#meta{font-size:.8rem;color:var(--mute)}
+#meta{display:block;background:none;padding:0;font-size:.8rem;color:var(--mute);text-align:start}
 .pill{display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:99px;background:var(--lift);font-size:.85rem}
 .pill .ic{width:18px;height:18px}
 
@@ -82,6 +82,20 @@ button{cursor:pointer;border:0}
 .tile[data-state="new"] .nm::after,.tile[data-state="checking"] .nm::after{content:" — در حال اتصال"}
 .tile[data-state="failed"] .nm::after,.tile[data-state="disconnected"] .nm::after{content:" — اتصال برقرار نشد";color:#ff9d9d}
 #grid.has-spot .tile:not(.spot) .nm{font-size:.7rem;padding:2px 8px;bottom:6px;right:6px}
+
+.hint{color:var(--mute);font-size:.88rem;margin-top:-4px}
+.rb.on{background:var(--lake);color:var(--night)}
+.tile.screen video{object-fit:contain;background:#000}
+.tabs{display:flex;gap:4px}
+.tabs button{background:none;padding:6px 14px;border-radius:99px;font-weight:600;color:var(--mute)}
+.tabs button.on{background:var(--lift);color:var(--mist)}
+#people{display:none;flex:1;min-height:0;overflow-y:auto;padding:14px 16px;flex-direction:column;gap:10px}
+#chat.show-people #people{display:flex}
+#chat.show-people #msgs,#chat.show-people #send{display:none}
+.p{display:flex;align-items:center;gap:12px}
+.pav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--night);flex:none}
+.pnm{flex:1;min-width:0;overflow-wrap:anywhere}
+.p::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--lake);flex:none}
 
 /* ---------- Chat ---------- */
 #chat{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
@@ -137,6 +151,7 @@ button{cursor:pointer;border:0}
   <symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M8 11h6"/></symbol>
   <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
   <symbol id="i-flip" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
@@ -152,7 +167,7 @@ button{cursor:pointer;border:0}
       <input id="name" type="text" maxlength="30" autocomplete="nickname" placeholder="مثلاً سارا">
       <label for="room">نام اتاق</label>
       <input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room">
-      <label class="check"><input id="audioOnly" type="checkbox"> فقط تماس صوتی، بدون تصویر</label>
+      <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید.</p>
       <button class="primary" id="go">ورود به اتاق</button>
       <div id="err" role="alert"></div>
     </div>
@@ -162,21 +177,23 @@ button{cursor:pointer;border:0}
 <div id="app">
   <section id="stage">
     <div id="top">
-      <div class="t"><span id="roomTitle"></span><span id="meta"></span></div>
+      <div class="t"><span id="roomTitle"></span><button id="meta" aria-label="نمایش افراد"></button></div>
       <button class="pill" id="copy" aria-label="کپی لینک اتاق"><svg class="ic"><use href="#i-link"/></svg><span id="copyTxt">کپی لینک</span></button>
     </div>
     <div id="grid" data-n="1"></div>
     <div id="bar">
       <button class="rb" id="mic" aria-label="میکروفون"><svg class="ic"><use href="#i-mic"/><path class="sl" d="M2 2l20 20"/></svg></button>
-      <button class="rb" id="cam" aria-label="دوربین"><svg class="ic"><use href="#i-cam"/><path class="sl" d="M2 2l20 20"/></svg></button>
+      <button class="rb off" id="cam" aria-label="دوربین"><svg class="ic"><use href="#i-cam"/><path class="sl" d="M2 2l20 20"/></svg></button>
       <button class="rb" id="flip" aria-label="تعویض دوربین" style="display:none"><svg class="ic"><use href="#i-flip"/></svg></button>
+      <button class="rb" id="share" aria-label="اشتراک صفحه" style="display:none"><svg class="ic"><use href="#i-share"/></svg></button>
       <button class="rb" id="chatBtn" aria-label="چت"><svg class="ic"><use href="#i-chat"/></svg><span id="badge"></span></button>
       <button class="rb leave" id="leave" aria-label="ترک تماس"><svg class="ic"><use href="#i-phone"/></svg></button>
     </div>
   </section>
   <aside id="chat">
-    <header><span>گفتگو</span><button id="closeChat" aria-label="بستن چت"><svg class="ic"><use href="#i-x"/></svg></button></header>
+    <header><div class="tabs"><button id="tabChat" class="on">گفتگو</button><button id="tabPeople">افراد <span id="pcount"></span></button></div><button id="closeChat" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
     <div id="msgs"><div class="empty" id="empty">هنوز پیامی نیست.<br>اولین پیام را بفرستید.</div></div>
+    <div id="people"></div>
     <form id="send">
       <input id="text" type="text" maxlength="2000" placeholder="پیام بنویسید" autocomplete="off">
       <button aria-label="ارسال"><svg class="ic"><use href="#i-send"/></svg></button>
@@ -204,6 +221,8 @@ const ICE = { iceServers: [
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
+let blank, camTrack = null, screenTrack = null;
+const sharers = new Set();
 let mySession = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 const pcs = {};
 const COLORS = ['#2ec4b6', '#ffb454', '#ff8fa3', '#9b8cff', '#7bd88f', '#5bb8ff'];
@@ -283,10 +302,11 @@ function tile(id, name, stream, isLocal) {
   if (isLocal) v.muted = true;
   if (stream) {
     v.srcObject = stream;
-    t.classList.toggle('hasvideo', stream.getVideoTracks().length > 0);
+    if (!v.onresize) v.onresize = v.onloadedmetadata = () => t.classList.toggle('hasvideo', v.videoWidth > 64);
     v.play().catch(() => {});
   }
   if (pcs[id]) t.dataset.state = pcs[id].iceConnectionState;
+  if (sharers.has(id)) { t.classList.add('screen'); if (!spotId) spotId = id; }
   layout();
 }
 
@@ -403,9 +423,11 @@ async function join() {
   }
   $('err').textContent = '';
   try {
-    local = await navigator.mediaDevices.getUserMedia({ audio: true, video: !$('audioOnly').checked });
+    local = await navigator.mediaDevices.getUserMedia({ audio: true });
+    blank = blank || makeBlankTrack();
+    local.addTrack(blank); // placeholder video, replaced by camera or screen later
   } catch (e) {
-    $('err').textContent = 'دسترسی به میکروفون یا دوربین ممکن نشد. اجازه دسترسی را در مرورگر بدهید.';
+    $('err').textContent = 'میکروفون الزامی است. اجازه دسترسی به میکروفون را در مرورگر بدهید.';
     return;
   }
   localStorage.setItem('cc-name', myName);
@@ -435,6 +457,15 @@ async function join() {
 
   ch.on('broadcast', { event: 'signal' }, ({ payload }) => onSignal(payload));
   ch.on('broadcast', { event: 'chat' }, ({ payload }) => showChat(payload));
+  ch.on('broadcast', { event: 'share' }, ({ payload }) => {
+    if (payload.id === myId) return;
+    payload.on ? sharers.add(payload.id) : sharers.delete(payload.id);
+    const t = $('t-' + payload.id);
+    if (t) t.classList.toggle('screen', payload.on);
+    if (payload.on) { spotId = payload.id; layout(); }
+    else if (spotId === payload.id) { spotId = null; layout(); }
+  });
+  ch.on('presence', { event: 'sync' }, renderPeople);
 
   // Presence = who is in the room. The peer with the larger id starts the call.
   ch.on('presence', { event: 'join' }, ({ key, newPresences }) => {
@@ -442,6 +473,7 @@ async function join() {
     const name = (newPresences[0] && newPresences[0].name) || 'مهمان';
     if (ready) eventLine({ type: 'join', id: key, name, t: Date.now() });
     if (myId > key && !pcs[key]) call(key, name);
+    if (screenTrack) announceShare(true); // tell newcomers that a screen is being shared
   });
   ch.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
     if (key === myId) return;
@@ -490,32 +522,70 @@ async function join() {
     if (innerWidth >= 760) setChat(true);
     tracked = true;
     await ch.track({ name: myName, session: mySession });
-    setupFlip();
   });
 }
 
+const isMobile = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
 const videoCams = async () => (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
 
-async function setupFlip() {
-  if (!local.getVideoTracks()[0]) return;
-  try { if ((await videoCams()).length > 1) $('flip').style.display = ''; } catch {}
+// Tiny black video that is always sent, so the camera or screen can be swapped in later without renegotiating
+function makeBlankTrack() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'); let k = 0;
+  const draw = () => { g.fillStyle = (k = 1 - k) ? '#000' : '#020202'; g.fillRect(0, 0, 64, 64); };
+  draw(); setInterval(draw, 1000);
+  return c.captureStream(1).getVideoTracks()[0];
+}
+
+// Sends screen, else camera, else the blank track to everyone
+async function setVideo() {
+  const nt = screenTrack || camTrack || blank;
+  local.getVideoTracks().forEach((t) => { if (t !== nt) local.removeTrack(t); });
+  if (!local.getVideoTracks().includes(nt)) local.addTrack(nt);
+  for (const pc of Object.values(pcs)) {
+    const s = pc.getSenders().find((x) => x.track && x.track.kind === 'video');
+    if (s) { try { await s.replaceTrack(nt); } catch {} }
+  }
+  const t = $('t-me');
+  if (t) {
+    t.classList.toggle('screen', !!screenTrack);
+    const v = t.querySelector('video'); v.srcObject = local; v.play().catch(() => {});
+  }
   syncMirror();
 }
 
-// The front camera is shown mirrored, the back camera is not
+// The front camera is shown mirrored; back camera and screen are not
 function syncMirror() {
-  const vt = local.getVideoTracks()[0], t = $('t-me');
-  if (!vt || !t) return;
-  const facing = (vt.getSettings && vt.getSettings().facingMode) || 'user';
+  const t = $('t-me'); if (!t) return;
+  const facing = screenTrack ? 'environment' : ((camTrack && camTrack.getSettings().facingMode) || 'user');
   t.classList.toggle('unmirror', facing === 'environment');
   applyZoom(t);
 }
 
+async function setupFlip() {
+  try { $('flip').style.display = camTrack && (await videoCams()).length > 1 ? '' : 'none'; } catch {}
+  syncMirror();
+}
+
+// Asks for camera permission only when the camera button is pressed
+async function toggleCamera() {
+  if (camTrack) {
+    camTrack.stop(); camTrack = null;
+    $('cam').classList.add('off'); $('flip').style.display = 'none';
+    return setVideo();
+  }
+  try {
+    camTrack = (await navigator.mediaDevices.getUserMedia({ video: true })).getVideoTracks()[0];
+  } catch { alert('دسترسی به دوربین داده نشد.'); return; }
+  $('cam').classList.remove('off');
+  await setVideo();
+  setupFlip();
+}
+
 async function flipCamera() {
-  const old = local.getVideoTracks()[0];
+  const old = camTrack;
   if (!old) return;
   const { deviceId: oldId, facingMode } = old.getSettings();
-  const wasOn = old.enabled;
   old.stop(); // some phones cannot open two cameras at once
   let stream;
   try {
@@ -528,17 +598,54 @@ async function flipCamera() {
     }
   } catch (e) {
     try { stream = await navigator.mediaDevices.getUserMedia({ video: oldId ? { deviceId: { exact: oldId } } : true }); }
-    catch { alert('تعویض دوربین ممکن نشد.'); return; }
+    catch { alert('تعویض دوربین ممکن نشد.'); camTrack = null; $('cam').classList.add('off'); $('flip').style.display = 'none'; return setVideo(); }
   }
-  const nt = stream.getVideoTracks()[0];
-  nt.enabled = wasOn;
-  local.removeTrack(old); local.addTrack(nt);
-  for (const pc of Object.values(pcs)) {
-    const s = pc.getSenders().find((x) => x.track && x.track.kind === 'video');
-    if (s) { try { await s.replaceTrack(nt); } catch {} }
-  }
-  const v = $('t-me').querySelector('video'); v.srcObject = local; v.play().catch(() => {});
-  syncMirror();
+  camTrack = stream.getVideoTracks()[0];
+  await setVideo();
+}
+
+// Screen sharing (computers only; phone browsers do not support it)
+const announceShare = (on) => ch && ch.send({ type: 'broadcast', event: 'share', payload: { id: myId, on } });
+async function toggleShare() {
+  if (screenTrack) return stopShare();
+  let s;
+  try { s = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 15 }, audio: false }); }
+  catch { return; } // cancelled
+  screenTrack = s.getVideoTracks()[0];
+  screenTrack.contentHint = 'detail';
+  screenTrack.onended = stopShare; // the browser's own "Stop sharing" button
+  $('share').classList.add('on');
+  announceShare(true);
+  await setVideo();
+}
+async function stopShare() {
+  if (!screenTrack) return;
+  screenTrack.onended = null; screenTrack.stop(); screenTrack = null;
+  $('share').classList.remove('on');
+  announceShare(false);
+  await setVideo();
+}
+
+function showTab(name) {
+  $('chat').classList.toggle('show-people', name === 'people');
+  $('tabChat').classList.toggle('on', name !== 'people');
+  $('tabPeople').classList.toggle('on', name === 'people');
+}
+
+function renderPeople() {
+  if (!ch) return;
+  const list = Object.entries(ch.presenceState()).map(([id, v]) => ({ id, name: (v[0] && v[0].name) || 'مهمان' }));
+  list.sort((a, b) => (b.id === myId) - (a.id === myId) || a.name.localeCompare(b.name, 'fa'));
+  $('pcount').textContent = list.length;
+  $('people').replaceChildren(...list.map((p) => {
+    const row = document.createElement('div'); row.className = 'p';
+    const av = document.createElement('span'); av.className = 'pav';
+    av.textContent = p.name.trim().charAt(0); av.style.background = colorOf(p.name);
+    const nm = document.createElement('span'); nm.className = 'pnm';
+    nm.textContent = p.name + (p.id === myId ? ' (شما)' : '');
+    row.append(av, nm);
+    return row;
+  }));
 }
 
 function toggle(btn, kind) {
@@ -555,8 +662,13 @@ $('go').onclick = join;
   el.addEventListener('keydown', (e) => { if (e.key === 'Enter') join(); })
 );
 $('mic').onclick = () => toggle($('mic'), 'audio');
-$('cam').onclick = () => toggle($('cam'), 'video');
+$('cam').onclick = toggleCamera;
 $('flip').onclick = flipCamera;
+$('share').onclick = toggleShare;
+$('tabChat').onclick = () => showTab('chat');
+$('tabPeople').onclick = () => showTab('people');
+$('meta').onclick = () => { setChat(true); showTab('people'); };
+if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && !isMobile()) $('share').style.display = '';
 $('chatBtn').onclick = () => setChat(!$('app').classList.contains('chat-open'));
 $('closeChat').onclick = () => setChat(false);
 $('copy').onclick = async () => {
