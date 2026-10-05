@@ -87,7 +87,7 @@ button{cursor:pointer;border:0}
 .rb.on{background:var(--lake);color:var(--night)}
 .tile.screen video{object-fit:contain;background:#000}
 #people{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
-.p{display:flex;align-items:center;gap:12px}
+.p{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .pav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--night);flex:none}
 .pnm{flex:1;min-width:0;overflow-wrap:anywhere}
 .p::after{content:"";width:10px;height:10px;border-radius:50%;background:#3a4f60;flex:none;transition:background .15s}
@@ -111,6 +111,25 @@ button{cursor:pointer;border:0}
 .meter i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lake);transition:width .08s}
 .meter b{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:23%}
 .note{color:var(--mute);font-size:.8rem;margin-top:4px;line-height:1.8}
+
+#adminBar{display:none;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+#app.is-admin #adminBar{display:flex}
+#adminBar button,.acts button{background:var(--lift);padding:7px 14px;border-radius:99px;font-size:.84rem}
+.p::after{order:1}
+.acts{order:2;flex-basis:100%;display:none;flex-wrap:wrap;gap:6px;padding-inline-start:50px}
+.p.open .acts{display:flex}
+.acts button.danger{background:rgba(239,91,91,.2);color:#ff9d9d}
+.more{background:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--mute);font-size:1.1rem;line-height:1}
+.more:hover{background:var(--lift)}
+.chip{background:var(--sun);color:var(--night);font-size:.7rem;font-weight:800;padding:1px 8px;border-radius:99px;flex:none}
+.pmi.gray{color:var(--mute)}
+.tile .hm{display:none;position:absolute;bottom:10px;left:46px;width:30px;height:30px;padding:6px;border-radius:50%;background:rgba(36,57,75,.95);color:#fff;z-index:2}
+.tile.hushed .hm{display:block}
+.tile.me .tools [data-a="hush"]{display:none}
+.tools .sl{display:none}
+.tile.hushed .tools [data-a="hush"] .sl{display:block}
+#grid.has-spot .tile:not(.spot) .hm{width:22px;height:22px;padding:4px;bottom:6px;left:32px}
+#toast{display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);max-width:90vw;background:rgba(15,30,43,.96);border:1px solid rgba(255,255,255,.15);padding:10px 18px;border-radius:14px;z-index:30;text-align:center}
 
 /* ---------- Chat ---------- */
 #chat,#peoplePanel,#settingsPanel{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
@@ -169,6 +188,7 @@ button{cursor:pointer;border:0}
   <symbol id="i-share" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
@@ -219,6 +239,7 @@ button{cursor:pointer;border:0}
   </aside>
   <aside id="peoplePanel">
     <header><span>افراد <span id="pcount"></span></span><button id="closePeople" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
+    <div id="adminBar"><button id="muteAll">میوت کردن همه</button></div>
     <div id="people"></div>
   </aside>
   <aside id="settingsPanel">
@@ -245,6 +266,7 @@ button{cursor:pointer;border:0}
   </aside>
 </div>
 
+<div id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ====== Paste your Supabase values here (Project Settings > API) ======
@@ -265,7 +287,8 @@ const ICE = { iceServers: [
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
-let blank, camTrack = null, screenTrack = null, micMuted = false;
+let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, openRow = null, joinedAt = Date.now();
+const hushed = new Set(); // people I muted just for myself
 const sharers = new Set();
 let mySession = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 const pcs = {};
@@ -306,6 +329,7 @@ function bindTile(t, id) {
     const b = e.target.closest('button'); if (!b) return;
     const a = b.dataset.a;
     if (a === 'spot') { setSpot(id); return; }
+    if (a === 'hush') { toggleHush(id); return; }
     t.querySelector('video').style.transformOrigin = 'center';
     zoomBy(t, a === 'in' ? 0.25 : -0.25);
   };
@@ -341,10 +365,11 @@ function tile(id, name, stream, isLocal) {
   if (!t) {
     t = document.createElement('div');
     t.className = 'tile' + (isLocal ? ' me' : ''); t.id = 't-' + id;
-    t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span><svg class="ic mi"><use href="#i-mic"/><path d="M2 2l20 20"/></svg>'
+    t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span><svg class="ic mi"><use href="#i-mic"/><path d="M2 2l20 20"/></svg><svg class="ic hm"><use href="#i-vol"/><path d="M2 2l20 20"/></svg>'
       + '<div class="tools"><button data-a="in" aria-label="بزرگ‌نمایی"><svg class="ic"><use href="#i-zin"/></svg></button>'
       + '<button data-a="out" aria-label="کوچک‌نمایی"><svg class="ic"><use href="#i-zout"/></svg></button>'
-      + '<button data-a="spot" aria-label="نمایش بزرگ"><svg class="ic"><use href="#i-max"/></svg></button></div>';
+      + '<button data-a="spot" aria-label="نمایش بزرگ"><svg class="ic"><use href="#i-max"/></svg></button>'
+      + '<button data-a="hush" aria-label="بی‌صدا کردن برای خودم"><svg class="ic"><use href="#i-vol"/><path class="sl" d="M2 2l20 20"/></svg></button></div>';
     bindTile(t, id);
     $('grid').appendChild(t);
   }
@@ -354,6 +379,7 @@ function tile(id, name, stream, isLocal) {
   t.querySelector('.nm').textContent = isLocal ? name + ' (شما)' : name;
   const v = t.querySelector('video');
   if (isLocal) v.muted = true;
+  if (hushed.has(id)) { v.muted = true; t.classList.add('hushed'); }
   if (stream) {
     v.srcObject = stream;
     if (!v.onresize) {
@@ -534,6 +560,8 @@ async function join() {
     else if (spotId === payload.id) { spotId = null; layout(); }
   });
   ch.on('presence', { event: 'sync' }, renderPeople);
+  ch.on('broadcast', { event: 'admin' }, ({ payload }) => onAdmin(payload));
+  ch.on('presence', { event: 'sync' }, () => { if (ready) checkSuccession(); });
 
   // Presence = who is in the room. The peer with the larger id starts the call.
   ch.on('presence', { event: 'join' }, ({ key, newPresences, currentPresences }) => {
@@ -565,6 +593,8 @@ async function join() {
       mySession = sessions[0];
       trackMe();
     }
+    // The first person in an empty room becomes its admin
+    if (Object.keys(state).length === 1) { iAmAdmin = true; trackMe(); renderPeople(); toast('شما مدیر این اتاق هستید.'); }
     // Chat shows only events of the people who are here now (an empty room starts clean)
     if (Object.keys(state).length > 1) {
       try {
@@ -593,6 +623,7 @@ async function join() {
     watchSpeaker('me', local);
     if (innerWidth >= 760) setChat(true);
     tracked = true;
+    joinedAt = Date.now();
     await trackMe();
   });
 }
@@ -701,7 +732,7 @@ async function stopShare() {
   await setVideo();
 }
 
-const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens });
+const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens, adm: iAmAdmin, joinedAt });
 
 // Marks who has their microphone muted (shared through presence)
 function applyStates() {
@@ -746,10 +777,12 @@ setInterval(() => {
 
 function renderPeople() {
   if (!ch) return;
-  const list = Object.entries(ch.presenceState()).map(([id, v]) => ({
-    id: id === myId ? 'me' : id, name: (v[0] && v[0].name) || 'مهمان', muted: !!(v[0] && v[0].muted)
-  }));
+  const list = Object.entries(ch.presenceState()).map(([id, v]) => {
+    const m = v[0] || {};
+    return { id: id === myId ? 'me' : id, name: m.name || 'مهمان', muted: !!m.muted, adm: !!m.adm };
+  });
   list.sort((a, b) => (b.id === 'me') - (a.id === 'me') || a.name.localeCompare(b.name, 'fa'));
+  $('app').classList.toggle('is-admin', iAmAdmin);
   $('pcount').textContent = $('pbadge').textContent = list.length;
   $('people').replaceChildren(...list.map((p) => {
     const row = document.createElement('div'); row.className = 'p'; row.dataset.id = p.id;
@@ -759,10 +792,87 @@ function renderPeople() {
     const nm = document.createElement('span'); nm.className = 'pnm';
     nm.textContent = p.name + (p.id === 'me' ? ' (شما)' : '');
     row.append(av, nm);
+    if (p.adm) row.insertAdjacentHTML('beforeend', '<span class="chip">مدیر</span>');
     if (p.muted) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi" aria-label="میکروفون بسته"><use href="#i-mic"/><path d="M2 2l20 20"/></svg>');
+    if (hushed.has(p.id)) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi gray" aria-label="بی‌صدا برای شما"><use href="#i-vol"/><path d="M2 2l20 20"/></svg>');
+    if (p.id !== 'me') {
+      row.insertAdjacentHTML('beforeend', '<button class="more" data-act="more" aria-label="گزینه‌ها">⋯</button>');
+      const acts = document.createElement('div'); acts.className = 'acts';
+      const add = (act, text, danger) => {
+        const b = document.createElement('button'); b.dataset.act = act; b.textContent = text;
+        if (danger) b.className = 'danger';
+        acts.append(b);
+      };
+      add('hush', hushed.has(p.id) ? 'پخش دوباره صدای او' : 'بی‌صدا کردن برای خودم');
+      if (iAmAdmin) {
+        add('mute', 'بستن میکروفون او');
+        add('video', 'خاموش کردن دوربین / اشتراک');
+        if (!p.adm) add('admin', 'ادمین کردن');
+        add('kick', 'حذف از اتاق', true);
+      }
+      row.append(acts);
+      if (openRow === p.id) row.classList.add('open');
+    }
     return row;
   }));
   applyStates();
+}
+
+// ---------- Admin and personal muting ----------
+// Note: there is no server, so these rules are enforced by the page itself (fine for friends, not for hostile users).
+const toast = (msg) => {
+  const t = $('toast'); t.textContent = msg; t.style.display = 'block';
+  clearTimeout(toast.k); toast.k = setTimeout(() => (t.style.display = 'none'), 4500);
+};
+const metaOf = (id) => ((ch && ch.presenceState()[id]) || [])[0];
+const sendAdmin = (to, action) => ch.send({ type: 'broadcast', event: 'admin', payload: { from: myId, to, action } });
+
+function toggleHush(id) {
+  hushed.has(id) ? hushed.delete(id) : hushed.add(id);
+  const t = $('t-' + id);
+  if (t) { t.querySelector('video').muted = hushed.has(id); t.classList.toggle('hushed', hushed.has(id)); }
+  renderPeople();
+}
+
+function adminAct(id, act) {
+  if (!iAmAdmin) return;
+  if (act === 'kick' && !confirm('این فرد از اتاق حذف شود؟')) return;
+  sendAdmin(id, act);
+}
+
+function onAdmin({ from, to, action }) {
+  if (from === myId || (to !== myId && to !== 'all')) return;
+  if (to === 'all' && action !== 'mute') return;
+  const sender = metaOf(from);
+  if (!sender || !sender.adm) return; // only admins can give orders
+  if (action === 'mute') {
+    local.getAudioTracks().forEach((t) => (t.enabled = false));
+    micMuted = true; $('mic').classList.add('off');
+    const me = $('t-me'); if (me) me.classList.add('muted');
+    trackMe();
+    toast('مدیر میکروفون شما را بست. می‌توانید دوباره آن را باز کنید.');
+  } else if (action === 'video') {
+    if (screenTrack) stopShare();
+    if (camTrack) toggleCamera();
+    toast('مدیر دوربین یا اشتراک صفحه شما را متوقف کرد.');
+  } else if (action === 'admin') {
+    iAmAdmin = true; trackMe(); renderPeople();
+    toast('شما مدیر اتاق شدید.');
+  } else if (action === 'kick') {
+    sessionStorage.setItem('cc-notice', 'مدیر شما را از اتاق حذف کرد.');
+    location.reload();
+  }
+}
+
+// If nobody in the room is an admin any more, the longest-present person takes over
+function checkSuccession() {
+  const all = Object.entries(ch.presenceState()).map(([id, v]) => ({ id, ...(v[0] || {}) }));
+  if (!all.length || all.some((e) => e.adm)) return;
+  all.sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0) || (a.id < b.id ? -1 : 1));
+  if (all[0].id === myId && !iAmAdmin) {
+    iAmAdmin = true; trackMe(); renderPeople();
+    toast('مدیر قبلی رفت؛ شما اکنون مدیر اتاق هستید.');
+  }
 }
 
 // ---------- Settings (saved in this browser) ----------
@@ -873,6 +983,17 @@ $('sens').onchange = () => { saveS(); trackMe(); };
 $('optMirror').onchange = (e) => { S.mirror = e.target.checked; saveS(); syncMirror(); };
 if (navigator.mediaDevices) navigator.mediaDevices.ondevicechange = renderDevices;
 syncSettingsUI();
+$('people').onclick = (e) => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const id = b.closest('.p').dataset.id, act = b.dataset.act;
+  if (act === 'more') { openRow = openRow === id ? null : id; return renderPeople(); }
+  openRow = null;
+  if (act === 'hush') toggleHush(id); else adminAct(id, act);
+  renderPeople();
+};
+$('muteAll').onclick = () => { if (iAmAdmin && confirm('میکروفون همه بسته شود؟')) sendAdmin('all', 'mute'); };
+const notice = sessionStorage.getItem('cc-notice');
+if (notice) { sessionStorage.removeItem('cc-notice'); $('err').textContent = notice; }
 if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && !isMobile()) $('share').style.display = '';
 $('chatBtn').onclick = () => setChat(!$('app').classList.contains('chat-open'));
 $('closeChat').onclick = () => setChat(false);
