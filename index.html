@@ -221,6 +221,22 @@ button.pill:hover{background:#2f4a60}
 .tile.zoomed{cursor:grab}.tile.grabbing{cursor:grabbing}
 @media(max-width:760px){.rb.leave{width:56px;border-radius:22px}.chips{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* connection quality, lost connections */
+.sig{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex:none}
+.sig i{width:4px;border-radius:1px;background:rgba(255,255,255,.25)}
+.sig i:nth-child(1){height:5px}.sig i:nth-child(2){height:9px}.sig i:nth-child(3){height:14px}
+.sig[data-q="3"] i{background:var(--lake)}
+.sig[data-q="2"] i:nth-child(-n+2){background:var(--sun)}
+.sig[data-q="1"] i:nth-child(1){background:var(--danger)}
+.p .sig:not([data-q]){opacity:.35}
+.tile .sig{position:absolute;top:12px;right:12px;z-index:2;padding:5px 7px;box-sizing:content-box;border-radius:8px;background:rgba(10,20,30,.55)}
+.tile .sig:not([data-q]){display:none}
+.tile[data-state="lost"] .nm::after{content:" — اتصال قطع شد";color:var(--sun)}
+.tile[data-state="lost"] video{filter:grayscale(1) brightness(.45)}
+.sys.lost::before,.sys.net::before{background:var(--sun)}
+.sys.back::before{background:var(--lake)}
+#netbar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;justify-content:center;padding:8px 12px;background:#b4691a;color:#fff;font-size:.9rem;text-align:center}
 </style>
 </head>
 <body>
@@ -322,6 +338,7 @@ button.pill:hover{background:#2f4a60}
   </aside>
 </div>
 
+<div id="netbar" role="alert">اتصال شما قطع شد؛ در حال تلاش برای اتصال دوباره…</div>
 <div id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -345,6 +362,8 @@ const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
 let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, openRow = null, joinedAt = Date.now(), callStart = 0;
 const hushed = new Set(); // people I muted just for myself
+const pendingLeave = new Set(), byeSet = new Set(), dropped = {}, lostTimers = {}, peerQ = {};
+let offlineSince = 0;
 const sharers = new Set();
 let mySession = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 const pcs = {};
@@ -459,7 +478,7 @@ function tile(id, name, stream, isLocal) {
   if (!t) {
     t = document.createElement('div');
     t.className = 'tile' + (isLocal ? ' me' : ''); t.id = 't-' + id;
-    t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span><svg class="ic mi"><use href="#i-mic"/><path d="M2 2l20 20"/></svg><svg class="ic hm"><use href="#i-vol"/><path d="M2 2l20 20"/></svg>'
+    t.innerHTML = '<span class="av"></span><video autoplay playsinline></video><span class="nm"></span><svg class="ic mi"><use href="#i-mic"/><path d="M2 2l20 20"/></svg><svg class="ic hm"><use href="#i-vol"/><path d="M2 2l20 20"/></svg><span class="sig"><i></i><i></i><i></i></span>'
       + '<div class="tools"><button data-a="spot" aria-label="تثبیت و بزرگ کردن"><svg class="ic"><use href="#i-max"/></svg></button>'
       + '<button data-a="full" aria-label="تمام‌صفحه"><svg class="ic"><use href="#i-full"/></svg></button>'
       + '<button data-a="hush" aria-label="بی‌صدا کردن برای خودم"><svg class="ic"><use href="#i-vol"/><path class="sl" d="M2 2l20 20"/></svg></button></div>'
@@ -546,12 +565,17 @@ async function onSignal({ from, to, name, data }) {
   }
 }
 
-function removePeer(id) {
-  delete meters[id];
-  if (pcs[id]) { pcs[id].close(); delete pcs[id]; }
+function dropPeerConn(id) {
+  const pc = pcs[id];
+  if (pc) { pc.oniceconnectionstatechange = pc.ontrack = pc.onicecandidate = null; pc.close(); delete pcs[id]; }
+  delete meters[id]; setQuality(id, null);
+}
+function removeTile(id) {
+  clearTimeout(lostTimers[id]); delete lostTimers[id];
   const t = $('t-' + id); if (t) t.remove();
   layout();
 }
+function removePeer(id) { dropPeerConn(id); removeTile(id); }
 
 function eventLine({ type, id, name, t }) {
   $('empty').style.display = 'none';
@@ -562,10 +586,15 @@ function eventLine({ type, id, name, t }) {
     ? d0.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
     : d0.toLocaleString('fa-IR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const who = mine ? 'شما' : name;
-  const verb = type === 'join' ? (mine ? 'وارد شدید' : 'وارد شد') : (mine ? 'خارج شدید' : 'خارج شد');
+  const when = '، ' + (sameDay ? 'ساعت ' : '') + time;
+  let text;
+  if (type === 'lost') text = 'اتصال ' + who + ' قطع شد (احتمالاً مشکل اینترنت)' + when;
+  else if (type === 'back') text = who + ' دوباره وصل شد' + when;
+  else if (type === 'net') text = name + when; // about my own connection
+  else text = who + ' ' + (type === 'join' ? (mine ? 'وارد شدید' : 'وارد شد') : (mine ? 'خارج شدید' : 'خارج شد')) + when;
   const d = document.createElement('div');
   d.className = 'sys ' + type; d.dir = 'auto';
-  d.textContent = who + ' ' + verb + '، ' + (sameDay ? 'ساعت ' : '') + time;
+  d.textContent = text;
   $('msgs').appendChild(d);
   $('msgs').scrollTop = $('msgs').scrollHeight;
 }
@@ -592,7 +621,8 @@ function logEvent(type, keepalive) {
     body: JSON.stringify({ room: myRoom, name: myName, type, session: mySession })
   }).catch(() => {});
 }
-addEventListener('pagehide', () => { if (joined) logEvent('leave', true); });
+const sendBye = () => { try { if (ch) ch.send({ type: 'broadcast', event: 'bye', payload: { id: myId } }); } catch {} };
+addEventListener('pagehide', () => { if (joined) { sendBye(); logEvent('leave', true); } });
 
 async function join() {
   myName = $('name').value.trim() || 'مهمان';
@@ -655,6 +685,7 @@ async function join() {
   });
   ch.on('presence', { event: 'sync' }, renderPeople);
   ch.on('broadcast', { event: 'admin' }, ({ payload }) => onAdmin(payload));
+  ch.on('broadcast', { event: 'bye' }, ({ payload }) => byeSet.add(payload.id));
   ch.on('presence', { event: 'sync' }, () => { if (ready) checkSuccession(); });
 
   // Presence = who is in the room. The peer with the larger id starts the call.
@@ -662,7 +693,14 @@ async function join() {
     if (key === myId) return;
     const name = (newPresences[0] && newPresences[0].name) || 'مهمان';
     const known = (currentPresences && currentPresences.length) || pcs[key]; // a status update, not a new person
-    if (ready && !known) { eventLine({ type: 'join', id: key, name, t: Date.now() }); playSound('join'); }
+    const blip = pendingLeave.delete(key); // gone and back within a second: say nothing
+    if (ready && !known && !blip) {
+      const d = dropped[key];
+      if (d && Date.now() - d.t < 300000) { delete dropped[key]; eventLine({ type: 'back', id: key, name, t: Date.now() }); }
+      else eventLine({ type: 'join', id: key, name, t: Date.now() });
+      playSound('join');
+    }
+    if (!known) clearTimeout(lostTimers[key]);
     if (myId > key && !pcs[key]) call(key, name);
     if (screenTrack) announceShare(true); // tell newcomers that a screen is being shared
   });
@@ -670,9 +708,22 @@ async function join() {
     if (key === myId) return;
     const st = ch.presenceState()[key];
     if (st && st.length) return; // just a status update
-    removePeer(key);
-    eventLine({ type: 'leave', id: key, name: (leftPresences[0] && leftPresences[0].name) || 'مهمان', t: Date.now() });
-    playSound('leave');
+    const name = (leftPresences[0] && leftPresences[0].name) || 'مهمان';
+    dropPeerConn(key);
+    pendingLeave.add(key);
+    // Someone who clicks "leave" sends a "bye" first. No "bye" means the connection probably dropped.
+    const decide = () => {
+      if (!pendingLeave.delete(key)) return; // they came back in the meantime
+      if (byeSet.delete(key)) { removeTile(key); eventLine({ type: 'leave', id: key, name, t: Date.now() }); }
+      else {
+        dropped[key] = { name, t: Date.now() };
+        const t = $('t-' + key); if (t) t.dataset.state = 'lost';
+        lostTimers[key] = setTimeout(() => removeTile(key), 25000);
+        eventLine({ type: 'lost', id: key, name, t: Date.now() });
+      }
+      playSound('leave');
+    };
+    if (byeSet.has(key)) decide(); else setTimeout(decide, 1200);
   });
   ch.on('presence', { event: 'sync' }, async () => {
     if (!tracked || checked) return;
@@ -706,11 +757,14 @@ async function join() {
   });
 
   timer = setTimeout(() => fail('timeout'), 12000);
+  let uiReady = false;
   ch.subscribe(async (status) => {
     if (status !== 'SUBSCRIBED') {
-      if (['CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'].includes(status)) fail(status);
+      if (['CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'].includes(status)) { if (uiReady) netDown(); else fail(status); }
       return;
     }
+    if (uiReady) { trackMe(); netUp(); return; } // the connection came back by itself
+    uiReady = true;
     settled = true; clearTimeout(timer);
     $('join').style.display = 'none';
     $('app').style.display = 'block';
@@ -910,6 +964,7 @@ function renderPeople() {
     if (p.muted) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi" aria-label="میکروفون بسته"><use href="#i-mic"/><path d="M2 2l20 20"/></svg>');
     if (hushed.has(p.id)) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi gray" aria-label="بی‌صدا برای شما"><use href="#i-vol"/><path d="M2 2l20 20"/></svg>');
     if (p.id !== 'me') {
+      row.insertAdjacentHTML('beforeend', '<span class="sig"' + (peerQ[p.id] ? ' data-q="' + peerQ[p.id] + '"' : '') + '><i></i><i></i><i></i></span>');
       row.insertAdjacentHTML('beforeend', '<button class="more" data-act="more" aria-label="گزینه‌ها">⋯</button>');
       const acts = document.createElement('div'); acts.className = 'acts';
       const add = (act, text, danger) => {
@@ -974,7 +1029,7 @@ function onAdmin({ from, to, action }) {
     toast('شما مدیر اتاق شدید.');
   } else if (action === 'kick') {
     sessionStorage.setItem('cc-notice', 'مدیر شما را از اتاق حذف کرد.');
-    location.reload();
+    sendBye(); setTimeout(() => location.reload(), 250);
   }
 }
 
@@ -1060,6 +1115,73 @@ function syncSettingsUI() {
   updateMarker();
 }
 
+// ---------- Connection health ----------
+function setQuality(id, q) {
+  if (q) peerQ[id] = q; else delete peerQ[id];
+  const t = $('t-' + id), s = t && t.querySelector('.sig');
+  if (s) { if (q) s.dataset.q = q; else s.removeAttribute('data-q'); }
+  const row = [...document.querySelectorAll('#people .p')].find((r) => r.dataset.id === id);
+  const rs = row && row.querySelector('.sig');
+  if (rs) { if (q) rs.dataset.q = q; else rs.removeAttribute('data-q'); }
+}
+
+// 3 = good, 2 = medium, 1 = poor, from round-trip time and lost packets
+async function pollStats() {
+  for (const [id, pc] of Object.entries(pcs)) {
+    if (!['connected', 'completed'].includes(pc.iceConnectionState)) { setQuality(id, null); continue; }
+    try {
+      let rtt = null, lost = 0, recv = 0;
+      (await pc.getStats()).forEach((r) => {
+        if (r.type === 'candidate-pair' && r.nominated && typeof r.currentRoundTripTime === 'number') rtt = r.currentRoundTripTime * 1000;
+        if (r.type === 'inbound-rtp') { lost += Math.max(0, r.packetsLost || 0); recv += r.packetsReceived || 0; }
+      });
+      const prev = pc.lastLoss || { lost, recv };
+      const dl = Math.max(0, lost - prev.lost), dr = Math.max(0, recv - prev.recv);
+      pc.lastLoss = { lost, recv };
+      const loss = dl + dr > 0 ? dl / (dl + dr) : 0;
+      setQuality(id, (rtt > 400 || loss > 0.1) ? 1 : (rtt > 200 || loss > 0.03) ? 2 : 3);
+    } catch {}
+  }
+}
+
+// If a link breaks, the caller side restarts it; the other side answers
+function recover(id) {
+  const pc = pcs[id];
+  if (!pc || pc.recovering) return;
+  pc.recovering = true;
+  setTimeout(() => { pc.recovering = false; }, 8000);
+  if (myId > id) {
+    try {
+      pc.restartIce();
+      pc.createOffer({ iceRestart: true }).then((o) => pc.setLocalDescription(o)).then(() => sendSignal(id, { sdp: pc.localDescription })).catch(() => {});
+    } catch {}
+  }
+}
+setInterval(() => {
+  for (const [id, pc] of Object.entries(pcs)) if (['failed', 'disconnected'].includes(pc.iceConnectionState)) recover(id);
+}, 6000);
+setInterval(pollStats, 3000);
+
+// My own internet connection
+function netDown() {
+  if (!joined || offlineSince) return;
+  offlineSince = Date.now();
+  $('netbar').style.display = 'flex';
+  eventLine({ type: 'net', id: '', name: 'اینترنت شما قطع شد', t: Date.now() });
+}
+function netUp() {
+  if (!offlineSince) return;
+  offlineSince = 0;
+  $('netbar').style.display = 'none';
+  eventLine({ type: 'net', id: '', name: 'اتصال شما دوباره برقرار شد', t: Date.now() });
+  trackMe();
+  for (const [key, v] of Object.entries(ch.presenceState())) { // call people we lost during the outage
+    if (key !== myId && !pcs[key] && myId > key) call(key, (v[0] && v[0].name) || 'مهمان');
+  }
+}
+addEventListener('offline', netDown);
+addEventListener('online', () => setTimeout(netUp, 800));
+
 function toggle(btn, kind) {
   const tracks = kind === 'audio' ? local.getAudioTracks() : local.getVideoTracks();
   if (!tracks.length) { btn.disabled = true; btn.style.opacity = .4; return; }
@@ -1123,7 +1245,7 @@ $('copy').onclick = async () => {
   catch { $('copyTxt').textContent = location.href; }
   setTimeout(() => ($('copyTxt').textContent = 'کپی لینک'), 2000);
 };
-$('leave').onclick = () => location.reload();
+$('leave').onclick = () => { sendBye(); setTimeout(() => location.reload(), 250); };
 $('send').onsubmit = (e) => {
   e.preventDefault();
   const v = $('text').value.trim();
