@@ -237,6 +237,48 @@ button.pill:hover{background:#2f4a60}
 .sys.lost::before,.sys.net::before{background:var(--sun)}
 .sys.back::before{background:var(--lake)}
 #netbar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;justify-content:center;padding:8px 12px;background:#b4691a;color:#fff;font-size:.9rem;text-align:center}
+
+/* ---------- Konkur section ---------- */
+.ghost{width:100%;margin-top:10px;padding:12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--mist);font-weight:600;transition:background .15s}
+.ghost:hover{background:rgba(255,255,255,.14)}
+#konkur{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
+  background:radial-gradient(60% 40% at 90% 0%,rgba(46,196,182,.22),transparent 70%),radial-gradient(50% 40% at 0% 100%,rgba(255,180,84,.16),transparent 70%),var(--night)}
+#konkur.open{display:block}
+.k-wrap{max-width:780px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));display:grid;gap:14px}
+.k-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.k-head h2{flex:1;font-size:1.4rem;font-weight:800}
+.k-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;backdrop-filter:blur(10px)}
+.k-card h3{margin-bottom:10px;font-size:1.05rem;font-weight:800}
+.k-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.k-full{grid-column:1/-1}
+#konkur label{display:grid;gap:4px;font-size:.85rem;color:var(--mute)}
+#konkur input,#konkur select,#konkur textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist)}
+#konkur select option{color:#111}
+#konkur textarea{resize:vertical;min-height:64px}
+.k-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.k-row input{flex:1;min-width:160px}
+.k-btn{padding:9px 16px;border-radius:10px;background:var(--lift);color:var(--mist);font-weight:600}
+.k-btn:hover{background:#2f4a60}
+.k-primary{padding:11px 18px;border-radius:12px;background:linear-gradient(135deg,var(--lake),#3fd6a6);color:var(--night);font-weight:800}
+.k-chip{display:inline-block;padding:1px 10px;border-radius:99px;background:rgba(255,255,255,.1);font-size:.8rem}
+.k-chip.ok{background:rgba(46,196,182,.2);color:var(--lake)}.k-chip.warn{background:rgba(255,180,84,.2);color:var(--sun)}
+.k-sub{color:var(--mute);font-size:.88rem}
+.k-code{font-size:1.5rem;letter-spacing:.12em;color:var(--sun);background:rgba(255,255,255,.07);padding:4px 14px;border-radius:12px;user-select:all}
+#kHave{margin-bottom:12px}
+.k-list{display:grid;gap:10px;padding:0;list-style:none;margin-top:10px}
+.k-item{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+.k-no{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--lake),#2a8cff);color:#fff;display:grid;place-items:center;font-weight:800}
+.k-t{font-weight:800}.k-u{color:var(--mute);font-size:.92rem}
+.k-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.k-note{margin-top:6px;font-size:.9rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.k-acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px dashed rgba(255,255,255,.14);padding-top:8px}
+.k-acts button{padding:4px 11px;font-size:.85rem;border-radius:9px;background:var(--lift);color:var(--mist)}
+.k-acts input{width:88px;min-width:0;padding:4px 8px;font-size:.85rem}
+.k-acts .on{background:#f59e0b;color:#fff}.k-acts .del{background:rgba(239,91,91,.18);color:#ff9d9d}
+.k-list.filtered [data-a="up"],.k-list.filtered [data-a="down"],.k-list.filtered [data-a="pos"]{display:none}
+.k-empty{text-align:center;color:var(--mute);padding:26px 10px}
+.k-msg{margin-top:10px;min-height:1.4em;color:var(--sun);font-size:.92rem}
+#kOut{margin-top:10px;min-height:120px}
+@media(max-width:520px){.k-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -275,6 +317,7 @@ button.pill:hover{background:#2f4a60}
       <input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room">
       <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید.</p>
       <button class="primary" id="go">ورود به اتاق</button>
+      <button class="ghost" id="openKonkur">📚 انتخاب رشته کنکور</button>
       <div id="err" role="alert"></div>
     </div>
   </div>
@@ -338,6 +381,65 @@ button.pill:hover{background:#2f4a60}
   </aside>
 </div>
 
+<div id="konkur" role="dialog" aria-label="انتخاب رشته">
+  <div class="k-wrap">
+    <header class="k-head">
+      <button class="k-btn" id="kBack">← بازگشت</button>
+      <h2>انتخاب رشته</h2>
+      <span class="k-chip" id="kStatus"></span>
+    </header>
+
+    <section class="k-card">
+      <div id="kHave" style="display:none">
+        <div class="k-sub">کد شما. آن را یادداشت کنید تا هر وقت خواستید لیستتان را دوباره ببینید.</div>
+        <div class="k-row"><b id="kCode" class="k-code" dir="ltr"></b><button class="k-btn" id="kCopyCode">کپی کد</button></div>
+      </div>
+      <div class="k-row" id="kLoadRow">
+        <input id="kCodeIn" dir="ltr" placeholder="کد ذخیره‌شده را وارد کنید" autocomplete="off" maxlength="14">
+        <button class="k-btn" id="kLoad">نمایش لیست من</button>
+      </div>
+    </section>
+
+    <section class="k-card">
+      <h3 id="kFormTitle">افزودن گزینه</h3>
+      <div class="k-grid">
+        <label>رشته *<input id="kField" maxlength="80"></label>
+        <label>دانشگاه *<input id="kUni" maxlength="80"></label>
+        <label>شهر<input id="kCity" maxlength="40"></label>
+        <label>نوع دوره
+          <select id="kType"><option value="">—</option><option>روزانه</option><option>شبانه</option><option>نوبت دوم</option><option>پردیس خودگردان</option><option>غیرانتفاعی</option><option>پیام‌نور</option><option>بین‌المللی</option></select>
+        </label>
+        <label>کد رشته‌محل<input id="kRCode" inputmode="numeric" maxlength="20"></label>
+        <label>جایگاه در لیست (اختیاری)<input id="kPos" type="number" min="1" placeholder="خالی = آخر لیست"></label>
+        <label class="k-full">یادداشت<textarea id="kNote" maxlength="600"></textarea></label>
+      </div>
+      <div class="k-row" style="margin-top:12px">
+        <button class="k-primary" id="kAdd">افزودن</button>
+        <button class="k-btn" id="kCancel" style="display:none">انصراف از ویرایش</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="k-row">
+        <input id="kQ" placeholder="جستجو در رشته، دانشگاه، شهر و یادداشت" aria-label="جستجو" style="flex:1;min-width:160px">
+        <button class="k-btn" id="kStarOnly">فقط ستاره‌دارها</button>
+        <span class="k-sub" id="kCount"></span>
+      </div>
+      <ol id="kList" class="k-list"></ol>
+      <p class="k-empty" id="kEmpty"></p>
+    </section>
+
+    <section class="k-card">
+      <button class="k-primary" id="kSave">ذخیره در سرور و دریافت کد</button>
+      <p class="k-msg" id="kMsg" role="alert"></p>
+      <div class="k-row" style="margin-top:10px">
+        <button class="k-btn" id="kCsv">دانلود فایل اکسل (CSV)</button>
+        <button class="k-btn" id="kCopy">کپی لیست به‌صورت متن</button>
+      </div>
+      <textarea id="kOut" readonly style="display:none" aria-label="متن لیست"></textarea>
+    </section>
+  </div>
+</div>
 <div id="netbar" role="alert">اتصال شما قطع شد؛ در حال تلاش برای اتصال دوباره…</div>
 <div id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1252,6 +1354,179 @@ $('send').onsubmit = (e) => {
   if (v && ch) ch.send({ type: 'broadcast', event: 'chat', payload: { id: myId, name: myName, text: v.slice(0, 2000) } });
   $('text').value = '';
 };
+
+// ---------- Konkur major selection (saved in Supabase, reopened with a code) ----------
+(() => {
+  const LS = 'konkur-draft-v2', LSC = 'konkur-code-v2';
+  const fa = (n) => Number(n).toLocaleString('fa-IR');
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pnum = (s) => parseInt(String(s ?? '').replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)), 10);
+  const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+  const ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no look-alike characters (0/O, 1/I)
+  const newCode = () => { const a = new Uint8Array(10); crypto.getRandomValues(a); return [...a].map((x) => ALPHA[x % 32]).join(''); };
+  const fmt = (c) => c.slice(0, 5) + '-' + c.slice(5);
+  const norm = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const read = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } };
+  const clean = (arr) => (Array.isArray(arr) ? arr : []).slice(0, 500).filter((x) => x && x.field && x.uni).map((x) => ({
+    id: String(x.id || uid()).slice(0, 20), field: String(x.field).slice(0, 80), uni: String(x.uni).slice(0, 80),
+    city: String(x.city || '').slice(0, 40), type: String(x.type || '').slice(0, 30), code: String(x.code || '').slice(0, 20),
+    note: String(x.note || '').slice(0, 600), star: !!x.star }));
+
+  let K = read(LS, { items: [], dirty: false }), code = String(read(LSC, '') || '');
+  K = { items: clean(K.items), dirty: !!K.dirty };
+  let editId = null, onlyStar = false, msgT = 0, replaceWarn = false, delT = 0;
+
+  async function rpc(fn, args) {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args)
+    });
+    if (!r.ok) throw new Error(r.status);
+    const t = await r.text();
+    return t ? JSON.parse(t) : null;
+  }
+  const msg = (t) => { $('kMsg').textContent = t; clearTimeout(msgT); msgT = setTimeout(() => ($('kMsg').textContent = ''), 9000); };
+  const status = () => {
+    const s = $('kStatus');
+    s.textContent = !code ? 'هنوز در سرور ذخیره نشده' : K.dirty ? 'تغییرات ذخیره‌نشده' : 'در سرور ذخیره شده';
+    s.className = 'k-chip ' + (!code || K.dirty ? 'warn' : 'ok');
+    $('kSave').textContent = code ? 'ذخیره تغییرات' : 'ذخیره در سرور و دریافت کد';
+    $('kHave').style.display = code ? 'block' : 'none';
+    $('kCode').textContent = code ? fmt(code) : '';
+  };
+  const persist = () => { try { localStorage.setItem(LS, JSON.stringify(K)); localStorage.setItem(LSC, JSON.stringify(code)); } catch {} };
+  const commit = () => { K.dirty = true; persist(); render(); status(); };
+
+  // ---- list ----
+  const card = (it, i) => `<li class="k-item" data-id="${esc(it.id)}">
+    <div class="k-no">${fa(i + 1)}</div>
+    <div>
+      <div class="k-t">${esc(it.field)}</div>
+      <div class="k-u">${esc(it.uni)}${it.city ? ' — ' + esc(it.city) : ''}</div>
+      <div class="k-tags">${it.type ? `<span class="k-chip">${esc(it.type)}</span>` : ''}${it.code ? `<span class="k-chip">کد ${esc(it.code)}</span>` : ''}</div>
+      ${it.note ? `<p class="k-note">${esc(it.note)}</p>` : ''}
+    </div>
+    <div class="k-acts">
+      <button data-a="star" class="${it.star ? 'on' : ''}" aria-label="ستاره">★</button>
+      <button data-a="up" aria-label="بالاتر">↑</button><button data-a="down" aria-label="پایین‌تر">↓</button>
+      <input data-a="pos" type="number" min="1" placeholder="جایگاه" aria-label="رفتن به جایگاه">
+      <button data-a="edit">ویرایش</button><button data-a="del" class="del">حذف</button>
+    </div></li>`;
+  function render() {
+    const q = $('kQ').value.trim().toLowerCase();
+    const rows = K.items.map((it, i) => [it, i]).filter(([it]) =>
+      (!onlyStar || it.star) && (!q || [it.field, it.uni, it.city, it.note, it.code].join(' ').toLowerCase().includes(q)));
+    $('kList').innerHTML = rows.map(([it, i]) => card(it, i)).join('');
+    $('kList').classList.toggle('filtered', !!(q || onlyStar));
+    $('kEmpty').style.display = rows.length ? 'none' : 'block';
+    $('kEmpty').textContent = K.items.length ? 'چیزی با این فیلتر پیدا نشد.' : 'هنوز گزینه‌ای اضافه نکرده‌اید.';
+    $('kCount').textContent = fa(K.items.length) + ' گزینه';
+    $('kStarOnly').style.background = onlyStar ? '#f59e0b' : '';
+  }
+  const move = (from, to) => {
+    to = Math.max(0, Math.min(K.items.length - 1, to));
+    if (from === to) return;
+    K.items.splice(to, 0, K.items.splice(from, 1)[0]); commit();
+  };
+
+  // ---- form ----
+  function resetForm() {
+    editId = null;
+    ['kField', 'kUni', 'kCity', 'kRCode', 'kPos', 'kNote'].forEach((id) => ($(id).value = ''));
+    $('kType').value = ''; $('kFormTitle').textContent = 'افزودن گزینه'; $('kAdd').textContent = 'افزودن'; $('kCancel').style.display = 'none';
+  }
+  $('kAdd').onclick = () => {
+    const v = (id) => $(id).value.trim();
+    if (!v('kField') || !v('kUni')) { msg('نام رشته و دانشگاه را وارد کنید.'); return; }
+    const it = { id: editId || uid(), field: v('kField'), uni: v('kUni'), city: v('kCity'), type: $('kType').value, code: v('kRCode'), note: v('kNote'), star: false };
+    const pos = pnum(v('kPos'));
+    if (editId) { const i = K.items.findIndex((x) => x.id === editId); it.star = K.items[i].star; K.items[i] = it; }
+    else K.items.push(it);
+    if (pos >= 1) move(K.items.findIndex((x) => x.id === it.id), pos - 1);
+    resetForm(); commit();
+  };
+  $('kCancel').onclick = resetForm;
+  $('kList').onclick = (e) => {
+    const b = e.target.closest('button[data-a]'); if (!b) return;
+    const id = b.closest('.k-item').dataset.id, i = K.items.findIndex((x) => x.id === id), a = b.dataset.a;
+    if (a === 'up') move(i, i - 1);
+    else if (a === 'down') move(i, i + 1);
+    else if (a === 'star') { K.items[i].star = !K.items[i].star; commit(); }
+    else if (a === 'edit') {
+      const it = K.items[i]; editId = id;
+      $('kField').value = it.field; $('kUni').value = it.uni; $('kCity').value = it.city; $('kType').value = it.type;
+      $('kRCode').value = it.code; $('kNote').value = it.note; $('kPos').value = '';
+      $('kFormTitle').textContent = 'ویرایش گزینه'; $('kAdd').textContent = 'ذخیره تغییرات گزینه'; $('kCancel').style.display = '';
+      $('kField').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('kField').focus();
+    } else if (a === 'del') {
+      if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'مطمئنید؟'; clearTimeout(delT); delT = setTimeout(render, 3000); return; }
+      K.items.splice(i, 1); commit();
+    }
+  };
+  $('kList').onchange = (e) => {
+    if (e.target.dataset.a !== 'pos') return;
+    const pos = pnum(e.target.value); if (!(pos >= 1)) return;
+    move(K.items.findIndex((x) => x.id === e.target.closest('.k-item').dataset.id), pos - 1);
+  };
+  $('kQ').oninput = render;
+  $('kStarOnly').onclick = () => { onlyStar = !onlyStar; render(); };
+
+  // ---- save / open with a code ----
+  $('kSave').onclick = async () => {
+    if (!K.items.length) { msg('اول چند گزینه اضافه کنید.'); return; }
+    const fresh = !code, c = code || newCode();
+    $('kSave').disabled = true; $('kStatus').textContent = 'در حال ذخیره…';
+    try {
+      await rpc('konkur_save', { p_code: c, p_data: { items: K.items } });
+      code = c; K.dirty = false; persist(); status();
+      msg(fresh ? 'ذخیره شد. کد شما ' + fmt(code) + ' است. آن را یادداشت کنید.' : 'تغییرات ذخیره شد.');
+    } catch { status(); msg('ذخیره در سرور انجام نشد. اینترنت و اجرای فایل konkur-setup.sql در Supabase را بررسی کنید.'); }
+    $('kSave').disabled = false;
+  };
+  $('kLoad').onclick = async () => {
+    const c = norm($('kCodeIn').value);
+    if (c.length !== 10) { msg('کد باید ۱۰ حرف و عدد باشد.'); return; }
+    if (K.dirty && K.items.length && !replaceWarn) {
+      replaceWarn = true; setTimeout(() => (replaceWarn = false), 8000);
+      msg('تغییرات ذخیره‌نشده دارید و با نمایش لیست قبلی از بین می‌روند. اگر مطمئنید دوباره بزنید.'); return;
+    }
+    replaceWarn = false;
+    try {
+      const d = await rpc('konkur_get', { p_code: c });
+      if (!d || !Array.isArray(d.items)) { msg('لیستی با این کد پیدا نشد.'); return; }
+      K = { items: clean(d.items), dirty: false }; code = c; persist(); resetForm(); render(); status();
+      $('kCodeIn').value = ''; msg('لیست شما بارگذاری شد.');
+    } catch { msg('اتصال به سرور برقرار نشد.'); }
+  };
+  $('kCopyCode').onclick = async () => {
+    try { await navigator.clipboard.writeText(fmt(code)); msg('کد کپی شد.'); } catch { msg('کد را با انتخاب کردن کپی کنید.'); }
+  };
+
+  // ---- export ----
+  const plain = () => K.items.map((x, i) => `${fa(i + 1)}. ${x.field} — ${x.uni}${x.city ? ' (' + x.city + ')' : ''}${x.type ? ' [' + x.type + ']' : ''}${x.code ? ' کد ' + x.code : ''}`).join('\n');
+  const csv = () => '\uFEFF' + [['ردیف', 'رشته', 'دانشگاه', 'شهر', 'نوع دوره', 'کد رشته‌محل', 'ستاره', 'یادداشت'],
+    ...K.items.map((x, i) => [i + 1, x.field, x.uni, x.city, x.type, x.code, x.star ? '★' : '', x.note])]
+    .map((r) => r.map((c) => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  $('kCsv').onclick = () => {
+    if (!K.items.length) return msg('لیست خالی است.');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv()], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'انتخاب-رشته.csv'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  };
+  $('kCopy').onclick = async () => {
+    if (!K.items.length) return msg('لیست خالی است.');
+    try { await navigator.clipboard.writeText(plain()); msg('لیست کپی شد.'); }
+    catch { const o = $('kOut'); o.value = plain(); o.style.display = 'block'; o.select(); msg('متن را کپی کنید.'); }
+  };
+
+  // ---- open / close ----
+  const open = () => { $('konkur').classList.add('open'); render(); status(); };
+  const close = () => $('konkur').classList.remove('open');
+  $('openKonkur').onclick = open;
+  $('kBack').onclick = close;
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  render(); status();
+})();
 </script>
 </body>
 </html>
