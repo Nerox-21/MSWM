@@ -395,7 +395,7 @@ button.pill:hover{background:#2f4a60}
         <div class="k-row"><b id="kCode" class="k-code" dir="ltr"></b><button class="k-btn" id="kCopyCode">کپی کد</button></div>
       </div>
       <div class="k-row" id="kLoadRow">
-        <input id="kCodeIn" dir="ltr" placeholder="کد ذخیره‌شده را وارد کنید" autocomplete="off" maxlength="14">
+        <input id="kCodeIn" dir="ltr" placeholder="کد ۶ رقمی را وارد کنید" autocomplete="off" maxlength="14">
         <button class="k-btn" id="kLoad">نمایش لیست من</button>
       </div>
     </section>
@@ -1362,10 +1362,9 @@ $('send').onsubmit = (e) => {
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const pnum = (s) => parseInt(String(s ?? '').replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)), 10);
   const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
-  const ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no look-alike characters (0/O, 1/I)
-  const newCode = () => { const a = new Uint8Array(10); crypto.getRandomValues(a); return [...a].map((x) => ALPHA[x % 32]).join(''); };
-  const fmt = (c) => c.slice(0, 5) + '-' + c.slice(5);
-  const norm = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // 6-digit codes (older 10-character codes still work); Persian digits are accepted
+  const fmt = (c) => (c.length === 6 ? c.slice(0, 3) + '-' + c.slice(3) : c.slice(0, 5) + '-' + c.slice(5));
+  const norm = (s) => String(s || '').replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).toUpperCase().replace(/[^A-Z0-9]/g, '');
   const read = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } };
   const clean = (arr) => (Array.isArray(arr) ? arr : []).slice(0, 500).filter((x) => x && x.field && x.uni).map((x) => ({
     id: String(x.id || uid()).slice(0, 20), field: String(x.field).slice(0, 80), uni: String(x.uni).slice(0, 80),
@@ -1473,18 +1472,19 @@ $('send').onsubmit = (e) => {
   // ---- save / open with a code ----
   $('kSave').onclick = async () => {
     if (!K.items.length) { msg('اول چند گزینه اضافه کنید.'); return; }
-    const fresh = !code, c = code || newCode();
+    const fresh = !code;
     $('kSave').disabled = true; $('kStatus').textContent = 'در حال ذخیره…';
     try {
-      await rpc('konkur_save', { p_code: c, p_data: { items: K.items } });
-      code = c; K.dirty = false; persist(); status();
+      if (fresh) code = String(await rpc('konkur_create', { p_data: { items: K.items } }));
+      else await rpc('konkur_save', { p_code: code, p_data: { items: K.items } });
+      K.dirty = false; persist(); status();
       msg(fresh ? 'ذخیره شد. کد شما ' + fmt(code) + ' است. آن را یادداشت کنید.' : 'تغییرات ذخیره شد.');
-    } catch { status(); msg('ذخیره در سرور انجام نشد. اینترنت و اجرای فایل konkur-setup.sql در Supabase را بررسی کنید.'); }
+    } catch { status(); msg('ذخیره در سرور انجام نشد. اینترنت را بررسی کنید و مطمئن شوید نسخه جدید konkur-setup.sql را در Supabase اجرا کرده‌اید.'); }
     $('kSave').disabled = false;
   };
   $('kLoad').onclick = async () => {
     const c = norm($('kCodeIn').value);
-    if (c.length !== 10) { msg('کد باید ۱۰ حرف و عدد باشد.'); return; }
+    if (c.length !== 6 && c.length !== 10) { msg('کد باید ۶ رقم باشد.'); return; }
     if (K.dirty && K.items.length && !replaceWarn) {
       replaceWarn = true; setTimeout(() => (replaceWarn = false), 8000);
       msg('تغییرات ذخیره‌نشده دارید و با نمایش لیست قبلی از بین می‌روند. اگر مطمئنید دوباره بزنید.'); return;
