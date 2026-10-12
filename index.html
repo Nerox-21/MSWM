@@ -309,6 +309,24 @@ button.pill:hover{background:#2f4a60}
 .tool small{display:block;color:var(--mute);font-size:.76rem;line-height:1.6;margin-top:2px}
 @media(max-width:760px){.tool small{display:none}.tools-row{gap:8px}.tool{padding:10px}.tool i{width:36px;height:36px}.tool b{font-size:.86rem}}
 
+
+/* ---------- Music explore ---------- */
+#music{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;background:var(--night)}
+#music.open{display:block}
+#music input[type=text]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist)}
+.explore{display:flex;align-items:center;gap:14px;width:100%;max-width:440px;margin-top:18px;padding:14px 16px;border-radius:18px;text-align:start;color:var(--mist);background:linear-gradient(120deg,rgba(155,140,255,.28),rgba(255,143,163,.22));border:1px solid rgba(255,255,255,.16);transition:transform .15s,filter .15s}
+.explore:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.explore i{font-style:normal;font-size:1.5rem;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.14);flex:none}
+.explore b{display:block;font-size:1.02rem}
+.explore small{display:block;color:var(--mute);font-size:.8rem;margin-top:2px}
+.m-item{display:grid;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+.m-item.playing{border-color:#9b8cff;box-shadow:0 0 0 1px #9b8cff inset}
+.m-title{font-weight:800;overflow-wrap:anywhere}
+.m-item audio{width:100%;height:40px}
+.m-item a.k-btn{text-decoration:none;display:inline-block}
+.m-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+@media(max-width:560px){.m-form{grid-template-columns:1fr}}
+
 /* ---------- Short link redirect ---------- */
 #redirBox{display:none;position:fixed;inset:0;z-index:200;place-items:center;background:var(--night);text-align:center;padding:20px}
 html.redir #redirBox{display:grid}
@@ -346,6 +364,7 @@ html.redir body>*:not(#redirBox){display:none!important}
       <h1>با هر کسی، از هر جا، <span class="grad">رو در رو</span> حرف بزنید</h1>
       <p>یک نام برای اتاق انتخاب کنید و لینکش را بفرستید. بدون ثبت‌نام.</p>
       <div class="chips"><span>بدون ثبت‌نام</span><span>تماس گروهی تا ۸ نفر</span><span>اشتراک صفحه</span></div>
+      <button class="explore" id="openMusic"><i>🎵</i><span><b>اکسپلور موزیک</b><small>موزیک آپلود کنید، گوش بدهید و دانلود کنید</small></span></button>
       <div class="faces" aria-hidden="true"><i style="background:#2ec4b6">ن</i><i style="background:#ffb454">ر</i><i style="background:#ff8fa3">س</i><i style="background:#9b8cff">م</i></div>
     </div>
     <div class="side">
@@ -510,6 +529,40 @@ html.redir body>*:not(#redirBox){display:none!important}
       <div id="uList" class="k-list"></div>
       <p class="k-empty" id="uEmpty">هنوز فایلی آپلود نکرده‌اید.</p>
       <p class="k-sub">پاک کردن فهرست فقط از همین صفحه حذف می‌کند و فایل‌ها هنوز با لینک باز می‌شوند.</p>
+    </section>
+  </div>
+</div>
+<div id="music" role="dialog" aria-label="اکسپلور موزیک">
+  <div class="k-wrap">
+    <header class="k-head">
+      <button class="k-btn" id="mBack">← بازگشت</button>
+      <h2>🎵 اکسپلور موزیک</h2>
+      <button class="k-btn" id="mRefresh">تازه‌سازی</button>
+    </header>
+    <section class="k-card">
+      <h3>آپلود موزیک</h3>
+      <div class="m-form">
+        <input type="text" id="mTitle" maxlength="100" placeholder="نام آهنگ">
+        <input type="text" id="mArtist" maxlength="60" placeholder="خواننده (اختیاری)">
+      </div>
+      <div class="u-drop" id="mDrop" tabindex="0" role="button" aria-label="انتخاب فایل موزیک">
+        <b>فایل موزیک را اینجا بکشید یا برای انتخاب بزنید</b>
+        <span class="k-sub">mp3، m4a، wav، ogg و … حداکثر ۵۰ مگابایت. همه می‌توانند آن را ببینند و گوش بدهند.</span>
+      </div>
+      <input type="file" id="mFile" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.opus,.flac" hidden>
+      <div class="u-prog" id="mProg">
+        <div class="u-bar" id="mBarWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="mBar"></i></div>
+        <div class="u-stat"><span id="mStat"></span><button class="k-btn" id="mCancel" style="padding:3px 12px">لغو</button></div>
+      </div>
+      <p class="k-msg" id="mMsg" role="alert"></p>
+    </section>
+    <section>
+      <div class="k-row">
+        <h3 style="font-weight:800">همه موزیک‌ها</h3>
+        <input type="text" id="mSearch" placeholder="جستجو…" style="flex:1;min-width:140px">
+      </div>
+      <div id="mList" class="k-list"></div>
+      <p class="k-empty" id="mEmpty">هنوز موزیکی نیست. اولین نفر باشید!</p>
     </section>
   </div>
 </div>
@@ -1780,6 +1833,133 @@ $('send').onsubmit = (e) => {
   $('uBack').onclick = () => $('uploader').classList.remove('open');
   addEventListener('keydown', (e) => { if (e.key === 'Escape') $('uploader').classList.remove('open'); });
   render();
+})();
+
+// ---------- Music explore ----------
+(() => {
+  const BUCKET = 'uploads', MAX_MB = 50, AUDIO_EXT = /\.(mp3|m4a|aac|wav|ogg|oga|opus|flac|weba|webm)$/i;
+  const fa = (n) => Number(n).toLocaleString('fa-IR', { maximumFractionDigits: 1 });
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const bytes = (n) => (n >= 1048576 ? fa(n / 1048576) + ' مگابایت' : fa(Math.max(1, Math.round(n / 1024))) + ' کیلوبایت');
+  const rpc = async (fn, args) => {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+    if (!r.ok) throw new Error('rpc ' + r.status);
+    return r.json();
+  };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  let tracks = [], busy = false, cur = null, msgT = 0, mc = null;
+  const msg = (t) => { $('mMsg').textContent = t; clearTimeout(msgT); if (t) msgT = setTimeout(() => ($('mMsg').textContent = ''), 12000); };
+  const dlUrl = (t) => t.url + '?download=' + encodeURIComponent(t.title + (((t.url.match(/\.[A-Za-z0-9]{1,5}$/) || [''])[0]) || ''));
+  const bar = (pct, text, ind, canCancel = true) => {
+    $('mProg').classList.add('on'); $('mBarWrap').classList.toggle('ind', !!ind);
+    if (pct != null) { $('mBar').style.width = pct + '%'; $('mBarWrap').setAttribute('aria-valuenow', Math.round(pct)); }
+    $('mStat').textContent = text; $('mCancel').style.display = canCancel ? '' : 'none';
+  };
+
+  function render() {
+    const q = $('mSearch').value.trim().toLowerCase();
+    const list = tracks.filter((t) => !q || (t.title + ' ' + t.artist).toLowerCase().includes(q));
+    $('mEmpty').style.display = list.length ? 'none' : 'block';
+    $('mEmpty').textContent = tracks.length ? 'موردی پیدا نشد.' : 'هنوز موزیکی نیست. اولین نفر باشید!';
+    $('mList').innerHTML = list.map((t) => `<div class="m-item" data-id="${t.id}">
+      <div class="m-title">${esc(t.title)}</div>
+      <div class="k-sub">${t.artist ? esc(t.artist) + ' — ' : ''}${bytes(t.size)} — ${new Date(t.created_at).toLocaleDateString('fa-IR')}</div>
+      <audio controls preload="none" src="${esc(t.url)}"></audio>
+      <div class="k-row">
+        <a class="k-btn" href="${esc(dlUrl(t))}" download>دانلود</a>
+        <button class="k-btn" data-a="copy">کپی لینک دانلود</button>
+      </div></div>`).join('');
+  }
+  async function load() {
+    try { tracks = await rpc('music_list', { p_limit: 100 }); render(); }
+    catch { $('mEmpty').style.display = 'block'; $('mEmpty').textContent = 'فهرست بارگذاری نشد. اینترنت را بررسی کنید و مطمئن شوید music-setup.sql را در Supabase اجرا کرده‌اید.'; }
+  }
+  function xhrUpload(path, file, onP, onSent) {
+    return new Promise((resolve, reject) => {
+      const x = (cur = new XMLHttpRequest());
+      x.open('POST', SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path);
+      x.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+      x.setRequestHeader('Authorization', 'Bearer ' + SUPABASE_ANON_KEY);
+      x.setRequestHeader('Content-Type', file.type || 'audio/mpeg');
+      x.setRequestHeader('x-upsert', 'false');
+      x.setRequestHeader('cache-control', 'max-age=3600');
+      x.upload.onprogress = (e) => e.lengthComputable && onP(e.loaded, e.total);
+      x.upload.onload = onSent;
+      x.onload = () => (x.status >= 200 && x.status < 300 ? resolve() : reject({ status: x.status, message: x.responseText }));
+      x.onerror = () => reject({ status: 0, message: 'network' });
+      x.onabort = () => reject({ aborted: true });
+      x.send(file);
+    });
+  }
+  async function upload(file) {
+    if (busy || !file) return;
+    if (typeof supabase === 'undefined') { msg('کتابخانه Supabase بارگذاری نشد. اینترنت یا فیلترشکن را بررسی کنید.'); return; }
+    if (!(/^audio\//.test(file.type) || AUDIO_EXT.test(file.name))) { msg('فقط فایل موزیک (mp3، m4a، wav، ogg …) قابل آپلود است.'); return; }
+    if (file.size > MAX_MB * 1048576) { msg('فایل بزرگ‌تر از ' + fa(MAX_MB) + ' مگابایت است.'); return; }
+    const title = $('mTitle').value.trim() || file.name.replace(/\.[^.]+$/, '').slice(0, 100), artist = $('mArtist').value.trim();
+    const ext = ((file.name.match(/\.[A-Za-z0-9]{1,5}$/) || ['.mp3'])[0]).toLowerCase();
+    const path = 'music/' + crypto.randomUUID() + '/track' + ext;
+    busy = true; msg(''); $('mDrop').style.opacity = .5;
+    bar(0, 'در حال آپلود «' + title + '» — ۰٪');
+    try {
+      const bucket = (mc = mc || supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)).storage.from(BUCKET);
+      try {
+        await xhrUpload(path, file, (l, t) => bar(l / t * 100, fa(Math.round(l / t * 100)) + '٪ — ' + bytes(l) + ' از ' + bytes(t)),
+          () => bar(100, 'آپلود انجام شد، در حال ثبت در فهرست…', true, false));
+      } catch (e) {
+        if (e.aborted) throw e;
+        if (e.status === 401 || /jwt|apikey|signature/i.test(String(e.message))) {
+          bar(null, 'در حال آپلود…', true, false);
+          const { error } = await bucket.upload(path, file, { contentType: file.type || 'audio/mpeg', upsert: false });
+          if (error) throw error;
+        } else throw e;
+      }
+      const url = bucket.getPublicUrl(path).data.publicUrl;
+      await sleep(400);
+      await rpc('music_add', { p_title: title, p_artist: artist, p_url: url, p_size: file.size });
+      bar(100, 'موزیک اضافه شد ✓', false, false);
+      $('mTitle').value = ''; $('mArtist').value = '';
+      msg('موزیک شما به فهرست اضافه شد.');
+      await load();
+      setTimeout(() => { if (!busy) $('mProg').classList.remove('on'); }, 3000);
+    } catch (e) {
+      $('mProg').classList.remove('on');
+      if (e && e.aborted) msg('آپلود لغو شد.');
+      else if (/rpc/.test(String(e && e.message))) msg('فایل آپلود شد ولی ثبت در فهرست انجام نشد. فایل music-setup.sql را در Supabase اجرا کرده‌اید؟');
+      else if (/maximum allowed size|too large|413/i.test(String(e && (e.message || e.error)))) msg('حجم فایل از حد مجاز بیشتر است.');
+      else msg('آپلود انجام نشد. اینترنت را بررسی کنید و دوباره امتحان کنید.');
+    }
+    $('mDrop').style.opacity = ''; cur = null; busy = false;
+  }
+  $('mCancel').onclick = () => { if (cur) cur.abort(); };
+  const drop = $('mDrop');
+  drop.onclick = () => $('mFile').click();
+  drop.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('mFile').click(); } };
+  $('mFile').onchange = (e) => { upload(e.target.files[0]); e.target.value = ''; };
+  ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', (e) => upload(e.dataTransfer.files[0]));
+
+  // Only one track plays at a time; when one ends, the next in the list starts
+  $('mList').addEventListener('play', (e) => {
+    document.querySelectorAll('#mList audio').forEach((a) => { if (a !== e.target) a.pause(); });
+    document.querySelectorAll('.m-item').forEach((i) => i.classList.toggle('playing', i.contains(e.target)));
+  }, true);
+  $('mList').addEventListener('ended', (e) => {
+    const next = e.target.closest('.m-item')?.nextElementSibling?.querySelector('audio');
+    if (next) next.play().catch(() => {});
+  }, true);
+  $('mList').onclick = async (e) => {
+    const b = e.target.closest('button[data-a="copy"]'); if (!b) return;
+    const t = tracks.find((x) => String(x.id) === b.closest('.m-item').dataset.id); if (!t) return;
+    try { await navigator.clipboard.writeText(dlUrl(t)); msg('لینک دانلود کپی شد.'); } catch { msg('کپی نشد. روی «دانلود» بزنید.'); }
+  };
+  $('mSearch').oninput = render;
+  $('mRefresh').onclick = load;
+  $('openMusic').onclick = () => { $('music').classList.add('open'); load(); };
+  const close = () => { $('music').classList.remove('open'); document.querySelectorAll('#mList audio').forEach((a) => a.pause()); };
+  $('mBack').onclick = close;
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 })();
 </script>
 </body>
