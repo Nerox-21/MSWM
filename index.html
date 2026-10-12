@@ -241,9 +241,9 @@ button.pill:hover{background:#2f4a60}
 /* ---------- Konkur section ---------- */
 .ghost{width:100%;margin-top:10px;padding:12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--mist);font-weight:600;transition:background .15s}
 .ghost:hover{background:rgba(255,255,255,.14)}
-#konkur{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
+#konkur,#uploader{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
   background:radial-gradient(60% 40% at 90% 0%,rgba(46,196,182,.22),transparent 70%),radial-gradient(50% 40% at 0% 100%,rgba(255,180,84,.16),transparent 70%),var(--night)}
-#konkur.open{display:block}
+#konkur.open,#uploader.open{display:block}
 .k-wrap{max-width:780px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));display:grid;gap:14px}
 .k-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .k-head h2{flex:1;font-size:1.4rem;font-weight:800}
@@ -279,6 +279,14 @@ button.pill:hover{background:#2f4a60}
 .k-msg{margin-top:10px;min-height:1.4em;color:var(--sun);font-size:.92rem}
 #kOut{margin-top:10px;min-height:120px}
 @media(max-width:520px){.k-grid{grid-template-columns:1fr}}
+
+/* ---------- Uploader ---------- */
+.u-drop{display:grid;gap:6px;border:2px dashed rgba(255,255,255,.25);border-radius:18px;padding:34px 16px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s}
+.u-drop:hover,.u-drop.over,.u-drop:focus-visible{background:rgba(46,196,182,.1);border-color:var(--lake);outline:0}
+.u-drop b{font-size:1.1rem}
+.u-item{display:grid;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+.u-name{font-weight:800;overflow-wrap:anywhere}
+.u-link{width:100%;direction:ltr;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist);font-size:.82rem}
 </style>
 </head>
 <body>
@@ -312,12 +320,13 @@ button.pill:hover{background:#2f4a60}
     </div>
     <div class="card">
       <label for="name">نام شما</label>
-      <input id="name" type="text" maxlength="30" autocomplete="nickname" placeholder="مثلاً سینا">
+      <input id="name" type="text" maxlength="30" autocomplete="nickname" placeholder="مثلاً سارا">
       <label for="room">نام اتاق</label>
       <input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room">
       <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید.</p>
       <button class="primary" id="go">ورود به اتاق</button>
       <button class="ghost" id="openKonkur">📚 انتخاب رشته کنکور</button>
+      <button class="ghost" id="openUploader">📤 آپلود فایل و دریافت لینک</button>
       <div id="err" role="alert"></div>
     </div>
   </div>
@@ -437,6 +446,31 @@ button.pill:hover{background:#2f4a60}
         <button class="k-btn" id="kCopy">کپی لیست به‌صورت متن</button>
       </div>
       <textarea id="kOut" readonly style="display:none" aria-label="متن لیست"></textarea>
+    </section>
+  </div>
+</div>
+<div id="uploader" role="dialog" aria-label="آپلود فایل">
+  <div class="k-wrap">
+    <header class="k-head">
+      <button class="k-btn" id="uBack">← بازگشت</button>
+      <h2>آپلود فایل</h2>
+    </header>
+    <section class="k-card">
+      <div class="u-drop" id="uDrop" tabindex="0" role="button" aria-label="انتخاب فایل">
+        <b>فایل را اینجا بکشید یا برای انتخاب بزنید</b>
+        <span class="k-sub">بعد از آپلود، یک لینک می‌گیرید که می‌توانید برای هر کسی بفرستید. حداکثر حجم هر فایل ۵۰ مگابایت.</span>
+      </div>
+      <input type="file" id="uFile" multiple hidden>
+      <p class="k-msg" id="uMsg" role="alert"></p>
+    </section>
+    <section>
+      <div class="k-row">
+        <h3 style="flex:1;font-weight:800">آپلودهای شما در این دستگاه</h3>
+        <button class="k-btn" id="uClear">پاک کردن فهرست</button>
+      </div>
+      <div id="uList" class="k-list"></div>
+      <p class="k-empty" id="uEmpty">هنوز فایلی آپلود نکرده‌اید.</p>
+      <p class="k-sub">پاک کردن فهرست فقط از همین صفحه حذف می‌کند و فایل‌ها هنوز با لینک باز می‌شوند.</p>
     </section>
   </div>
 </div>
@@ -1526,6 +1560,89 @@ $('send').onsubmit = (e) => {
   $('kBack').onclick = close;
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   render(); status();
+})();
+
+// ---------- Uploader (files go to a public Supabase Storage bucket) ----------
+(() => {
+  const BUCKET = 'uploads', MAX_MB = 50, LSU = 'uploads-history-v1';
+  const fa = (n) => Number(n).toLocaleString('fa-IR', { maximumFractionDigits: 1 });
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const bytes = (n) => (n >= 1048576 ? fa(n / 1048576) + ' مگابایت' : fa(Math.max(1, Math.round(n / 1024))) + ' کیلوبایت');
+  let hist = []; try { hist = JSON.parse(localStorage.getItem(LSU)) || []; } catch {}
+  let uc = null, busy = false, msgT = 0;
+  const client = () => (uc = uc || supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
+  const msg = (t) => { $('uMsg').textContent = t; clearTimeout(msgT); if (t) msgT = setTimeout(() => ($('uMsg').textContent = ''), 12000); };
+  const persist = () => { try { localStorage.setItem(LSU, JSON.stringify(hist)); } catch {} };
+
+  // Storage paths must be plain ASCII, so the stored name is simplified; the download link restores the real name
+  function pathFor(file) {
+    const ext = ((file.name.match(/\.[A-Za-z0-9]{1,8}$/) || [''])[0]).toLowerCase();
+    const base = file.name.slice(0, file.name.length - ext.length).replace(/[^A-Za-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'file';
+    return crypto.randomUUID() + '/' + base + ext;
+  }
+  function render() {
+    $('uEmpty').style.display = hist.length ? 'none' : 'block';
+    $('uClear').style.display = hist.length ? '' : 'none';
+    $('uList').innerHTML = hist.map((x, i) => `<div class="u-item" data-i="${i}">
+      <div class="u-name">${esc(x.name)}</div>
+      <div class="k-sub">${bytes(x.size)} — ${new Date(x.t).toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' })}</div>
+      <input class="u-link" readonly value="${esc(x.url)}" aria-label="لینک فایل">
+      <div class="k-row">
+        <button class="k-btn" data-a="copy">کپی لینک</button>
+        <button class="k-btn" data-a="dl">کپی لینک دانلود مستقیم</button>
+        <button class="k-btn" data-a="open">باز کردن</button>
+      </div></div>`).join('');
+  }
+  function explain(e) {
+    const m = String((e && (e.message || e.error)) || e);
+    if (/maximum allowed size|too large|413/i.test(m)) return 'حجم فایل از حد مجاز بیشتر است (در پلن رایگان Supabase ممکن است حد کمتر از ۵۰ مگابایت باشد).';
+    if (/row-level security|bucket not found|not found|403|401/i.test(m)) return 'آپلود مجاز نیست. فایل uploader-setup.sql را در Supabase اجرا کرده‌اید؟';
+    if (/duplicate|exists/i.test(m)) return 'این فایل قبلاً آپلود شده است. دوباره امتحان کنید.';
+    return 'آپلود انجام نشد. اینترنت را بررسی کنید و دوباره امتحان کنید.';
+  }
+  async function uploadAll(files) {
+    if (busy || !files.length) return;
+    if (typeof supabase === 'undefined') { msg('کتابخانه Supabase بارگذاری نشد. اینترنت یا فیلترشکن را بررسی کنید.'); return; }
+    busy = true;
+    let ok = 0;
+    for (const [n, file] of files.entries()) {
+      if (file.size > MAX_MB * 1048576) { msg('«' + file.name + '» بزرگ‌تر از ' + fa(MAX_MB) + ' مگابایت است.'); continue; }
+      msg('در حال آپلود (' + fa(n + 1) + ' از ' + fa(files.length) + '): ' + file.name + '…');
+      try {
+        const path = pathFor(file), bucket = client().storage.from(BUCKET);
+        const { error } = await bucket.upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+        if (error) throw error;
+        hist.unshift({ name: file.name, size: file.size, url: bucket.getPublicUrl(path).data.publicUrl,
+          dl: bucket.getPublicUrl(path, { download: file.name }).data.publicUrl, t: Date.now() });
+        hist = hist.slice(0, 30); persist(); render(); ok++;
+      } catch (e) { msg('«' + file.name + '»: ' + explain(e)); break; }
+    }
+    if (ok === files.length) msg(ok === 1 ? 'آپلود شد. لینک را از فهرست زیر کپی کنید.' : fa(ok) + ' فایل آپلود شد.');
+    busy = false;
+  }
+
+  const drop = $('uDrop');
+  drop.onclick = () => $('uFile').click();
+  drop.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('uFile').click(); } };
+  $('uFile').onchange = (e) => { uploadAll([...e.target.files]); e.target.value = ''; };
+  ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', (e) => uploadAll([...e.dataTransfer.files]));
+
+  $('uList').onclick = async (e) => {
+    const b = e.target.closest('button[data-a]'); if (!b) return;
+    const item = b.closest('.u-item'), x = hist[+item.dataset.i];
+    if (!x) return;
+    if (b.dataset.a === 'open') { window.open(x.url, '_blank', 'noopener'); return; }
+    const text = b.dataset.a === 'dl' ? x.dl : x.url;
+    try { await navigator.clipboard.writeText(text); msg('لینک کپی شد.'); }
+    catch { const inp = item.querySelector('.u-link'); inp.value = text; inp.select(); msg('لینک را کپی کنید.'); }
+  };
+  $('uClear').onclick = () => { hist = []; persist(); render(); };
+  $('openUploader').onclick = () => { $('uploader').classList.add('open'); render(); };
+  $('uBack').onclick = () => $('uploader').classList.remove('open');
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') $('uploader').classList.remove('open'); });
+  render();
 })();
 </script>
 </body>
