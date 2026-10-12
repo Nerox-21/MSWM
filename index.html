@@ -295,6 +295,28 @@ button.pill:hover{background:#2f4a60}
 .u-bar.ind i{width:40%;animation:uslide 1.1s ease-in-out infinite alternate}
 @keyframes uslide{from{margin-left:0}to{margin-left:60%}}
 .u-stat{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;font-size:.9rem;flex-wrap:wrap}
+
+/* ---------- Main page: separate tools area ---------- */
+.side{display:grid;gap:14px;min-width:0}
+.tools-title{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:.82rem}
+.tools-title::before,.tools-title::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12)}
+.tools-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{display:flex;gap:10px;align-items:center;text-align:start;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--mist);transition:transform .15s,background .15s}
+.tool:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.tool i{font-style:normal;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:1.3rem;flex:none;background:rgba(46,196,182,.2)}
+.tool + .tool i{background:rgba(255,180,84,.22)}
+.tool b{display:block;font-size:.92rem}
+.tool small{display:block;color:var(--mute);font-size:.76rem;line-height:1.6;margin-top:2px}
+@media(max-width:760px){.tool small{display:none}.tools-row{gap:8px}.tool{padding:10px}.tool i{width:36px;height:36px}.tool b{font-size:.86rem}}
+
+/* ---------- Short link redirect ---------- */
+#redirBox{display:none;position:fixed;inset:0;z-index:200;place-items:center;background:var(--night);text-align:center;padding:20px}
+html.redir #redirBox{display:grid}
+html.redir body>*:not(#redirBox){display:none!important}
+.redir-spin{width:38px;height:38px;border-radius:50%;border:4px solid rgba(255,255,255,.15);border-top-color:var(--lake);margin:0 auto 14px;animation:rspin .8s linear infinite}
+.redir-fail .redir-spin{display:none}
+@keyframes rspin{to{transform:rotate(360deg)}}
+#redirHome{color:var(--lake);display:inline-block;margin-top:12px}
 </style>
 </head>
 <body>
@@ -326,6 +348,7 @@ button.pill:hover{background:#2f4a60}
       <div class="chips"><span>بدون ثبت‌نام</span><span>تماس گروهی تا ۸ نفر</span><span>اشتراک صفحه</span></div>
       <div class="faces" aria-hidden="true"><i style="background:#2ec4b6">ن</i><i style="background:#ffb454">ر</i><i style="background:#ff8fa3">س</i><i style="background:#9b8cff">م</i></div>
     </div>
+    <div class="side">
     <div class="card">
       <label for="name">نام شما</label>
       <input id="name" type="text" maxlength="30" autocomplete="nickname" placeholder="مثلاً سارا">
@@ -333,9 +356,13 @@ button.pill:hover{background:#2f4a60}
       <input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room">
       <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید.</p>
       <button class="primary" id="go">ورود به اتاق</button>
-      <button class="ghost" id="openKonkur">📚 انتخاب رشته کنکور</button>
-      <button class="ghost" id="openUploader">📤 آپلود فایل و دریافت لینک</button>
       <div id="err" role="alert"></div>
+    </div>
+    <div class="tools-title">ابزارهای دیگر</div>
+    <div class="tools-row">
+      <button class="tool" id="openUploader"><i>📤</i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
+      <button class="tool" id="openKonkur"><i>📚</i><span><b>انتخاب رشته کنکور</b><small>لیست را بسازید و با یک کد ذخیره کنید</small></span></button>
+    </div>
     </div>
   </div>
 </main>
@@ -488,6 +515,7 @@ button.pill:hover{background:#2f4a60}
 </div>
 <div id="netbar" role="alert">اتصال شما قطع شد؛ در حال تلاش برای اتصال دوباره…</div>
 <div id="toast" role="status"></div>
+<div id="redirBox"><div id="redirCard"><div class="redir-spin"></div><p id="redirMsg">در حال باز کردن فایل…</p><a id="redirHome" href="./" style="display:none">بازگشت به صفحه اصلی</a></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ====== Paste your Supabase values here (Project Settings > API) ======
@@ -495,6 +523,29 @@ const SUPABASE_URL = 'https://oeehbcttertgewkhfzes.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable__6iqYESMfzjNeukvnh_Zww_THGAbnKB';
 // =====================================================================
 const MAX_PER_ROOM = 8;
+
+// ---- Short file links: #f/code opens the file, #d/code downloads it ----
+(() => {
+  const m = /^#([fd])\/([A-Za-z0-9]{4,12})$/.exec(location.hash);
+  if (!m) return;
+  document.documentElement.classList.add('redir');
+  const fail = (t) => {
+    document.getElementById('redirCard').classList.add('redir-fail');
+    document.getElementById('redirMsg').textContent = t;
+    document.getElementById('redirHome').style.display = '';
+  };
+  fetch(SUPABASE_URL + '/rest/v1/rpc/link_get', {
+    method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_code: m[2].toLowerCase() })
+  }).then((r) => (r.ok ? r.json() : Promise.reject()))
+    .then((d) => {
+      const to = d && (m[1] === 'd' ? d.dl : d.url);
+      // only ever redirect to a file in this project's uploads bucket
+      if (typeof to === 'string' && to.startsWith(SUPABASE_URL + '/storage/v1/object/public/uploads/')) location.replace(to);
+      else fail('این لینک پیدا نشد یا حذف شده است.');
+    })
+    .catch(() => fail('اتصال به سرور برقرار نشد. اینترنت یا فیلترشکن را بررسی کنید.'));
+})();
 const $ = (id) => document.getElementById(id);
 // Optional TURN server: needed when two people cannot connect directly (different networks, filtering).
 // Fill these from your TURN provider (e.g. Metered Open Relay or Cloudflare Realtime TURN).
@@ -518,7 +569,7 @@ const pcs = {};
 const COLORS = ['#2ec4b6', '#ffb454', '#ff8fa3', '#9b8cff', '#7bd88f', '#5bb8ff'];
 const colorOf = (s) => COLORS[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORS.length];
 
-$('room').value = decodeURIComponent(location.hash.slice(1));
+if (!/^#[fd]\//.test(location.hash)) $('room').value = decodeURIComponent(location.hash.slice(1));
 $('name').value = localStorage.getItem('cc-name') || '';
 
 // Fill the tile when the video has a similar shape (little is cropped);
@@ -1592,16 +1643,31 @@ $('send').onsubmit = (e) => {
     const base = file.name.slice(0, file.name.length - ext.length).replace(/[^A-Za-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'file';
     return crypto.randomUUID() + '/' + base + ext;
   }
+  // The short link points back to this page (#f/code opens the file, #d/code downloads it)
+  const base = () => location.href.split('#')[0];
+  const link = (x) => (x.code ? base() + '#f/' + x.code : x.url);
+  const dlLink = (x) => (x.code ? base() + '#d/' + x.code : x.dl);
+  async function makeShort(url, dl) {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/link_create', {
+        method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_url: url, p_dl: dl })
+      });
+      if (!r.ok) return null;
+      const code = await r.json();
+      return typeof code === 'string' && /^[a-z0-9]{4,12}$/.test(code) ? code : null;
+    } catch { return null; }
+  }
   function render() {
     $('uEmpty').style.display = hist.length ? 'none' : 'block';
     $('uClear').style.display = hist.length ? '' : 'none';
     $('uList').innerHTML = hist.map((x, i) => `<div class="u-item" data-i="${i}">
       <div class="u-name">${esc(x.name)}</div>
       <div class="k-sub">${bytes(x.size)} — ${new Date(x.t).toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' })}</div>
-      <input class="u-link" readonly value="${esc(x.url)}" aria-label="لینک فایل">
+      <input class="u-link" readonly value="${esc(link(x))}" aria-label="لینک فایل">
       <div class="k-row">
         <button class="k-btn" data-a="copy">کپی لینک</button>
-        <button class="k-btn" data-a="dl">کپی لینک دانلود مستقیم</button>
+        <button class="k-btn" data-a="dl">کپی لینک دانلود</button>
+        ${x.code ? '<button class="k-btn" data-a="long">کپی لینک اصلی (بلند)</button>' : ''}
         <button class="k-btn" data-a="open">باز کردن</button>
       </div></div>`).join('');
   }
@@ -1644,7 +1710,7 @@ $('send').onsubmit = (e) => {
     if (typeof supabase === 'undefined') { msg('کتابخانه Supabase بارگذاری نشد. اینترنت یا فیلترشکن را بررسی کنید.'); return; }
     busy = true; cancelled = false; msg('');
     $('uDrop').style.opacity = .5;
-    let ok = 0;
+    let ok = 0, shortFail = false;
     for (const [n, file] of files.entries()) {
       if (file.size > MAX_MB * 1048576) { msg('«' + file.name + '» بزرگ‌تر از ' + fa(MAX_MB) + ' مگابایت است.'); continue; }
       const tag = files.length > 1 ? '(' + fa(n + 1) + ' از ' + fa(files.length) + ') ' : '';
@@ -1665,9 +1731,10 @@ $('send').onsubmit = (e) => {
             bar(100, tag + 'آپلود انجام شد، در حال ساخت لینک…', true, false);
           } else throw e;
         }
-        await sleep(500); // let the "building the link" message be seen
-        hist.unshift({ name: file.name, size: file.size, url: bucket.getPublicUrl(path).data.publicUrl,
-          dl: bucket.getPublicUrl(path, { download: file.name }).data.publicUrl, t: Date.now() });
+        const url = bucket.getPublicUrl(path).data.publicUrl, dl = bucket.getPublicUrl(path, { download: file.name }).data.publicUrl;
+        const [code] = await Promise.all([makeShort(url, dl), sleep(500)]); // build the short link; the pause lets the message be seen
+        if (!code) shortFail = true;
+        hist.unshift({ name: file.name, size: file.size, url, dl, code, t: Date.now() });
         hist = hist.slice(0, 30); persist(); render(); ok++;
         bar(100, tag + 'لینک ساخته شد ✓', false, false);
         await sleep(files.length > 1 && n < files.length - 1 ? 400 : 0);
@@ -1677,7 +1744,7 @@ $('send').onsubmit = (e) => {
         break;
       }
     }
-    if (ok && ok === files.length && !cancelled) msg(ok === 1 ? 'لینک آماده است. آن را از فهرست زیر کپی کنید.' : fa(ok) + ' فایل آپلود شد و لینک‌ها آماده است.');
+    if (ok && ok === files.length && !cancelled) msg((ok === 1 ? 'لینک آماده است. آن را از فهرست زیر کپی کنید.' : fa(ok) + ' فایل آپلود شد و لینک‌ها آماده است.') + (shortFail ? ' لینک کوتاه ساخته نشد؛ نسخه جدید uploader-setup.sql را در Supabase اجرا کنید. فعلاً لینک اصلی (بلند) در فهرست است.' : ''));
     if (!ok || cancelled) $('uProg').classList.remove('on');
     else setTimeout(() => { if (!busy) $('uProg').classList.remove('on'); }, 4000);
     $('uDrop').style.opacity = '';
@@ -1698,7 +1765,7 @@ $('send').onsubmit = (e) => {
     const item = b.closest('.u-item'), x = hist[+item.dataset.i];
     if (!x) return;
     if (b.dataset.a === 'open') { window.open(x.url, '_blank', 'noopener'); return; }
-    const text = b.dataset.a === 'dl' ? x.dl : x.url;
+    const text = b.dataset.a === 'dl' ? dlLink(x) : b.dataset.a === 'long' ? x.url : link(x);
     try { await navigator.clipboard.writeText(text); msg('لینک کپی شد.'); }
     catch { const inp = item.querySelector('.u-link'); inp.value = text; inp.select(); msg('لینک را کپی کنید.'); }
   };
