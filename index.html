@@ -287,6 +287,14 @@ button.pill:hover{background:#2f4a60}
 .u-item{display:grid;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
 .u-name{font-weight:800;overflow-wrap:anywhere}
 .u-link{width:100%;direction:ltr;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist);font-size:.82rem}
+
+.u-prog{display:none;margin-top:14px}
+.u-prog.on{display:block}
+.u-bar{height:12px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;direction:ltr}
+.u-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lake),#3fd6a6);border-radius:99px;transition:width .15s}
+.u-bar.ind i{width:40%;animation:uslide 1.1s ease-in-out infinite alternate}
+@keyframes uslide{from{margin-left:0}to{margin-left:60%}}
+.u-stat{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;font-size:.9rem;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -461,6 +469,10 @@ button.pill:hover{background:#2f4a60}
         <span class="k-sub">بعد از آپلود، یک لینک می‌گیرید که می‌توانید برای هر کسی بفرستید. حداکثر حجم هر فایل ۵۰ مگابایت.</span>
       </div>
       <input type="file" id="uFile" multiple hidden>
+      <div class="u-prog" id="uProg">
+        <div class="u-bar" id="uBarWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="uBar"></i></div>
+        <div class="u-stat"><span id="uStat"></span><button class="k-btn" id="uCancel" style="padding:3px 12px">لغو</button></div>
+      </div>
       <p class="k-msg" id="uMsg" role="alert"></p>
     </section>
     <section>
@@ -1600,26 +1612,78 @@ $('send').onsubmit = (e) => {
     if (/duplicate|exists/i.test(m)) return 'این فایل قبلاً آپلود شده است. دوباره امتحان کنید.';
     return 'آپلود انجام نشد. اینترنت را بررسی کنید و دوباره امتحان کنید.';
   }
+  // Uploads with a real progress bar (XMLHttpRequest reports how many bytes were sent)
+  let cur = null, cancelled = false;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function bar(pct, text, indeterminate, canCancel = true) {
+    $('uProg').classList.add('on');
+    $('uBarWrap').classList.toggle('ind', !!indeterminate);
+    if (pct != null) { $('uBar').style.width = pct + '%'; $('uBarWrap').setAttribute('aria-valuenow', Math.round(pct)); }
+    $('uStat').textContent = text;
+    $('uCancel').style.display = canCancel ? '' : 'none';
+  }
+  function xhrUpload(path, file, onProgress, onSent) {
+    return new Promise((resolve, reject) => {
+      const x = (cur = new XMLHttpRequest());
+      x.open('POST', SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path);
+      x.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+      x.setRequestHeader('Authorization', 'Bearer ' + SUPABASE_ANON_KEY);
+      x.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+      x.setRequestHeader('x-upsert', 'false');
+      x.setRequestHeader('cache-control', 'max-age=3600');
+      x.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded, e.total);
+      x.upload.onload = onSent;
+      x.onload = () => (x.status >= 200 && x.status < 300 ? resolve() : reject({ status: x.status, message: x.responseText }));
+      x.onerror = () => reject({ status: 0, message: 'network' });
+      x.onabort = () => reject({ aborted: true });
+      x.send(file);
+    });
+  }
   async function uploadAll(files) {
     if (busy || !files.length) return;
     if (typeof supabase === 'undefined') { msg('کتابخانه Supabase بارگذاری نشد. اینترنت یا فیلترشکن را بررسی کنید.'); return; }
-    busy = true;
+    busy = true; cancelled = false; msg('');
+    $('uDrop').style.opacity = .5;
     let ok = 0;
     for (const [n, file] of files.entries()) {
       if (file.size > MAX_MB * 1048576) { msg('«' + file.name + '» بزرگ‌تر از ' + fa(MAX_MB) + ' مگابایت است.'); continue; }
-      msg('در حال آپلود (' + fa(n + 1) + ' از ' + fa(files.length) + '): ' + file.name + '…');
+      const tag = files.length > 1 ? '(' + fa(n + 1) + ' از ' + fa(files.length) + ') ' : '';
+      bar(0, tag + 'در حال آپلود «' + file.name + '» — ۰٪');
       try {
         const path = pathFor(file), bucket = client().storage.from(BUCKET);
-        const { error } = await bucket.upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
-        if (error) throw error;
+        try {
+          await xhrUpload(path, file,
+            (l, t) => bar(l / t * 100, tag + fa(Math.round(l / t * 100)) + '٪ — ' + bytes(l) + ' از ' + bytes(t)),
+            () => bar(100, tag + 'آپلود انجام شد، در حال ساخت لینک…', true, false));
+        } catch (e) {
+          if (e.aborted) throw e;
+          // some key types are not accepted on this route: fall back to the library (no progress, but it works)
+          if (e.status === 401 || /jwt|apikey|signature/i.test(String(e.message))) {
+            bar(null, tag + 'در حال آپلود «' + file.name + '»…', true, false);
+            const { error } = await bucket.upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+            if (error) throw error;
+            bar(100, tag + 'آپلود انجام شد، در حال ساخت لینک…', true, false);
+          } else throw e;
+        }
+        await sleep(500); // let the "building the link" message be seen
         hist.unshift({ name: file.name, size: file.size, url: bucket.getPublicUrl(path).data.publicUrl,
           dl: bucket.getPublicUrl(path, { download: file.name }).data.publicUrl, t: Date.now() });
         hist = hist.slice(0, 30); persist(); render(); ok++;
-      } catch (e) { msg('«' + file.name + '»: ' + explain(e)); break; }
+        bar(100, tag + 'لینک ساخته شد ✓', false, false);
+        await sleep(files.length > 1 && n < files.length - 1 ? 400 : 0);
+      } catch (e) {
+        if (e && e.aborted) { msg('آپلود لغو شد.'); cancelled = true; }
+        else msg('«' + file.name + '»: ' + explain(e));
+        break;
+      }
     }
-    if (ok === files.length) msg(ok === 1 ? 'آپلود شد. لینک را از فهرست زیر کپی کنید.' : fa(ok) + ' فایل آپلود شد.');
-    busy = false;
+    if (ok && ok === files.length && !cancelled) msg(ok === 1 ? 'لینک آماده است. آن را از فهرست زیر کپی کنید.' : fa(ok) + ' فایل آپلود شد و لینک‌ها آماده است.');
+    if (!ok || cancelled) $('uProg').classList.remove('on');
+    else setTimeout(() => { if (!busy) $('uProg').classList.remove('on'); }, 4000);
+    $('uDrop').style.opacity = '';
+    cur = null; busy = false;
   }
+  $('uCancel').onclick = () => { if (cur) cur.abort(); };
 
   const drop = $('uDrop');
   drop.onclick = () => $('uFile').click();
