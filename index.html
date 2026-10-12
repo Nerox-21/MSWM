@@ -1667,7 +1667,7 @@ $('send').onsubmit = (e) => {
       <div class="k-row">
         <button class="k-btn" data-a="copy">کپی لینک</button>
         <button class="k-btn" data-a="dl">کپی لینک دانلود</button>
-        ${x.code ? '<button class="k-btn" data-a="long">کپی لینک اصلی (بلند)</button>' : ''}
+        ${x.code ? '<button class="k-btn" data-a="long">کپی لینک اصلی (بلند)</button>' : '<button class="k-btn" data-a="short">کوتاه کردن لینک</button>'}
         <button class="k-btn" data-a="open">باز کردن</button>
       </div></div>`).join('');
   }
@@ -1710,7 +1710,7 @@ $('send').onsubmit = (e) => {
     if (typeof supabase === 'undefined') { msg('کتابخانه Supabase بارگذاری نشد. اینترنت یا فیلترشکن را بررسی کنید.'); return; }
     busy = true; cancelled = false; msg('');
     $('uDrop').style.opacity = .5;
-    let ok = 0, shortFail = false;
+    let ok = 0;
     for (const [n, file] of files.entries()) {
       if (file.size > MAX_MB * 1048576) { msg('«' + file.name + '» بزرگ‌تر از ' + fa(MAX_MB) + ' مگابایت است.'); continue; }
       const tag = files.length > 1 ? '(' + fa(n + 1) + ' از ' + fa(files.length) + ') ' : '';
@@ -1732,9 +1732,8 @@ $('send').onsubmit = (e) => {
           } else throw e;
         }
         const url = bucket.getPublicUrl(path).data.publicUrl, dl = bucket.getPublicUrl(path, { download: file.name }).data.publicUrl;
-        const [code] = await Promise.all([makeShort(url, dl), sleep(500)]); // build the short link; the pause lets the message be seen
-        if (!code) shortFail = true;
-        hist.unshift({ name: file.name, size: file.size, url, dl, code, t: Date.now() });
+        await sleep(500); // let the "building the link" message be seen
+        hist.unshift({ name: file.name, size: file.size, url, dl, t: Date.now() });
         hist = hist.slice(0, 30); persist(); render(); ok++;
         bar(100, tag + 'لینک ساخته شد ✓', false, false);
         await sleep(files.length > 1 && n < files.length - 1 ? 400 : 0);
@@ -1744,7 +1743,7 @@ $('send').onsubmit = (e) => {
         break;
       }
     }
-    if (ok && ok === files.length && !cancelled) msg((ok === 1 ? 'لینک آماده است. آن را از فهرست زیر کپی کنید.' : fa(ok) + ' فایل آپلود شد و لینک‌ها آماده است.') + (shortFail ? ' لینک کوتاه ساخته نشد؛ نسخه جدید uploader-setup.sql را در Supabase اجرا کنید. فعلاً لینک اصلی (بلند) در فهرست است.' : ''));
+    if (ok && ok === files.length && !cancelled) msg(ok === 1 ? 'لینک آماده است. اگر لینک کوتاه‌تر می‌خواهید، «کوتاه کردن لینک» را بزنید.' : fa(ok) + ' فایل آپلود شد و لینک‌ها آماده است. برای هر کدام می‌توانید لینک را کوتاه کنید.');
     if (!ok || cancelled) $('uProg').classList.remove('on');
     else setTimeout(() => { if (!busy) $('uProg').classList.remove('on'); }, 4000);
     $('uDrop').style.opacity = '';
@@ -1764,6 +1763,13 @@ $('send').onsubmit = (e) => {
     const b = e.target.closest('button[data-a]'); if (!b) return;
     const item = b.closest('.u-item'), x = hist[+item.dataset.i];
     if (!x) return;
+    if (b.dataset.a === 'short') {
+      b.disabled = true; b.textContent = 'در حال کوتاه کردن…';
+      const code = await makeShort(x.url, x.dl);
+      if (code) { x.code = code; persist(); render(); msg('لینک کوتاه ساخته شد. حالا «کپی لینک» همین لینک کوتاه را کپی می‌کند.'); }
+      else { b.disabled = false; b.textContent = 'کوتاه کردن لینک'; msg('کوتاه کردن لینک انجام نشد. اینترنت را بررسی کنید و مطمئن شوید نسخه جدید uploader-setup.sql را در Supabase اجرا کرده‌اید.'); }
+      return;
+    }
     if (b.dataset.a === 'open') { window.open(x.url, '_blank', 'noopener'); return; }
     const text = b.dataset.a === 'dl' ? dlLink(x) : b.dataset.a === 'long' ? x.url : link(x);
     try { await navigator.clipboard.writeText(text); msg('لینک کپی شد.'); }
