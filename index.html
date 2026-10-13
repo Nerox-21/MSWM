@@ -27,8 +27,10 @@ button{cursor:pointer;border:0}
 .faces i:first-child{margin-inline-start:0}
 .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:26px;backdrop-filter:blur(14px)}
 .card label{display:block;margin:0 0 6px;font-size:.9rem;color:var(--mute)}
-.card input[type=text]{width:100%;padding:13px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);margin-bottom:16px}
-.card input[type=text]::placeholder{color:#5f7587}
+.card input[type=text],.card input[type=password]{width:100%;padding:13px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);margin-bottom:16px}
+.card input[type=text]::placeholder,.card input[type=password]::placeholder{color:#5f7587}
+.rp{display:grid;grid-template-columns:1.45fr 1fr;gap:10px}
+.rp>div{min-width:0}
 .check{display:flex!important;gap:10px;align-items:center;color:var(--mist)!important;font-size:.95rem!important;cursor:pointer}
 .check input{width:18px;height:18px;accent-color:var(--lake)}
 .primary{width:100%;margin-top:20px;padding:14px;border-radius:12px;background:var(--lake);color:var(--night);font-weight:800;font-size:1.05rem}
@@ -74,8 +76,8 @@ button{cursor:pointer;border:0}
 .tools button:hover{background:rgba(15,30,43,.95)}
 .tools .ic{width:17px;height:17px}
 #grid[data-n="2"]:not(.has-spot) .tile.me .tools{display:none}
-#grid.has-spot{grid-template-columns:minmax(0,1fr) 200px;grid-template-rows:repeat(var(--o,1),minmax(0,1fr));grid-auto-rows:0}
-#grid.has-spot .tile.spot{grid-column:1;grid-row:1 / span var(--o,1)}
+#grid.has-spot{grid-template-columns:minmax(0,1fr) 210px;grid-template-rows:repeat(var(--o,1),var(--th,130px)) minmax(0,1fr);grid-auto-rows:0}
+#grid.has-spot .tile.spot{grid-column:1;grid-row:1 / -1}
 #grid.has-spot .tile:not(.spot){grid-column:2}
 #grid.has-spot .tile:not(.spot) .tools{display:none}
 .tile{cursor:pointer}
@@ -188,7 +190,7 @@ button{cursor:pointer;border:0}
 .faces i:nth-child(2){animation-delay:.5s}.faces i:nth-child(3){animation-delay:1s}.faces i:nth-child(4){animation-delay:1.5s}
 @keyframes bob{50%{transform:translateY(-7px)}}
 .card{box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12)}
-.card input[type=text]:focus{border-color:var(--lake);outline:0;box-shadow:0 0 0 3px rgba(46,196,182,.25)}
+.card input[type=text]:focus,.card input[type=password]:focus{border-color:var(--lake);outline:0;box-shadow:0 0 0 3px rgba(46,196,182,.25)}
 .primary{background:linear-gradient(135deg,var(--lake),#3fd6a6);box-shadow:0 10px 26px rgba(46,196,182,.35);transition:transform .15s,box-shadow .15s}
 .primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(46,196,182,.45)}
 
@@ -311,6 +313,30 @@ button.pill:hover{background:#2f4a60}
 
 
 @media(max-width:420px){#bar{gap:6px;padding:8px 10px}.rb{width:42px;height:42px}.rb.leave{width:50px}}
+/* ---------- Meet-like stage: people with a picture get the space, the rest are chips ---------- */
+#lane{position:absolute;top:58px;left:12px;right:12px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-height:92px;overflow:hidden;z-index:4;pointer-events:none}
+#lane:empty{display:none}
+.tile.chip{position:relative;display:flex;align-items:center;gap:8px;height:40px;width:auto;max-width:46vw;padding:0 6px 0 14px;border-radius:99px;pointer-events:auto;cursor:default;animation:none;background:rgba(22,41,58,.88);backdrop-filter:blur(10px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.tile.chip video,.tile.chip .tools,.tile.chip .sig,.tile.chip .zoombar,.tile.chip .hm{display:none!important}
+.tile.chip .av{display:grid!important;width:28px;height:28px;font-size:.85rem;box-shadow:none!important;flex:none;animation:none!important;order:2}
+.tile.chip .nm{position:static;background:none!important;backdrop-filter:none;padding:0!important;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block!important;order:1}
+.tile.chip .mi{position:static;width:20px;height:20px;padding:3px;flex:none;order:0}
+.tile.chip.speaking{outline-offset:0}
+#grid.solo{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+#grid.solo .tile.spot{grid-row:1}
+.tile.spot{touch-action:none;background:#050b11}
+#grid.allnovid .tile{background:none;box-shadow:none;animation:none;cursor:default;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#grid.allnovid .tile .av{width:clamp(72px,22vmin,150px);font-size:clamp(1.8rem,8vmin,3.4rem)}
+#grid.allnovid .tile .nm{position:static;display:flex}
+#grid.allnovid .tile .tools{display:none}
+#grid.allnovid .tile .mi{bottom:auto;left:auto;position:static}
+#grid.allnovid[data-n="2"] .tile.me{position:relative;width:auto;height:auto;bottom:auto;left:auto;z-index:auto;border:0;border-radius:20px;box-shadow:none}
+#grid.allnovid[data-n="2"] .tile.me .nm{display:flex}
+/* people without a picture: hide the black placeholder video so the name circle shows; voice-only rooms centre big circles like Discord */
+.tile:not(.hasvideo):not(.screen) video{visibility:hidden}
+.tile.chip .nm{color:var(--mist)}
+#grid.allnovid{display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:28px 44px}
+#grid.allnovid .tile{flex:0 0 auto;min-width:130px;outline:0!important}
 /* ---------- Room music ---------- */
 #musicBody{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 24px}
 #musicBody label{display:block;margin:16px 0 6px;font-size:.88rem;color:var(--mute)}
@@ -401,9 +427,11 @@ html.redir body>*:not(#redirBox){display:none!important}
     <div class="card">
       <label for="name">نام شما</label>
       <input id="name" type="text" maxlength="30" autocomplete="nickname" placeholder="مثلاً سارا">
-      <label for="room">نام اتاق</label>
-      <input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room">
-      <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید.</p>
+      <div class="rp">
+        <div><label for="room">نام اتاق</label><input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room"></div>
+        <div><label for="pw">رمز (اختیاری)</label><input id="pw" type="password" maxlength="40" dir="ltr" autocomplete="new-password" placeholder="بدون رمز"></div>
+      </div>
+      <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید. فقط کسانی که نام اتاق و رمز یکسان بزنند هم‌اتاق می‌شوند.</p>
       <button class="primary" id="go">ورود به اتاق</button>
       <div id="err" role="alert"></div>
     </div>
@@ -425,6 +453,7 @@ html.redir body>*:not(#redirBox){display:none!important}
       <button class="pill" id="settingsBtn" aria-label="تنظیمات"><svg class="ic"><use href="#i-gear"/></svg></button>
       <button class="pill" id="copy" aria-label="کپی لینک اتاق"><svg class="ic"><use href="#i-link"/></svg><span id="copyTxt">کپی لینک</span></button>
     </div>
+    <div id="lane"></div>
     <div id="grid" data-n="1"></div>
     <div id="bar">
       <button class="rb" id="mic" aria-label="میکروفون"><svg class="ic"><use href="#i-mic"/><path class="sl" d="M2 2l20 20"/></svg></button>
@@ -706,7 +735,7 @@ function fit(t) {
   if (!v.videoWidth || !t.clientHeight) return;
   const va = v.videoWidth / v.videoHeight, ta = t.clientWidth / t.clientHeight;
   const r = Math.max(va, ta) / Math.min(va, ta);
-  v.style.objectFit = (t.classList.contains('screen') || r > 1.4) ? 'contain' : 'cover';
+  v.style.objectFit = (t.classList.contains('screen') || t.classList.contains('spot') || r > 1.05) ? 'contain' : 'cover';
 }
 
 function applyZoom(t) {
@@ -755,6 +784,7 @@ function bindTile(t, id) {
       return;
     }
     if (onBar(e) || t.moved) { t.moved = false; return; }
+    if (!hasPic(t)) return; // people without a picture have nothing to enlarge
     setSpot(id); // click a tile to focus it, click again to go back
   });
   // Ctrl + wheel (or a trackpad pinch) zooms toward the cursor; plain scrolling is left alone
@@ -765,37 +795,64 @@ function bindTile(t, id) {
     zoomAt(t, (+t.dataset.z || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2);
   }, { passive: false });
   // Drag to move around while zoomed in
-  let drag = null;
+  let drag = null, pinch = null;
+  const ptrs = new Map();
   t.addEventListener('pointerdown', (e) => {
     t.moved = false;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2 && t.classList.contains('spot') && !onBar(e)) { // two fingers: pinch to zoom
+      const [a, b] = [...ptrs.values()];
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: +t.dataset.z || 1 }; drag = null; t.moved = true; return;
+    }
     if (e.button !== 0 || (+t.dataset.z || 1) <= 1 || onBar(e)) return;
     drag = { x: e.clientX, y: e.clientY, px: +t.dataset.px || 0, py: +t.dataset.py || 0 };
     t.setPointerCapture(e.pointerId); t.classList.add('grabbing');
   });
   t.addEventListener('pointermove', (e) => {
+    if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && ptrs.size === 2) {
+      const [a, b] = [...ptrs.values()], r = t.getBoundingClientRect();
+      zoomAt(t, pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d, (a.x + b.x) / 2 - r.left - r.width / 2, (a.y + b.y) / 2 - r.top - r.height / 2);
+      t.moved = true; return;
+    }
     if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
     if (Math.abs(dx) + Math.abs(dy) > 4) t.moved = true;
     t.dataset.px = drag.px + dx; t.dataset.py = drag.py + dy;
     clampPan(t); applyZoom(t);
   });
-  const end = () => { drag = null; t.classList.remove('grabbing'); };
+  const end = (e) => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; drag = null; t.classList.remove('grabbing'); };
   t.addEventListener('pointerup', end); t.addEventListener('pointercancel', end);
 }
 
+const hasPic = (t) => t.classList.contains('hasvideo') || t.classList.contains('screen');
+// Like Google Meet: people who show a picture (camera or screen) get the stage; people without a picture become small chips on top.
 function layout() {
-  const g = $('grid'), n = g.children.length;
-  g.dataset.n = n;
-  if (spotId && !$('t-' + spotId)) spotId = null;
+  const g = $('grid'), lane = $('lane'), all = [...g.children, ...lane.children];
+  if (spotId) { const st = $('t-' + spotId); if (!st || !hasPic(st)) spotId = null; }
+  const compact = all.some(hasPic);
+  all.forEach((t) => {
+    const toLane = compact && !hasPic(t), want = toLane ? lane : g;
+    if (t.parentNode !== want) { want.appendChild(t); const v = t.querySelector('video'); if (v && v.srcObject) v.play().catch(() => {}); }
+    t.classList.toggle('chip', toLane);
+  });
+  const kids = [...g.children], gn = kids.length, meIn = kids.some((c) => c.id === 't-me');
+  g.dataset.n = gn;
+  g.classList.toggle('allnovid', !compact);
   g.classList.toggle('has-spot', !!spotId);
-  [...g.children].forEach((c) => c.classList.toggle('spot', c.id === 't-' + spotId));
-  g.style.setProperty('--o', Math.max(1, n - 1));
-  const m = n === 2 ? 1 : n;
+  kids.forEach((c) => { c.classList.toggle('spot', c.id === 't-' + spotId); if (c.id === 't-' + spotId) fit(c); });
+  const thumbs = Math.max(0, gn - (spotId ? 1 : 0));
+  g.classList.toggle('solo', !!spotId && thumbs === 0);
+  g.style.setProperty('--o', Math.max(1, thumbs));
+  const avail = g.clientHeight - 64 - 96, gap = 10;
+  g.style.setProperty('--th', Math.max(72, Math.min(130, (avail - gap * Math.max(0, thumbs - 1)) / Math.max(1, thumbs))) + 'px');
+  const m = gn === 2 && meIn ? 1 : gn;
   let cols = m <= 1 ? 1 : m <= 4 ? 2 : 3;
   if (innerWidth < 760 && m >= 3) cols = 2;
   if (innerWidth >= 760 && m === 2) cols = 2;
   g.style.setProperty('--c', cols);
-  $('meta').textContent = n + ' نفر در تماس';
+  g.style.paddingTop = lane.children.length ? 58 + lane.offsetHeight + 8 + 'px' : '';
+  $('meta').textContent = all.length + ' نفر در تماس';
 }
 addEventListener('resize', layout);
 
@@ -822,7 +879,7 @@ function tile(id, name, stream, isLocal) {
   if (stream) {
     v.srcObject = stream;
     if (!v.onresize) {
-      v.onresize = v.onloadedmetadata = () => { t.classList.toggle('hasvideo', v.videoWidth > 64); fit(t); };
+      v.onresize = v.onloadedmetadata = () => { const had = t.classList.contains('hasvideo'), now = v.videoWidth > 64; t.classList.toggle('hasvideo', now); fit(t); if (had !== now) layout(); };
       if (window.ResizeObserver) new ResizeObserver(() => fit(t)).observe(t); // tile size changes (layout, rotation)
     }
     v.play().catch(() => {});
@@ -980,6 +1037,13 @@ async function join() {
     return;
   }
   localStorage.setItem('cc-name', myName);
+  // With a password the room's channel name includes a hash of it, so a different password is simply a different room
+  let roomKey = '';
+  const pw = $('pw').value;
+  if (pw) {
+    try { roomKey = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cc|' + myRoom + '|' + pw)))].slice(0, 10).map((b) => b.toString(16).padStart(2, '0')).join(''); }
+    catch { $('err').textContent = 'رمز‌گذاری روی این مرورگر ممکن نشد.'; local.getTracks().forEach((t) => t.stop()); return; }
+  }
   history.replaceState(null, '', '#' + encodeURIComponent(myRoom));
 
   $('err').style.color = '#9fd8d2'; $('err').textContent = 'در حال اتصال...'; $('go').disabled = true;
@@ -1001,7 +1065,7 @@ async function join() {
     try { sb.removeChannel(ch); } catch {}
   };
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  ch = sb.channel('room:' + myRoom, { config: { broadcast: { self: true }, presence: { key: myId } } });
+  ch = sb.channel('room:' + myRoom + (roomKey ? ':' + roomKey : ''), { config: { broadcast: { self: true }, presence: { key: myId } } });
   let tracked = false, checked = false, ready = false;
 
   ch.on('broadcast', { event: 'signal' }, ({ payload }) => onSignal(payload));
@@ -1101,7 +1165,7 @@ async function join() {
     settled = true; clearTimeout(timer);
     $('join').style.display = 'none';
     $('app').style.display = 'block';
-    $('roomTitle').textContent = myRoom;
+    $('roomTitle').textContent = myRoom + (roomKey ? ' 🔒' : '');
     tile('me', myName, local, true);
     watchSpeaker('me', local);
     if (innerWidth >= 760) setChat(true);
@@ -1123,6 +1187,17 @@ function makeBlankTrack() {
   return c.captureStream(1).getVideoTracks()[0];
 }
 
+// A shared screen keeps its resolution (readable text) and gets more bitrate, less when many people are watching
+async function tuneSender(s) {
+  try {
+    const peers = Object.keys(pcs).length, p = s.getParameters();
+    if (!p.encodings || !p.encodings.length) p.encodings = [{}];
+    p.encodings[0].maxBitrate = peers <= 2 ? 2500000 : peers <= 4 ? 1500000 : 1000000;
+    p.degradationPreference = 'maintain-resolution';
+    await s.setParameters(p);
+  } catch {}
+}
+
 // Sends screen, else camera, else the blank track to everyone
 async function setVideo() {
   const nt = screenTrack || camTrack || blank;
@@ -1130,7 +1205,7 @@ async function setVideo() {
   if (!local.getVideoTracks().includes(nt)) local.addTrack(nt);
   for (const pc of Object.values(pcs)) {
     const s = pc.getSenders().find((x) => x.track && x.track.kind === 'video');
-    if (s) { try { await s.replaceTrack(nt); } catch {} }
+    if (s) { try { await s.replaceTrack(nt); } catch {} if (screenTrack) tuneSender(s); }
   }
   const t = $('t-me');
   if (t) {
@@ -1198,7 +1273,7 @@ const announceShare = (on) => ch && ch.send({ type: 'broadcast', event: 'share',
 async function toggleShare() {
   if (screenTrack) return stopShare();
   let s;
-  try { s = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 15 }, audio: false }); }
+  try { s = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 15, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false }); }
   catch { return; } // cancelled
   screenTrack = s.getVideoTracks()[0];
   screenTrack.contentHint = 'detail';
