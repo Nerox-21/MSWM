@@ -37,7 +37,7 @@ button{cursor:pointer;border:0}
 /* ---------- Call screen ---------- */
 #app{display:none;position:fixed;inset:0;background:var(--night)}
 #stage{position:absolute;inset:0;transition:inset .2s}
-#app.chat-open #stage,#app.people-open #stage,#app.settings-open #stage{inset:0 0 0 340px}
+#app.chat-open #stage,#app.people-open #stage,#app.settings-open #stage,#app.music-open #stage{inset:0 0 0 340px}
 #grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(var(--c,1),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:10px;padding:64px 12px 96px}
 .tile{position:relative;min-height:0;border-radius:18px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#1c3246,#122232)}
 .tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -132,11 +132,11 @@ button{cursor:pointer;border:0}
 #toast{display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);max-width:90vw;background:rgba(15,30,43,.96);border:1px solid rgba(255,255,255,.15);padding:10px 18px;border-radius:14px;z-index:30;text-align:center}
 
 /* ---------- Chat ---------- */
-#chat,#peoplePanel,#settingsPanel{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
-#app.chat-open #chat,#app.people-open #peoplePanel,#app.settings-open #settingsPanel{display:flex}
-#chat header,#peoplePanel header,#settingsPanel header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08)}
-#chat header button,#peoplePanel header button,#settingsPanel header button{background:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
-#chat header button:hover,#peoplePanel header button:hover,#settingsPanel header button:hover{background:var(--lift)}
+#chat,#peoplePanel,#settingsPanel,#musicPanel{position:absolute;top:0;bottom:0;left:0;width:340px;display:none;flex-direction:column;background:var(--deep);border-right:1px solid rgba(255,255,255,.08);z-index:6}
+#app.chat-open #chat,#app.people-open #peoplePanel,#app.settings-open #settingsPanel,#app.music-open #musicPanel{display:flex}
+#chat header,#peoplePanel header,#settingsPanel header,#musicPanel header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.08)}
+#chat header button,#peoplePanel header button,#settingsPanel header button,#musicPanel header button{background:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+#chat header button:hover,#peoplePanel header button:hover,#settingsPanel header button:hover,#musicPanel header button:hover{background:var(--lift)}
 #msgs{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .m{max-width:85%;padding:8px 13px;border-radius:14px 14px 14px 4px;background:var(--lift);overflow-wrap:anywhere;line-height:1.7}
 .m b{display:block;font-size:.76rem;color:var(--sun)}
@@ -155,8 +155,8 @@ button{cursor:pointer;border:0}
   .wrap{grid-template-columns:1fr;gap:20px}
   .hero p,.faces{display:none}
   .hero h1{font-size:1.7rem}
-  #app.chat-open #stage,#app.people-open #stage,#app.settings-open #stage{inset:0}
-  #chat,#peoplePanel,#settingsPanel{top:auto;left:0;right:0;width:auto;height:70%;border-radius:22px 22px 0 0;border:0;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
+  #app.chat-open #stage,#app.people-open #stage,#app.settings-open #stage,#app.music-open #stage{inset:0}
+  #chat,#peoplePanel,#settingsPanel,#musicPanel{top:auto;left:0;right:0;width:auto;height:70%;border-radius:22px 22px 0 0;border:0;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
   #grid{padding:60px 8px 92px;gap:8px}
   #grid[data-n="2"]:not(.has-spot) .tile.me{width:92px;height:124px;bottom:96px;left:12px}
   .rb{width:48px;height:48px}
@@ -208,7 +208,7 @@ button.pill:hover{background:#2f4a60}
 .rb{transition:transform .15s,background .15s}
 .rb:hover{transform:translateY(-3px)}
 .rb.leave{width:64px;border-radius:26px;background:linear-gradient(135deg,#ff6b6b,#e14646)}
-#chat,#peoplePanel,#settingsPanel{background:rgba(17,31,44,.97)}
+#chat,#peoplePanel,#settingsPanel,#musicPanel{background:rgba(17,31,44,.97)}
 .m{box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .p{padding:8px 10px;border-radius:14px;transition:background .15s}
 .p:hover{background:rgba(255,255,255,.05)}
@@ -310,6 +310,31 @@ button.pill:hover{background:#2f4a60}
 @media(max-width:760px){.tool small{display:none}.tools-row{gap:8px}.tool{padding:10px}.tool i{width:36px;height:36px}.tool b{font-size:.86rem}}
 
 
+@media(max-width:420px){#bar{gap:6px;padding:8px 10px}.rb{width:42px;height:42px}.rb.leave{width:50px}}
+/* ---------- Room music ---------- */
+#musicBody{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 24px}
+#musicBody label{display:block;margin:16px 0 6px;font-size:.88rem;color:var(--mute)}
+#musicBody input[type=text],#musicBody input[type=url]{width:100%;padding:10px 12px;border-radius:10px;border:0;background:var(--lift);color:var(--mist)}
+.mu-now{border-radius:18px;padding:14px;background:linear-gradient(135deg,rgba(155,140,255,.25),rgba(46,196,182,.16));border:1px solid rgba(255,255,255,.12)}
+.mu-title{font-weight:800;overflow-wrap:anywhere}
+.mu-sub{color:var(--mute);font-size:.8rem;margin-top:3px;line-height:1.7}
+.mu-ctl{display:flex;align-items:center;gap:10px;margin-top:12px}
+.mu-ctl input[type=range]{flex:1;min-width:0;accent-color:var(--lake);direction:ltr}
+.mu-ctl time{font-size:.78rem;color:var(--mute);min-width:84px;text-align:end;direction:ltr}
+.mu-b{width:42px;height:42px;border-radius:50%;background:var(--lake);color:var(--night);font-size:1.1rem;display:grid;place-items:center;flex:none}
+.mu-b:disabled{opacity:.4}
+.mu-s{padding:8px 12px;border-radius:10px;background:var(--lift);color:var(--mist);font-size:.82rem;white-space:nowrap}
+.mu-s:disabled{opacity:.4}
+#muTap{display:none;width:100%;margin-top:12px;padding:10px;border-radius:12px;background:var(--sun);color:var(--night);font-weight:800}
+#muForm{display:flex;gap:8px}
+#muForm button{padding:0 16px;border-radius:10px;background:var(--lake);color:var(--night);font-weight:800;flex:none}
+.mu-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.05);margin-top:8px}
+.mu-item.cur{box-shadow:0 0 0 1px #9b8cff inset;background:rgba(155,140,255,.14)}
+.mu-item>div{flex:1;min-width:0}
+.mu-item b{display:block;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mu-item small{color:var(--mute);font-size:.76rem}
+.mu-item button{width:36px;height:36px;border-radius:50%;background:var(--lift);flex:none;color:var(--mist)}
+.sys.music::before{background:#9b8cff}
 /* ---------- Music explore ---------- */
 #music{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;background:var(--night)}
 #music.open{display:block}
@@ -354,6 +379,7 @@ html.redir body>*:not(#redirBox){display:none!important}
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
   <symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></symbol>
   <symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
 </svg>
 
@@ -401,6 +427,7 @@ html.redir body>*:not(#redirBox){display:none!important}
       <button class="rb off" id="cam" aria-label="دوربین"><svg class="ic"><use href="#i-cam"/><path class="sl" d="M2 2l20 20"/></svg></button>
       <button class="rb" id="flip" aria-label="تعویض دوربین" style="display:none"><svg class="ic"><use href="#i-flip"/></svg></button>
       <button class="rb" id="share" aria-label="اشتراک صفحه" style="display:none"><svg class="ic"><use href="#i-share"/></svg></button>
+      <button class="rb" id="musicBtn" aria-label="موزیک مشترک"><svg class="ic"><use href="#i-music"/></svg></button>
       <button class="rb" id="chatBtn" aria-label="چت"><svg class="ic"><use href="#i-chat"/></svg><span id="badge"></span></button>
       <button class="rb leave" id="leave" aria-label="ترک تماس"><svg class="ic"><use href="#i-phone"/></svg></button>
     </div>
@@ -417,6 +444,37 @@ html.redir body>*:not(#redirBox){display:none!important}
     <header><span>افراد <span id="pcount"></span></span><button id="closePeople" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
     <div id="adminBar"><button id="muteAll">میوت کردن همه</button></div>
     <div id="people"></div>
+  </aside>
+  <aside id="musicPanel">
+    <header><span>🎵 موزیک مشترک</span><button id="closeMusic" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
+    <div id="musicBody">
+      <div class="mu-now">
+        <div class="mu-title" id="muTitle">چیزی پخش نمی‌شود</div>
+        <div class="mu-sub" id="muSub">یک آهنگ انتخاب کنید تا برای همه‌ی افراد اتاق همزمان پخش شود.</div>
+        <div class="mu-ctl">
+          <button class="mu-b" id="muPlay" aria-label="پخش و توقف" disabled>▶</button>
+          <input type="range" id="muSeek" min="0" max="1000" value="0" disabled aria-label="جلو و عقب بردن">
+          <time id="muTime">0:00</time>
+        </div>
+        <div class="mu-ctl">
+          <span aria-hidden="true">🔊</span>
+          <input type="range" id="muVol" min="0" max="100" value="80" aria-label="بلندی صدای موزیک (فقط برای شما)">
+          <button class="mu-s" id="muStop" disabled>توقف برای همه</button>
+        </div>
+        <button id="muTap">برای شنیدن موزیک اینجا را بزنید</button>
+      </div>
+      <label for="muUrl">پخش با لینک مستقیم فایل صوتی</label>
+      <form id="muForm">
+        <input type="url" id="muUrl" dir="ltr" placeholder="https://…/song.mp3" autocomplete="off">
+        <button>پخش</button>
+      </form>
+      <p class="note" id="muMsg" role="alert"></p>
+      <label for="muSearch">از اکسپلور موزیک</label>
+      <input type="text" id="muSearch" placeholder="جستجوی آهنگ…" autocomplete="off">
+      <div id="muList"></div>
+      <p class="note" id="muEmpty"></p>
+      <p class="note">هر کس پخش، توقف یا جلو و عقب ببرد، برای همه اعمال می‌شود. بلندی صدا فقط برای خودتان است. برای جلوگیری از اکو، موقع گوش دادن از هدفون استفاده کنید. لینک یوتیوب و اسپاتیفای کار نمی‌کند؛ لینک باید مستقیماً به خود فایل صوتی برسد.</p>
+    </div>
   </aside>
   <aside id="settingsPanel">
     <header><span>تنظیمات</span><button id="closeSettings" aria-label="بستن"><svg class="ic"><use href="#i-x"/></svg></button></header>
@@ -775,15 +833,20 @@ async function flush(pc) {
 }
 
 function setSettings(open) {
-  if (open) { $('app').classList.remove('chat-open', 'people-open'); renderDevices(); }
+  if (open) { $('app').classList.remove('chat-open', 'people-open', 'music-open'); renderDevices(); }
   $('app').classList.toggle('settings-open', open);
 }
 function setPeople(open) {
-  if (open) $('app').classList.remove('chat-open', 'settings-open');
+  if (open) $('app').classList.remove('chat-open', 'settings-open', 'music-open');
   $('app').classList.toggle('people-open', open);
 }
+function setMusic(open) {
+  if (open) $('app').classList.remove('chat-open', 'people-open', 'settings-open');
+  $('app').classList.toggle('music-open', open);
+  if (open && window.roomMusic) window.roomMusic.refresh();
+}
 function setChat(open) {
-  if (open) $('app').classList.remove('people-open', 'settings-open');
+  if (open) $('app').classList.remove('people-open', 'settings-open', 'music-open');
   $('app').classList.toggle('chat-open', open);
   if (open) { unread = 0; $('badge').style.display = 'none'; $('text').focus({ preventScroll: true }); }
 }
@@ -938,6 +1001,7 @@ async function join() {
   ch.on('presence', { event: 'sync' }, renderPeople);
   ch.on('broadcast', { event: 'admin' }, ({ payload }) => onAdmin(payload));
   ch.on('broadcast', { event: 'bye' }, ({ payload }) => byeSet.add(payload.id));
+  ch.on('broadcast', { event: 'music' }, ({ payload }) => { try { window.roomMusic && window.roomMusic.onMsg(payload); } catch {} });
   ch.on('presence', { event: 'sync' }, () => { if (ready) checkSuccession(); });
 
   // Presence = who is in the room. The peer with the larger id starts the call.
@@ -1004,6 +1068,7 @@ async function join() {
       } catch {}
     }
     ready = true; joined = true;
+    try { window.roomMusic && window.roomMusic.ask(); } catch {}
     eventLine({ type: 'join', id: myId, name: myName, t: Date.now() });
     logEvent('join'); callStart = Date.now(); playSound('join');
   });
@@ -1490,6 +1555,8 @@ $('muteAll').onclick = () => { if (iAmAdmin && confirm('میکروفون همه 
 const notice = sessionStorage.getItem('cc-notice');
 if (notice) { sessionStorage.removeItem('cc-notice'); $('err').textContent = notice; }
 if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && !isMobile()) $('share').style.display = '';
+$('musicBtn').onclick = () => setMusic(!$('app').classList.contains('music-open'));
+$('closeMusic').onclick = () => setMusic(false);
 $('chatBtn').onclick = () => setChat(!$('app').classList.contains('chat-open'));
 $('closeChat').onclick = () => setChat(false);
 $('copy').onclick = async () => {
@@ -1960,6 +2027,141 @@ $('send').onsubmit = (e) => {
   const close = () => { $('music').classList.remove('open'); document.querySelectorAll('#mList audio').forEach((a) => a.pause()); };
   $('mBack').onclick = close;
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+})();
+// ---------- Shared music inside a call ----------
+// Everybody plays the same file on their own device and the "music" broadcast keeps the players in step.
+(() => {
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const audio = new Audio();
+  audio.preload = 'auto';
+  let st = { url: '', title: '', owner: '', ownerName: '' }; // what the room is playing now
+  let tracks = [], tok = 0, lastSync = 0, msgT = 0, seeking = false, loaded = false;
+
+  const send = (o) => { if (typeof ch !== 'undefined' && ch) ch.send({ type: 'broadcast', event: 'music', payload: { by: myId, byName: myName, ...o } }); };
+  const msg = (t) => { $('muMsg').textContent = t; clearTimeout(msgT); if (t) msgT = setTimeout(() => ($('muMsg').textContent = ''), 8000); };
+  const fmt = (s) => (isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '—');
+  const line = (text) => {
+    $('empty').style.display = 'none';
+    const d = document.createElement('div'); d.className = 'sys music'; d.dir = 'auto'; d.textContent = '🎵 ' + text;
+    $('msgs').appendChild(d); $('msgs').scrollTop = $('msgs').scrollHeight;
+  };
+
+  // ----- volume (kept on this device only)
+  let vol = 80;
+  try { const v = localStorage.getItem('cc-music-vol'); if (v !== null && !isNaN(+v)) vol = Math.min(100, Math.max(0, +v)); } catch {}
+  $('muVol').value = vol; audio.volume = vol / 100;
+  $('muVol').oninput = (e) => { audio.volume = e.target.value / 100; try { localStorage.setItem('cc-music-vol', e.target.value); } catch {} };
+
+  // ----- screen
+  function ui() {
+    const has = !!st.url;
+    $('muTitle').textContent = has ? st.title : 'چیزی پخش نمی‌شود';
+    $('muSub').textContent = has ? 'پخش‌کننده: ' + st.ownerName : 'یک آهنگ انتخاب کنید تا برای همه‌ی افراد اتاق همزمان پخش شود.';
+    $('muPlay').disabled = $('muStop').disabled = !has;
+    $('muPlay').textContent = audio.paused ? '▶' : '❚❚';
+    $('muSeek').disabled = !has || !isFinite(audio.duration);
+    if (!seeking) $('muSeek').value = isFinite(audio.duration) && audio.duration ? (audio.currentTime / audio.duration) * 1000 : 0;
+    $('muTime').textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+    $('musicBtn').classList.toggle('on', has && !audio.paused);
+    document.querySelectorAll('#muList .mu-item').forEach((e) => e.classList.toggle('cur', has && e.dataset.url === st.url));
+  }
+  ['timeupdate', 'play', 'pause', 'loadedmetadata', 'durationchange', 'ended'].forEach((ev) => audio.addEventListener(ev, ui));
+
+  const tryPlay = () => audio.play().then(() => ($('muTap').style.display = 'none')).catch((e) => {
+    if (e && e.name === 'NotAllowedError') { $('muTap').style.display = 'block'; if (!$('app').classList.contains('music-open')) setMusic(true); }
+  });
+  $('muTap').onclick = () => { tryPlay(); };
+  audio.addEventListener('error', () => { if (st.url) msg('این فایل روی دستگاه شما پخش نشد (لینک خراب است یا فرمتش پشتیبانی نمی‌شود).'); });
+
+  // ----- applying what the room says
+  function load(p) {
+    st = { url: p.url, title: p.title || 'آهنگ', owner: p.by, ownerName: p.byName || '' };
+    const my = ++tok;
+    audio.src = p.url;
+    audio.onloadedmetadata = () => { if (my !== tok) return; try { audio.currentTime = p.pos || 0; } catch {} if (!p.paused) tryPlay(); };
+    if (p.paused) audio.pause();
+    ui();
+  }
+  function setPos(pos) { try { if (isFinite(pos)) audio.currentTime = pos; } catch {} }
+
+  function onMsg(p) {
+    if (!p || typeof p !== 'object') return;
+    const mine = p.by === myId;
+    if (p.a === 'ask') {
+      if (mine || !st.url) return;
+      const asked = Date.now();
+      setTimeout(() => { // the one who started it answers first; if they are gone, someone else does
+        if (lastSync > asked || !st.url) return;
+        send({ a: 'play', sync: true, to: p.by, url: st.url, title: st.title, by: st.owner, byName: st.ownerName, pos: audio.currentTime, paused: audio.paused });
+      }, st.owner === myId ? 0 : 600 + Math.random() * 900);
+      return;
+    }
+    if (p.a === 'play') {
+      if (p.sync) { lastSync = Date.now(); if (p.to !== myId) return; }
+      if (typeof p.url !== 'string' || !/^https?:\/\//i.test(p.url)) return;
+      load({ ...p, title: String(p.title || '').slice(0, 120), byName: String(p.byName || '').slice(0, 40) });
+      if (!p.sync) line((mine ? 'شما' : p.byName) + ' «' + String(p.title || '').slice(0, 60) + (mine ? '» را پخش کردید' : '» را پخش کرد'));
+      return;
+    }
+    if (!st.url) return;
+    if (p.a === 'pause') { setPos(p.pos); audio.pause(); st.owner = p.by; st.ownerName = p.byName; }
+    else if (p.a === 'resume') { setPos(p.pos); tryPlay(); st.owner = p.by; st.ownerName = p.byName; }
+    else if (p.a === 'seek') { setPos(p.pos); }
+    else if (p.a === 'tick') { if (!mine && p.url === st.url && !audio.paused && Math.abs(audio.currentTime - p.pos) > 2) setPos(p.pos); }
+    else if (p.a === 'stop') { tok++; audio.pause(); audio.removeAttribute('src'); audio.load(); st = { url: '', title: '', owner: '', ownerName: '' }; line((mine ? 'شما' : p.byName) + (mine ? ' پخش موزیک را متوقف کردید' : ' پخش موزیک را متوقف کرد')); }
+    ui();
+  }
+
+  // ----- starting things
+  function start(url, title) {
+    send({ a: 'play', url, title: String(title).slice(0, 120), pos: 0, paused: false });
+  }
+  const bad = /(youtube\.com|youtu\.be|spotify\.com|soundcloud\.com|music\.apple\.com|deezer\.com|t\.me|instagram\.com|radiojavan\.com)/i;
+  $('muForm').onsubmit = (e) => {
+    e.preventDefault();
+    const raw = $('muUrl').value.trim(); if (!raw) return;
+    let u; try { u = new URL(raw); } catch { return msg('لینک معتبر نیست.'); }
+    if (u.protocol !== 'https:') return msg('لینک باید با https شروع شود.');
+    if (bad.test(u.hostname)) return msg('این سایت لینک مستقیم فایل نمی‌دهد. لینک باید مستقیماً به یک فایل صوتی (مثل .mp3) برسد؛ می‌توانید فایل را در اکسپلور موزیک یا بخش آپلود بگذارید.');
+    let name = ''; try { name = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || ''); } catch {}
+    start(u.href, name.replace(/\.[A-Za-z0-9]{1,5}$/, '') || u.hostname);
+    $('muUrl').value = ''; msg('');
+  };
+  $('muPlay').onclick = () => { if (!st.url) return; send({ a: audio.paused ? 'resume' : 'pause', pos: audio.currentTime }); };
+  $('muStop').onclick = () => { if (st.url) send({ a: 'stop' }); };
+  $('muSeek').oninput = () => { seeking = true; };
+  $('muSeek').onchange = (e) => { seeking = false; if (isFinite(audio.duration)) send({ a: 'seek', pos: (e.target.value / 1000) * audio.duration }); };
+  audio.addEventListener('ended', () => { // the player moves on to the next track of the explore list
+    if (st.owner !== myId) return;
+    const i = tracks.findIndex((t) => t.url === st.url);
+    if (i >= 0 && tracks[i + 1]) start(tracks[i + 1].url, tracks[i + 1].title);
+  });
+  setInterval(() => { if (st.url && st.owner === myId && !audio.paused) send({ a: 'tick', url: st.url, pos: audio.currentTime }); }, 10000);
+
+  // ----- explore list
+  function render() {
+    const q = $('muSearch').value.trim().toLowerCase();
+    const list = tracks.filter((t) => !q || (t.title + ' ' + t.artist).toLowerCase().includes(q));
+    $('muEmpty').textContent = list.length ? '' : (loaded ? (tracks.length ? 'موردی پیدا نشد.' : 'هنوز موزیکی در اکسپلور نیست.') : 'در حال بارگذاری…');
+    $('muList').innerHTML = list.map((t, i) => `<div class="mu-item" data-url="${esc(t.url)}" data-i="${tracks.indexOf(t)}">
+      <div><b>${esc(t.title)}</b><small>${esc(t.artist || '')}</small></div><button aria-label="پخش برای همه">▶</button></div>`).join('');
+    ui();
+  }
+  async function refresh() {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/music_list', { method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_limit: 100 }) });
+      if (!r.ok) throw 0;
+      tracks = await r.json(); loaded = true; render();
+    } catch { loaded = true; $('muEmpty').textContent = 'فهرست اکسپلور بارگذاری نشد. می‌توانید با لینک مستقیم پخش کنید.'; }
+  }
+  $('muList').onclick = (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const t = tracks[+b.closest('.mu-item').dataset.i]; if (t) start(t.url, t.title);
+  };
+  $('muSearch').oninput = render;
+
+  window.roomMusic = { onMsg, refresh, ask: () => send({ a: 'ask' }) };
+  ui();
 })();
 </script>
 </body>
