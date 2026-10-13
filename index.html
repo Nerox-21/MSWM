@@ -325,6 +325,10 @@ button.pill:hover{background:#2f4a60}
 .mu-b:disabled{opacity:.4}
 .mu-s{padding:8px 12px;border-radius:10px;background:var(--lift);color:var(--mist);font-size:.82rem;white-space:nowrap}
 .mu-s:disabled{opacity:.4}
+.mu-now label{margin:12px 0 0!important;font-size:.8rem!important}
+.mu-pct{min-width:42px;text-align:end;font-size:.8rem;color:var(--mute);direction:ltr}
+.mu-ctl .mu-s{flex:1}
+.mu-lock{opacity:.45;pointer-events:none}
 #muTap{display:none;width:100%;margin-top:12px;padding:10px;border-radius:12px;background:var(--sun);color:var(--night);font-weight:800}
 #muForm{display:flex;gap:8px}
 #muForm button{padding:0 16px;border-radius:10px;background:var(--lake);color:var(--night);font-weight:800;flex:none}
@@ -456,11 +460,23 @@ html.redir body>*:not(#redirBox){display:none!important}
           <input type="range" id="muSeek" min="0" max="1000" value="0" disabled aria-label="جلو و عقب بردن">
           <time id="muTime">0:00</time>
         </div>
+        <label for="muRoomVol">صدای کلی (برای همه‌ی اتاق)</label>
         <div class="mu-ctl">
           <span aria-hidden="true">🔊</span>
-          <input type="range" id="muVol" min="0" max="100" value="80" aria-label="بلندی صدای موزیک (فقط برای شما)">
-          <button class="mu-s" id="muStop" disabled>توقف برای همه</button>
+          <input type="range" id="muRoomVol" min="0" max="100" value="70" aria-label="صدای کلی موزیک برای همه">
+          <b class="mu-pct" id="muRoomPct">۷۰٪</b>
         </div>
+        <label for="muVol">صدای من (فقط برای خودم)</label>
+        <div class="mu-ctl">
+          <span aria-hidden="true">🎧</span>
+          <input type="range" id="muVol" min="0" max="100" value="100" aria-label="صدای موزیک فقط برای من">
+          <b class="mu-pct" id="muVolPct">۱۰۰٪</b>
+        </div>
+        <div class="mu-ctl">
+          <button class="mu-s" id="muMute" disabled>بی‌صدا کردن برای من</button>
+          <button class="mu-s" id="muStop" disabled style="display:none">توقف برای همه</button>
+        </div>
+        <p class="note" id="muLock" style="display:none;color:var(--sun)">مدیر اجازه‌ی کنترل موزیک را از شما گرفته است. می‌توانید گوش بدهید و صدای خودتان را تنظیم کنید.</p>
         <button id="muTap">برای شنیدن موزیک اینجا را بزنید</button>
       </div>
       <label for="muUrl">پخش با لینک مستقیم فایل صوتی</label>
@@ -473,7 +489,7 @@ html.redir body>*:not(#redirBox){display:none!important}
       <input type="text" id="muSearch" placeholder="جستجوی آهنگ…" autocomplete="off">
       <div id="muList"></div>
       <p class="note" id="muEmpty"></p>
-      <p class="note">هر کس پخش، توقف یا جلو و عقب ببرد، برای همه اعمال می‌شود. بلندی صدا فقط برای خودتان است. برای جلوگیری از اکو، موقع گوش دادن از هدفون استفاده کنید. لینک یوتیوب و اسپاتیفای کار نمی‌کند؛ لینک باید مستقیماً به خود فایل صوتی برسد.</p>
+      <p class="note">پخش، توقف و جلو و عقب بردن برای همه اعمال می‌شود، مگر مدیر اجازه‌ی کسی را گرفته باشد. صدای کلی را همه یکسان می‌شنوند و صدای خودم فقط روی دستگاه شماست. برای جلوگیری از اکو، موقع گوش دادن از هدفون استفاده کنید. لینک یوتیوب و اسپاتیفای کار نمی‌کند؛ لینک باید مستقیماً به خود فایل صوتی برسد.</p>
     </div>
   </aside>
   <aside id="settingsPanel">
@@ -670,7 +686,7 @@ const ICE = { iceServers: [
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
-let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, openRow = null, joinedAt = Date.now(), callStart = 0;
+let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, noMusic = false, openRow = null, joinedAt = Date.now(), callStart = 0;
 const hushed = new Set(); // people I muted just for myself
 const pendingLeave = new Set(), byeSet = new Set(), dropped = {}, lostTimers = {}, peerQ = {};
 let offlineSince = 0;
@@ -1199,7 +1215,7 @@ async function stopShare() {
   await setVideo();
 }
 
-const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens, adm: iAmAdmin, joinedAt });
+const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens, adm: iAmAdmin, nomusic: noMusic, joinedAt });
 
 // Marks who has their microphone muted (shared through presence)
 function applyStates() {
@@ -1264,7 +1280,7 @@ function renderPeople() {
   if (!ch) return;
   const list = Object.entries(ch.presenceState()).map(([id, v]) => {
     const m = v[0] || {};
-    return { id: id === myId ? 'me' : id, name: m.name || 'مهمان', muted: !!m.muted, adm: !!m.adm };
+    return { id: id === myId ? 'me' : id, name: m.name || 'مهمان', muted: !!m.muted, adm: !!m.adm, nomusic: !!m.nomusic };
   });
   list.sort((a, b) => (b.id === 'me') - (a.id === 'me') || a.name.localeCompare(b.name, 'fa'));
   $('app').classList.toggle('is-admin', iAmAdmin);
@@ -1278,6 +1294,7 @@ function renderPeople() {
     nm.textContent = p.name + (p.id === 'me' ? ' (شما)' : '');
     row.append(av, nm);
     if (p.adm) row.insertAdjacentHTML('beforeend', '<span class="chip">مدیر</span>');
+    if (p.nomusic) row.insertAdjacentHTML('beforeend', '<span class="chip" title="بدون اجازه‌ی موزیک">🎵✕</span>');
     if (p.muted) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi" aria-label="میکروفون بسته"><use href="#i-mic"/><path d="M2 2l20 20"/></svg>');
     if (hushed.has(p.id)) row.insertAdjacentHTML('beforeend', '<svg class="ic pmi gray" aria-label="بی‌صدا برای شما"><use href="#i-vol"/><path d="M2 2l20 20"/></svg>');
     if (p.id !== 'me') {
@@ -1293,6 +1310,7 @@ function renderPeople() {
       if (iAmAdmin) {
         add('mute', 'بستن میکروفون او');
         add('video', 'خاموش کردن دوربین / اشتراک');
+        add(p.nomusic ? 'okmusic' : 'nomusic', p.nomusic ? 'دادن اجازه‌ی آهنگ گذاشتن' : 'گرفتن اجازه‌ی آهنگ گذاشتن');
         if (!p.adm) add('admin', 'ادمین کردن');
         add('kick', 'حذف از اتاق', true);
       }
@@ -1302,6 +1320,7 @@ function renderPeople() {
     return row;
   }));
   applyStates();
+  if (window.roomMusic) window.roomMusic.perm();
 }
 
 // ---------- Admin and personal muting ----------
@@ -1324,6 +1343,7 @@ function adminAct(id, act) {
   if (!iAmAdmin) return;
   if (act === 'kick' && !confirm('این فرد از اتاق حذف شود؟')) return;
   sendAdmin(id, act);
+  if (act === 'nomusic' && window.roomMusic) window.roomMusic.stopIfBy(id);
 }
 
 function onAdmin({ from, to, action }) {
@@ -1341,8 +1361,13 @@ function onAdmin({ from, to, action }) {
     if (screenTrack) stopShare();
     if (camTrack) toggleCamera();
     toast('مدیر دوربین یا اشتراک صفحه شما را متوقف کرد.');
+  } else if (action === 'nomusic' || action === 'okmusic') {
+    noMusic = action === 'nomusic'; trackMe(); renderPeople();
+    if (window.roomMusic) window.roomMusic.perm();
+    toast(noMusic ? 'مدیر اجازه‌ی کنترل موزیک را از شما گرفت.' : 'مدیر دوباره اجازه‌ی کنترل موزیک را به شما داد.');
   } else if (action === 'admin') {
     iAmAdmin = true; trackMe(); renderPeople();
+    if (window.roomMusic) window.roomMusic.perm();
     toast('شما مدیر اتاق شدید.');
   } else if (action === 'kick') {
     sessionStorage.setItem('cc-notice', 'مدیر شما را از اتاق حذف کرد.');
@@ -2036,30 +2061,50 @@ $('send').onsubmit = (e) => {
   audio.preload = 'auto';
   let st = { url: '', title: '', owner: '', ownerName: '' }; // what the room is playing now
   let tracks = [], tok = 0, lastSync = 0, msgT = 0, seeking = false, loaded = false;
+  let roomVol = 70, myVol = 100, selfMute = false; // final loudness = room volume x my volume
 
+  const canCtl = () => !noMusic || iAmAdmin;
   const send = (o) => { if (typeof ch !== 'undefined' && ch) ch.send({ type: 'broadcast', event: 'music', payload: { by: myId, byName: myName, ...o } }); };
+  const ctl = (o) => { if (!canCtl()) { msg('مدیر اجازه‌ی کنترل موزیک را از شما گرفته است.'); return; } send(o); };
   const msg = (t) => { $('muMsg').textContent = t; clearTimeout(msgT); if (t) msgT = setTimeout(() => ($('muMsg').textContent = ''), 8000); };
+  const fa = (n) => Number(n).toLocaleString('fa-IR');
   const fmt = (s) => (isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '—');
   const line = (text) => {
     $('empty').style.display = 'none';
     const d = document.createElement('div'); d.className = 'sys music'; d.dir = 'auto'; d.textContent = '🎵 ' + text;
     $('msgs').appendChild(d); $('msgs').scrollTop = $('msgs').scrollHeight;
   };
+  // Someone whom the admin has blocked cannot control the music (the page of every person checks this)
+  const allowed = (id) => { const m = metaOf(id); return !(m && m.nomusic && !m.adm); };
 
-  // ----- volume (kept on this device only)
-  let vol = 80;
-  try { const v = localStorage.getItem('cc-music-vol'); if (v !== null && !isNaN(+v)) vol = Math.min(100, Math.max(0, +v)); } catch {}
-  $('muVol').value = vol; audio.volume = vol / 100;
-  $('muVol').oninput = (e) => { audio.volume = e.target.value / 100; try { localStorage.setItem('cc-music-vol', e.target.value); } catch {} };
+  // ----- volume: the room volume is shared, "my volume" stays on this device
+  try { const v = localStorage.getItem('cc-music-vol'); if (v !== null && !isNaN(+v)) myVol = Math.min(100, Math.max(0, +v)); } catch {}
+  const applyVol = () => {
+    audio.volume = (roomVol / 100) * (myVol / 100);
+    audio.muted = selfMute;
+    $('muRoomVol').value = roomVol; $('muRoomPct').textContent = fa(roomVol) + '٪';
+    $('muVol').value = myVol; $('muVolPct').textContent = fa(myVol) + '٪';
+    $('muMute').textContent = selfMute ? 'روشن کردن صدا برای من' : 'بی‌صدا کردن برای من';
+  };
+  $('muVol').oninput = (e) => { myVol = +e.target.value; applyVol(); try { localStorage.setItem('cc-music-vol', String(myVol)); } catch {} };
+  $('muRoomVol').oninput = (e) => { roomVol = +e.target.value; applyVol(); };
+  $('muRoomVol').onchange = (e) => ctl({ a: 'vol', v: +e.target.value });
+  $('muMute').onclick = () => { selfMute = !selfMute; applyVol(); };
 
   // ----- screen
   function ui() {
-    const has = !!st.url;
+    const has = !!st.url, can = canCtl();
     $('muTitle').textContent = has ? st.title : 'چیزی پخش نمی‌شود';
     $('muSub').textContent = has ? 'پخش‌کننده: ' + st.ownerName : 'یک آهنگ انتخاب کنید تا برای همه‌ی افراد اتاق همزمان پخش شود.';
-    $('muPlay').disabled = $('muStop').disabled = !has;
+    $('muPlay').disabled = !has || !can;
+    $('muMute').disabled = !has;
+    $('muStop').style.display = iAmAdmin ? '' : 'none'; $('muStop').disabled = !has;
     $('muPlay').textContent = audio.paused ? '▶' : '❚❚';
-    $('muSeek').disabled = !has || !isFinite(audio.duration);
+    $('muSeek').disabled = !has || !can || !isFinite(audio.duration);
+    $('muRoomVol').disabled = !can;
+    $('muUrl').disabled = !can; $('muForm').querySelector('button').disabled = !can;
+    $('muList').classList.toggle('mu-lock', !can);
+    $('muLock').style.display = can ? 'none' : '';
     if (!seeking) $('muSeek').value = isFinite(audio.duration) && audio.duration ? (audio.currentTime / audio.duration) * 1000 : 0;
     $('muTime').textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
     $('musicBtn').classList.toggle('on', has && !audio.paused);
@@ -2076,6 +2121,8 @@ $('send').onsubmit = (e) => {
   // ----- applying what the room says
   function load(p) {
     st = { url: p.url, title: p.title || 'آهنگ', owner: p.by, ownerName: p.byName || '' };
+    if (typeof p.vol === 'number') roomVol = Math.min(100, Math.max(0, p.vol));
+    applyVol();
     const my = ++tok;
     audio.src = p.url;
     audio.onloadedmetadata = () => { if (my !== tok) return; try { audio.currentTime = p.pos || 0; } catch {} if (!p.paused) tryPlay(); };
@@ -2092,30 +2139,34 @@ $('send').onsubmit = (e) => {
       const asked = Date.now();
       setTimeout(() => { // the one who started it answers first; if they are gone, someone else does
         if (lastSync > asked || !st.url) return;
-        send({ a: 'play', sync: true, to: p.by, url: st.url, title: st.title, by: st.owner, byName: st.ownerName, pos: audio.currentTime, paused: audio.paused });
+        send({ a: 'play', sync: true, to: p.by, url: st.url, title: st.title, by: st.owner, byName: st.ownerName, pos: audio.currentTime, paused: audio.paused, vol: roomVol });
       }, st.owner === myId ? 0 : 600 + Math.random() * 900);
       return;
     }
+    if (p.a === 'tick') { if (!mine && p.url === st.url && !audio.paused && Math.abs(audio.currentTime - p.pos) > 2) setPos(p.pos); return; }
+    if (p.a === 'play' && p.sync) {
+      lastSync = Date.now(); if (p.to !== myId) return;
+      if (typeof p.url === 'string' && /^https?:\/\//i.test(p.url)) load({ ...p, title: String(p.title || '').slice(0, 120), byName: String(p.byName || '').slice(0, 40) });
+      return;
+    }
+    if (!allowed(p.by)) return; // sent by someone the admin has blocked
+    if (p.a === 'vol') { if (typeof p.v === 'number') { roomVol = Math.min(100, Math.max(0, p.v)); applyVol(); } return; }
     if (p.a === 'play') {
-      if (p.sync) { lastSync = Date.now(); if (p.to !== myId) return; }
       if (typeof p.url !== 'string' || !/^https?:\/\//i.test(p.url)) return;
       load({ ...p, title: String(p.title || '').slice(0, 120), byName: String(p.byName || '').slice(0, 40) });
-      if (!p.sync) line((mine ? 'شما' : p.byName) + ' «' + String(p.title || '').slice(0, 60) + (mine ? '» را پخش کردید' : '» را پخش کرد'));
+      line((mine ? 'شما' : p.byName) + ' «' + String(p.title || '').slice(0, 60) + (mine ? '» را پخش کردید' : '» را پخش کرد'));
       return;
     }
     if (!st.url) return;
     if (p.a === 'pause') { setPos(p.pos); audio.pause(); st.owner = p.by; st.ownerName = p.byName; }
     else if (p.a === 'resume') { setPos(p.pos); tryPlay(); st.owner = p.by; st.ownerName = p.byName; }
     else if (p.a === 'seek') { setPos(p.pos); }
-    else if (p.a === 'tick') { if (!mine && p.url === st.url && !audio.paused && Math.abs(audio.currentTime - p.pos) > 2) setPos(p.pos); }
     else if (p.a === 'stop') { tok++; audio.pause(); audio.removeAttribute('src'); audio.load(); st = { url: '', title: '', owner: '', ownerName: '' }; line((mine ? 'شما' : p.byName) + (mine ? ' پخش موزیک را متوقف کردید' : ' پخش موزیک را متوقف کرد')); }
     ui();
   }
 
   // ----- starting things
-  function start(url, title) {
-    send({ a: 'play', url, title: String(title).slice(0, 120), pos: 0, paused: false });
-  }
+  const start = (url, title) => ctl({ a: 'play', url, title: String(title).slice(0, 120), pos: 0, paused: false, vol: roomVol });
   const bad = /(youtube\.com|youtu\.be|spotify\.com|soundcloud\.com|music\.apple\.com|deezer\.com|t\.me|instagram\.com|radiojavan\.com)/i;
   $('muForm').onsubmit = (e) => {
     e.preventDefault();
@@ -2127,12 +2178,12 @@ $('send').onsubmit = (e) => {
     start(u.href, name.replace(/\.[A-Za-z0-9]{1,5}$/, '') || u.hostname);
     $('muUrl').value = ''; msg('');
   };
-  $('muPlay').onclick = () => { if (!st.url) return; send({ a: audio.paused ? 'resume' : 'pause', pos: audio.currentTime }); };
-  $('muStop').onclick = () => { if (st.url) send({ a: 'stop' }); };
+  $('muPlay').onclick = () => { if (st.url) ctl({ a: audio.paused ? 'resume' : 'pause', pos: audio.currentTime }); };
+  $('muStop').onclick = () => { if (st.url && iAmAdmin) send({ a: 'stop' }); }; // only admins stop it for everyone
   $('muSeek').oninput = () => { seeking = true; };
-  $('muSeek').onchange = (e) => { seeking = false; if (isFinite(audio.duration)) send({ a: 'seek', pos: (e.target.value / 1000) * audio.duration }); };
+  $('muSeek').onchange = (e) => { seeking = false; if (isFinite(audio.duration)) ctl({ a: 'seek', pos: (e.target.value / 1000) * audio.duration }); };
   audio.addEventListener('ended', () => { // the player moves on to the next track of the explore list
-    if (st.owner !== myId) return;
+    if (st.owner !== myId || !canCtl()) return;
     const i = tracks.findIndex((t) => t.url === st.url);
     if (i >= 0 && tracks[i + 1]) start(tracks[i + 1].url, tracks[i + 1].title);
   });
@@ -2143,7 +2194,7 @@ $('send').onsubmit = (e) => {
     const q = $('muSearch').value.trim().toLowerCase();
     const list = tracks.filter((t) => !q || (t.title + ' ' + t.artist).toLowerCase().includes(q));
     $('muEmpty').textContent = list.length ? '' : (loaded ? (tracks.length ? 'موردی پیدا نشد.' : 'هنوز موزیکی در اکسپلور نیست.') : 'در حال بارگذاری…');
-    $('muList').innerHTML = list.map((t, i) => `<div class="mu-item" data-url="${esc(t.url)}" data-i="${tracks.indexOf(t)}">
+    $('muList').innerHTML = list.map((t) => `<div class="mu-item" data-url="${esc(t.url)}" data-i="${tracks.indexOf(t)}">
       <div><b>${esc(t.title)}</b><small>${esc(t.artist || '')}</small></div><button aria-label="پخش برای همه">▶</button></div>`).join('');
     ui();
   }
@@ -2160,8 +2211,12 @@ $('send').onsubmit = (e) => {
   };
   $('muSearch').oninput = render;
 
-  window.roomMusic = { onMsg, refresh, ask: () => send({ a: 'ask' }) };
-  ui();
+  window.roomMusic = {
+    onMsg, refresh, ui, perm: ui,
+    ask: () => send({ a: 'ask' }),
+    stopIfBy: (id) => { if (st.url && st.owner === id && iAmAdmin) send({ a: 'stop' }); } // the admin blocks the person who is playing
+  };
+  applyVol(); ui();
 })();
 </script>
 </body>
