@@ -240,22 +240,17 @@ button.pill:hover{background:#2f4a60}
 .sys.back::before{background:var(--lake)}
 #netbar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;justify-content:center;padding:8px 12px;background:#b4691a;color:#fff;font-size:.9rem;text-align:center}
 
-/* ---------- Konkur section ---------- */
+/* ---------- Shared overlay pages ---------- */
 .ghost{width:100%;margin-top:10px;padding:12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--mist);font-weight:600;transition:background .15s}
 .ghost:hover{background:rgba(255,255,255,.14)}
-#konkur,#uploader{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
+#uploader,#rooms{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
   background:radial-gradient(60% 40% at 90% 0%,rgba(46,196,182,.22),transparent 70%),radial-gradient(50% 40% at 0% 100%,rgba(255,180,84,.16),transparent 70%),var(--night)}
-#konkur.open,#uploader.open{display:block}
+#uploader.open,#rooms.open{display:block}
 .k-wrap{max-width:780px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));display:grid;gap:14px}
 .k-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .k-head h2{flex:1;font-size:1.4rem;font-weight:800}
 .k-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;backdrop-filter:blur(10px)}
 .k-card h3{margin-bottom:10px;font-size:1.05rem;font-weight:800}
-.k-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.k-full{grid-column:1/-1}
-#konkur label{display:grid;gap:4px;font-size:.85rem;color:var(--mute)}
-#konkur input,#konkur select,#konkur textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist)}
-#konkur select option{color:#111}
-#konkur textarea{resize:vertical;min-height:64px}
 .k-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .k-row input{flex:1;min-width:160px}
 .k-btn{padding:9px 16px;border-radius:10px;background:var(--lift);color:var(--mist);font-weight:600}
@@ -264,24 +259,9 @@ button.pill:hover{background:#2f4a60}
 .k-chip{display:inline-block;padding:1px 10px;border-radius:99px;background:rgba(255,255,255,.1);font-size:.8rem}
 .k-chip.ok{background:rgba(46,196,182,.2);color:var(--lake)}.k-chip.warn{background:rgba(255,180,84,.2);color:var(--sun)}
 .k-sub{color:var(--mute);font-size:.88rem}
-.k-code{font-size:1.5rem;letter-spacing:.12em;color:var(--sun);background:rgba(255,255,255,.07);padding:4px 14px;border-radius:12px;user-select:all}
-#kHave{margin-bottom:12px}
 .k-list{display:grid;gap:10px;padding:0;list-style:none;margin-top:10px}
-.k-item{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
-.k-no{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--lake),#2a8cff);color:#fff;display:grid;place-items:center;font-weight:800}
-.k-t{font-weight:800}.k-u{color:var(--mute);font-size:.92rem}
-.k-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.k-note{margin-top:6px;font-size:.9rem;white-space:pre-wrap;overflow-wrap:anywhere}
-.k-acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px dashed rgba(255,255,255,.14);padding-top:8px}
-.k-acts button{padding:4px 11px;font-size:.85rem;border-radius:9px;background:var(--lift);color:var(--mist)}
-.k-acts input{width:88px;min-width:0;padding:4px 8px;font-size:.85rem}
-.k-acts .on{background:#f59e0b;color:#fff}.k-acts .del{background:rgba(239,91,91,.18);color:#ff9d9d}
-.k-list.filtered [data-a="up"],.k-list.filtered [data-a="down"],.k-list.filtered [data-a="pos"]{display:none}
 .k-empty{text-align:center;color:var(--mute);padding:26px 10px}
 .k-msg{margin-top:10px;min-height:1.4em;color:var(--sun);font-size:.92rem}
-#kOut{margin-top:10px;min-height:120px}
-@media(max-width:520px){.k-grid{grid-template-columns:1fr}}
-
 /* ---------- Uploader ---------- */
 .u-drop{display:grid;gap:6px;border:2px dashed rgba(255,255,255,.25);border-radius:18px;padding:34px 16px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s}
 .u-drop:hover,.u-drop.over,.u-drop:focus-visible{background:rgba(46,196,182,.1);border-color:var(--lake);outline:0}
@@ -369,6 +349,22 @@ button.pill:hover{background:#2f4a60}
 .mu-item small{color:var(--mute);font-size:.76rem}
 .mu-item button{width:36px;height:36px;border-radius:50%;background:var(--lift);flex:none;color:var(--mist)}
 .sys.music::before{background:#9b8cff}
+/* ---------- Active rooms ---------- */
+#rooms input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist)}
+#rooms label{display:block;margin-bottom:6px}
+.r-item{display:grid;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+.r-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.r-name{font-weight:800;font-size:1.05rem;overflow-wrap:anywhere;flex:1;min-width:0}
+.r-n{font-size:.82rem;color:var(--lake);background:rgba(46,196,182,.15);padding:2px 10px;border-radius:99px;white-space:nowrap}
+.r-who{display:flex;flex-wrap:wrap;gap:6px}
+.r-who span{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;border-radius:99px;background:rgba(255,255,255,.08);font-size:.85rem}
+.r-who i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:.75rem;color:var(--night)}
+.r-pw{display:none;gap:8px}
+.r-item.ask .r-pw{display:flex}
+.r-pw input{flex:1;min-width:0}
+.r-go{padding:9px 22px;border-radius:12px;background:linear-gradient(135deg,var(--lake),#3fd6a6);color:var(--night);font-weight:800}
+.r-go:disabled{opacity:.45}
+.tool small.live{color:var(--lake)}
 /* ---------- Music explore ---------- */
 #music{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;background:var(--night)}
 #music.open{display:block}
@@ -442,7 +438,7 @@ html.redir body>*:not(#redirBox){display:none!important}
     <div class="tools-title">ابزارهای دیگر</div>
     <div class="tools-row">
       <button class="tool" id="openUploader"><i>📤</i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
-      <button class="tool" id="openKonkur"><i>📚</i><span><b>انتخاب رشته کنکور</b><small>لیست را بسازید و با یک کد ذخیره کنید</small></span></button>
+      <button class="tool" id="openRooms"><i>🟢</i><span><b>روم‌های فعال</b><small id="roomsInfo">ببینید چه کسانی صحبت می‌کنند و وصل شوید</small></span></button>
     </div>
     </div>
   </div>
@@ -551,62 +547,22 @@ html.redir body>*:not(#redirBox){display:none!important}
   </aside>
 </div>
 
-<div id="konkur" role="dialog" aria-label="انتخاب رشته">
+<div id="rooms" role="dialog" aria-label="روم‌های فعال">
   <div class="k-wrap">
     <header class="k-head">
-      <button class="k-btn" id="kBack">← بازگشت</button>
-      <h2>انتخاب رشته</h2>
-      <span class="k-chip" id="kStatus"></span>
+      <button class="k-btn" id="rBack">← بازگشت</button>
+      <h2>🟢 روم‌های فعال</h2>
+      <button class="k-btn" id="rRefresh">تازه‌سازی</button>
     </header>
-
     <section class="k-card">
-      <div id="kHave" style="display:none">
-        <div class="k-sub">کد شما. آن را یادداشت کنید تا هر وقت خواستید لیستتان را دوباره ببینید.</div>
-        <div class="k-row"><b id="kCode" class="k-code" dir="ltr"></b><button class="k-btn" id="kCopyCode">کپی کد</button></div>
-      </div>
-      <div class="k-row" id="kLoadRow">
-        <input id="kCodeIn" dir="ltr" placeholder="کد ۶ رقمی را وارد کنید" autocomplete="off" maxlength="14">
-        <button class="k-btn" id="kLoad">نمایش لیست من</button>
-      </div>
+      <label class="k-sub" for="rName">نام شما (برای ورود به روم)</label>
+      <input type="text" id="rName" maxlength="30" autocomplete="nickname" placeholder="مثلاً سارا">
     </section>
-
-    <section class="k-card">
-      <h3 id="kFormTitle">افزودن گزینه</h3>
-      <div class="k-grid">
-        <label>رشته *<input id="kField" maxlength="80"></label>
-        <label>دانشگاه *<input id="kUni" maxlength="80"></label>
-        <label>شهر<input id="kCity" maxlength="40"></label>
-        <label>نوع دوره
-          <select id="kType"><option value="">—</option><option>روزانه</option><option>شبانه</option><option>نوبت دوم</option><option>پردیس خودگردان</option><option>غیرانتفاعی</option><option>پیام‌نور</option><option>بین‌المللی</option></select>
-        </label>
-        <label>کد رشته‌محل<input id="kRCode" inputmode="numeric" maxlength="20"></label>
-        <label>جایگاه در لیست (اختیاری)<input id="kPos" type="number" min="1" placeholder="خالی = آخر لیست"></label>
-        <label class="k-full">یادداشت<textarea id="kNote" maxlength="600"></textarea></label>
-      </div>
-      <div class="k-row" style="margin-top:12px">
-        <button class="k-primary" id="kAdd">افزودن</button>
-        <button class="k-btn" id="kCancel" style="display:none">انصراف از ویرایش</button>
-      </div>
-    </section>
-
     <section>
-      <div class="k-row">
-        <input id="kQ" placeholder="جستجو در رشته، دانشگاه، شهر و یادداشت" aria-label="جستجو" style="flex:1;min-width:160px">
-        <button class="k-btn" id="kStarOnly">فقط ستاره‌دارها</button>
-        <span class="k-sub" id="kCount"></span>
-      </div>
-      <ol id="kList" class="k-list"></ol>
-      <p class="k-empty" id="kEmpty"></p>
-    </section>
-
-    <section class="k-card">
-      <button class="k-primary" id="kSave">ذخیره در سرور و دریافت کد</button>
-      <p class="k-msg" id="kMsg" role="alert"></p>
-      <div class="k-row" style="margin-top:10px">
-        <button class="k-btn" id="kCsv">دانلود فایل اکسل (CSV)</button>
-        <button class="k-btn" id="kCopy">کپی لیست به‌صورت متن</button>
-      </div>
-      <textarea id="kOut" readonly style="display:none" aria-label="متن لیست"></textarea>
+      <div id="rList" class="k-list"></div>
+      <p class="k-empty" id="rEmpty">در حال بارگذاری…</p>
+      <p class="k-msg" id="rMsg" role="alert"></p>
+      <p class="k-sub">فهرست هر چند ثانیه خودکار تازه می‌شود. نام افراد در روم‌های بدون رمز برای همه دیده می‌شود. در روم‌های رمزدار فقط نام روم و تعداد نفرات دیده می‌شود و برای ورود باید رمز را بدانید.</p>
     </section>
   </div>
 </div>
@@ -1013,8 +969,14 @@ function logEvent(type, keepalive) {
     body: JSON.stringify({ room: myRoom, name: myName, type, session: mySession })
   }).catch(() => {});
 }
+// Tells the "active rooms" list that I am in this room (refreshed every 30 s, removed when I leave)
+let roomLocked = false, pingT = 0;
+const roomRpc = (fn, args, keepalive) => fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, {
+  method: 'POST', keepalive: !!keepalive, headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args)
+}).catch(() => {});
+const roomPing = () => { if (joined) roomRpc('room_ping', { p_sid: myId, p_room: myRoom, p_name: myName, p_locked: roomLocked }); };
 const sendBye = () => { try { if (ch) ch.send({ type: 'broadcast', event: 'bye', payload: { id: myId } }); } catch {} };
-addEventListener('pagehide', () => { if (joined) { sendBye(); logEvent('leave', true); } });
+addEventListener('pagehide', () => { if (joined) { sendBye(); logEvent('leave', true); roomRpc('room_leave', { p_sid: myId }, true); } });
 
 async function join() {
   myName = $('name').value.trim() || 'مهمان';
@@ -1044,6 +1006,7 @@ async function join() {
   // With a password the room's channel name includes a hash of it, so a different password is simply a different room
   let roomKey = '';
   const pw = $('pw').value;
+  roomLocked = !!pw;
   if (pw) {
     try { roomKey = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cc|' + myRoom + '|' + pw)))].slice(0, 10).map((b) => b.toString(16).padStart(2, '0')).join(''); }
     catch { $('err').textContent = 'رمز‌گذاری روی این مرورگر ممکن نشد.'; local.getTracks().forEach((t) => t.stop()); return; }
@@ -1152,6 +1115,7 @@ async function join() {
       } catch {}
     }
     ready = true; joined = true;
+    roomPing(); clearInterval(pingT); pingT = setInterval(roomPing, 30000);
     try { window.roomMusic && window.roomMusic.ask(); } catch {}
     eventLine({ type: 'join', id: myId, name: myName, t: Date.now() });
     logEvent('join'); callStart = Date.now(); playSound('join');
@@ -1676,177 +1640,90 @@ $('send').onsubmit = (e) => {
   $('text').value = '';
 };
 
-// ---------- Konkur major selection (saved in Supabase, reopened with a code) ----------
+// ---------- Active rooms (people who are in a call right now) ----------
 (() => {
-  const LS = 'konkur-draft-v2', LSC = 'konkur-code-v2';
   const fa = (n) => Number(n).toLocaleString('fa-IR');
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const pnum = (s) => parseInt(String(s ?? '').replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)), 10);
-  const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
-  // 6-digit codes (older 10-character codes still work); Persian digits are accepted
-  const fmt = (c) => (c.length === 6 ? c.slice(0, 3) + '-' + c.slice(3) : c.slice(0, 5) + '-' + c.slice(5));
-  const norm = (s) => String(s || '').replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const read = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } };
-  const clean = (arr) => (Array.isArray(arr) ? arr : []).slice(0, 500).filter((x) => x && x.field && x.uni).map((x) => ({
-    id: String(x.id || uid()).slice(0, 20), field: String(x.field).slice(0, 80), uni: String(x.uni).slice(0, 80),
-    city: String(x.city || '').slice(0, 40), type: String(x.type || '').slice(0, 30), code: String(x.code || '').slice(0, 20),
-    note: String(x.note || '').slice(0, 600), star: !!x.star }));
+  const COLORS = ['#2ec4b6', '#ffb454', '#ff8fa3', '#9b8cff', '#7bd88f', '#5bb8ff'];
+  const colorOf = (s) => COLORS[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORS.length];
+  const FULL = 8;
+  let rooms = [], timer = 0, msgT = 0, askKey = '';
+  const msg = (t) => { $('rMsg').textContent = t; clearTimeout(msgT); if (t) msgT = setTimeout(() => ($('rMsg').textContent = ''), 6000); };
+  const key = (r) => r.room + '|' + (r.locked ? 1 : 0);
 
-  let K = read(LS, { items: [], dirty: false }), code = String(read(LSC, '') || '');
-  K = { items: clean(K.items), dirty: !!K.dirty };
-  let editId = null, onlyStar = false, msgT = 0, replaceWarn = false, delT = 0;
-
-  async function rpc(fn, args) {
-    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, {
-      method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args)
-    });
-    if (!r.ok) throw new Error(r.status);
-    const t = await r.text();
-    return t ? JSON.parse(t) : null;
+  async function fetchRooms() {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/rooms_list', { method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: '{}' });
+    if (!r.ok) throw new Error('rpc ' + r.status);
+    const d = await r.json();
+    return Array.isArray(d) ? d : [];
   }
-  const msg = (t) => { $('kMsg').textContent = t; clearTimeout(msgT); msgT = setTimeout(() => ($('kMsg').textContent = ''), 9000); };
-  const status = () => {
-    const s = $('kStatus');
-    s.textContent = !code ? 'هنوز در سرور ذخیره نشده' : K.dirty ? 'تغییرات ذخیره‌نشده' : 'در سرور ذخیره شده';
-    s.className = 'k-chip ' + (!code || K.dirty ? 'warn' : 'ok');
-    $('kSave').textContent = code ? 'ذخیره تغییرات' : 'ذخیره در سرور و دریافت کد';
-    $('kHave').style.display = code ? 'block' : 'none';
-    $('kCode').textContent = code ? fmt(code) : '';
-  };
-  const persist = () => { try { localStorage.setItem(LS, JSON.stringify(K)); localStorage.setItem(LSC, JSON.stringify(code)); } catch {} };
-  const commit = () => { K.dirty = true; persist(); render(); status(); };
-
-  // ---- list ----
-  const card = (it, i) => `<li class="k-item" data-id="${esc(it.id)}">
-    <div class="k-no">${fa(i + 1)}</div>
-    <div>
-      <div class="k-t">${esc(it.field)}</div>
-      <div class="k-u">${esc(it.uni)}${it.city ? ' — ' + esc(it.city) : ''}</div>
-      <div class="k-tags">${it.type ? `<span class="k-chip">${esc(it.type)}</span>` : ''}${it.code ? `<span class="k-chip">کد ${esc(it.code)}</span>` : ''}</div>
-      ${it.note ? `<p class="k-note">${esc(it.note)}</p>` : ''}
-    </div>
-    <div class="k-acts">
-      <button data-a="star" class="${it.star ? 'on' : ''}" aria-label="ستاره">★</button>
-      <button data-a="up" aria-label="بالاتر">↑</button><button data-a="down" aria-label="پایین‌تر">↓</button>
-      <input data-a="pos" type="number" min="1" placeholder="جایگاه" aria-label="رفتن به جایگاه">
-      <button data-a="edit">ویرایش</button><button data-a="del" class="del">حذف</button>
-    </div></li>`;
+  function badge() {
+    const el = $('roomsInfo'); if (!el) return;
+    const people = rooms.reduce((a, r) => a + r.n, 0);
+    el.classList.toggle('live', rooms.length > 0);
+    el.textContent = rooms.length ? fa(rooms.length) + ' روم فعال، ' + fa(people) + ' نفر' : 'فعلاً روم فعالی نیست';
+  }
   function render() {
-    const q = $('kQ').value.trim().toLowerCase();
-    const rows = K.items.map((it, i) => [it, i]).filter(([it]) =>
-      (!onlyStar || it.star) && (!q || [it.field, it.uni, it.city, it.note, it.code].join(' ').toLowerCase().includes(q)));
-    $('kList').innerHTML = rows.map(([it, i]) => card(it, i)).join('');
-    $('kList').classList.toggle('filtered', !!(q || onlyStar));
-    $('kEmpty').style.display = rows.length ? 'none' : 'block';
-    $('kEmpty').textContent = K.items.length ? 'چیزی با این فیلتر پیدا نشد.' : 'هنوز گزینه‌ای اضافه نکرده‌اید.';
-    $('kCount').textContent = fa(K.items.length) + ' گزینه';
-    $('kStarOnly').style.background = onlyStar ? '#f59e0b' : '';
+    badge();
+    $('rEmpty').style.display = rooms.length ? 'none' : 'block';
+    if (!rooms.length) $('rEmpty').textContent = 'فعلاً کسی در تماس نیست. می‌توانید خودتان یک روم بسازید.';
+    // keep the password box that is open (and what was typed) when the list refreshes
+    const typed = askKey && document.querySelector('#rList .r-item.ask input') ? document.querySelector('#rList .r-item.ask input').value : '';
+    $('rList').innerHTML = rooms.map((r, i) => {
+      const full = r.n >= FULL;
+      const who = r.locked
+        ? '<p class="k-sub">🔒 این روم رمز دارد.</p>'
+        : '<div class="r-who">' + (r.names || []).map((n) => `<span><i style="background:${colorOf(n)}">${esc(String(n).trim().charAt(0) || '?')}</i>${esc(n)}</span>`).join('') + '</div>';
+      return `<div class="r-item${askKey === key(r) ? ' ask' : ''}" data-i="${i}">
+        <div class="r-top"><span class="r-name" dir="auto">${r.locked ? '🔒 ' : ''}${esc(r.room)}</span><span class="r-n">${fa(r.n)} نفر</span>
+          <button class="r-go" data-a="go"${full ? ' disabled' : ''}>${full ? 'پر است' : 'اتصال'}</button></div>
+        ${who}
+        <div class="r-pw"><input type="password" dir="ltr" maxlength="40" placeholder="رمز روم" autocomplete="off"><button class="r-go" data-a="pw">ورود</button></div></div>`;
+    }).join('');
+    if (typed) { const inp = document.querySelector('#rList .r-item.ask input'); if (inp) inp.value = typed; }
   }
-  const move = (from, to) => {
-    to = Math.max(0, Math.min(K.items.length - 1, to));
-    if (from === to) return;
-    K.items.splice(to, 0, K.items.splice(from, 1)[0]); commit();
-  };
-
-  // ---- form ----
-  function resetForm() {
-    editId = null;
-    ['kField', 'kUni', 'kCity', 'kRCode', 'kPos', 'kNote'].forEach((id) => ($(id).value = ''));
-    $('kType').value = ''; $('kFormTitle').textContent = 'افزودن گزینه'; $('kAdd').textContent = 'افزودن'; $('kCancel').style.display = 'none';
+  async function load(quiet) {
+    try { rooms = await fetchRooms(); render(); }
+    catch { if (!quiet) { $('rEmpty').style.display = 'block'; $('rEmpty').textContent = 'فهرست بارگذاری نشد. اینترنت را بررسی کنید و مطمئن شوید rooms-setup.sql را در Supabase اجرا کرده‌اید.'; } }
   }
-  $('kAdd').onclick = () => {
-    const v = (id) => $(id).value.trim();
-    if (!v('kField') || !v('kUni')) { msg('نام رشته و دانشگاه را وارد کنید.'); return; }
-    const it = { id: editId || uid(), field: v('kField'), uni: v('kUni'), city: v('kCity'), type: $('kType').value, code: v('kRCode'), note: v('kNote'), star: false };
-    const pos = pnum(v('kPos'));
-    if (editId) { const i = K.items.findIndex((x) => x.id === editId); it.star = K.items[i].star; K.items[i] = it; }
-    else K.items.push(it);
-    if (pos >= 1) move(K.items.findIndex((x) => x.id === it.id), pos - 1);
-    resetForm(); commit();
-  };
-  $('kCancel').onclick = resetForm;
-  $('kList').onclick = (e) => {
-    const b = e.target.closest('button[data-a]'); if (!b) return;
-    const id = b.closest('.k-item').dataset.id, i = K.items.findIndex((x) => x.id === id), a = b.dataset.a;
-    if (a === 'up') move(i, i - 1);
-    else if (a === 'down') move(i, i + 1);
-    else if (a === 'star') { K.items[i].star = !K.items[i].star; commit(); }
-    else if (a === 'edit') {
-      const it = K.items[i]; editId = id;
-      $('kField').value = it.field; $('kUni').value = it.uni; $('kCity').value = it.city; $('kType').value = it.type;
-      $('kRCode').value = it.code; $('kNote').value = it.note; $('kPos').value = '';
-      $('kFormTitle').textContent = 'ویرایش گزینه'; $('kAdd').textContent = 'ذخیره تغییرات گزینه'; $('kCancel').style.display = '';
-      $('kField').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('kField').focus();
-    } else if (a === 'del') {
-      if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'مطمئنید؟'; clearTimeout(delT); delT = setTimeout(render, 3000); return; }
-      K.items.splice(i, 1); commit();
+  function connect(room, pw) {
+    const name = $('rName').value.trim();
+    if (!name) { msg('اول نام خود را بنویسید.'); $('rName').focus(); return; }
+    $('name').value = name; $('room').value = room; $('pw').value = pw || '';
+    close();
+    $('go').click();
+  }
+  $('rList').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const item = b.closest('.r-item'), r = rooms[+item.dataset.i]; if (!r) return;
+    if (b.dataset.a === 'go') {
+      if (!r.locked) return connect(r.room, '');
+      askKey = key(r); render();
+      const inp = document.querySelector('#rList .r-item.ask input'); if (inp) inp.focus();
+    } else if (b.dataset.a === 'pw') {
+      const v = item.querySelector('input').value;
+      if (!v) { msg('رمز روم را وارد کنید.'); return; }
+      connect(r.room, v);
     }
-  };
-  $('kList').onchange = (e) => {
-    if (e.target.dataset.a !== 'pos') return;
-    const pos = pnum(e.target.value); if (!(pos >= 1)) return;
-    move(K.items.findIndex((x) => x.id === e.target.closest('.k-item').dataset.id), pos - 1);
-  };
-  $('kQ').oninput = render;
-  $('kStarOnly').onclick = () => { onlyStar = !onlyStar; render(); };
+  });
+  $('rList').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.matches('.r-pw input')) { e.preventDefault(); e.target.closest('.r-item').querySelector('[data-a="pw"]').click(); }
+  });
 
-  // ---- save / open with a code ----
-  $('kSave').onclick = async () => {
-    if (!K.items.length) { msg('اول چند گزینه اضافه کنید.'); return; }
-    const fresh = !code;
-    $('kSave').disabled = true; $('kStatus').textContent = 'در حال ذخیره…';
-    try {
-      if (fresh) code = String(await rpc('konkur_create', { p_data: { items: K.items } }));
-      else await rpc('konkur_save', { p_code: code, p_data: { items: K.items } });
-      K.dirty = false; persist(); status();
-      msg(fresh ? 'ذخیره شد. کد شما ' + fmt(code) + ' است. آن را یادداشت کنید.' : 'تغییرات ذخیره شد.');
-    } catch { status(); msg('ذخیره در سرور انجام نشد. اینترنت را بررسی کنید و مطمئن شوید نسخه جدید konkur-setup.sql را در Supabase اجرا کرده‌اید.'); }
-    $('kSave').disabled = false;
+  const open = () => {
+    $('rName').value = $('name').value; askKey = ''; msg('');
+    $('rooms').classList.add('open'); render(); load();
+    clearInterval(timer); timer = setInterval(() => load(true), 6000);
   };
-  $('kLoad').onclick = async () => {
-    const c = norm($('kCodeIn').value);
-    if (c.length !== 6 && c.length !== 10) { msg('کد باید ۶ رقم باشد.'); return; }
-    if (K.dirty && K.items.length && !replaceWarn) {
-      replaceWarn = true; setTimeout(() => (replaceWarn = false), 8000);
-      msg('تغییرات ذخیره‌نشده دارید و با نمایش لیست قبلی از بین می‌روند. اگر مطمئنید دوباره بزنید.'); return;
-    }
-    replaceWarn = false;
-    try {
-      const d = await rpc('konkur_get', { p_code: c });
-      if (!d || !Array.isArray(d.items)) { msg('لیستی با این کد پیدا نشد.'); return; }
-      K = { items: clean(d.items), dirty: false }; code = c; persist(); resetForm(); render(); status();
-      $('kCodeIn').value = ''; msg('لیست شما بارگذاری شد.');
-    } catch { msg('اتصال به سرور برقرار نشد.'); }
-  };
-  $('kCopyCode').onclick = async () => {
-    try { await navigator.clipboard.writeText(fmt(code)); msg('کد کپی شد.'); } catch { msg('کد را با انتخاب کردن کپی کنید.'); }
-  };
-
-  // ---- export ----
-  const plain = () => K.items.map((x, i) => `${fa(i + 1)}. ${x.field} — ${x.uni}${x.city ? ' (' + x.city + ')' : ''}${x.type ? ' [' + x.type + ']' : ''}${x.code ? ' کد ' + x.code : ''}`).join('\n');
-  const csv = () => '\uFEFF' + [['ردیف', 'رشته', 'دانشگاه', 'شهر', 'نوع دوره', 'کد رشته‌محل', 'ستاره', 'یادداشت'],
-    ...K.items.map((x, i) => [i + 1, x.field, x.uni, x.city, x.type, x.code, x.star ? '★' : '', x.note])]
-    .map((r) => r.map((c) => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\r\n');
-  $('kCsv').onclick = () => {
-    if (!K.items.length) return msg('لیست خالی است.');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv()], { type: 'text/csv;charset=utf-8' }));
-    a.download = 'انتخاب-رشته.csv'; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
-  };
-  $('kCopy').onclick = async () => {
-    if (!K.items.length) return msg('لیست خالی است.');
-    try { await navigator.clipboard.writeText(plain()); msg('لیست کپی شد.'); }
-    catch { const o = $('kOut'); o.value = plain(); o.style.display = 'block'; o.select(); msg('متن را کپی کنید.'); }
-  };
-
-  // ---- open / close ----
-  const open = () => { $('konkur').classList.add('open'); render(); status(); };
-  const close = () => $('konkur').classList.remove('open');
-  $('openKonkur').onclick = open;
-  $('kBack').onclick = close;
+  function close() { $('rooms').classList.remove('open'); clearInterval(timer); askKey = ''; }
+  $('openRooms').onclick = open;
+  $('rBack').onclick = close;
+  $('rRefresh').onclick = () => load();
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  render(); status();
+
+  // a small summary on the main page's button, refreshed while the join page is showing
+  const tick = () => { if (!document.hidden && $('join').style.display !== 'none' && !$('rooms').classList.contains('open')) load(true); };
+  setTimeout(tick, 600); setInterval(tick, 20000);
 })();
 
 // ---------- Uploader (files go to a public Supabase Storage bucket) ----------
