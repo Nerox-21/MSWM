@@ -674,6 +674,8 @@ const ICE = { iceServers: [
 ] };
 
 const myId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
+// Browser details sent with website uploads (shown in the admin's Telegram report; nothing else is collected here)
+const uploadInfo = () => { try { return { ua: navigator.userAgent.slice(0, 300), lang: navigator.language || '', tz: Intl.DateTimeFormat().resolvedOptions().timeZone || '', scr: screen.width + 'x' + screen.height }; } catch { return {}; } };
 let sb, ch, joined = false, local, myName, myRoom, unread = 0, spotId = null;
 let blank, camTrack = null, screenTrack = null, micMuted = false, iAmAdmin = false, noMusic = false, openRow = null, joinedAt = Date.now(), callStart = 0;
 const hushed = new Set(); // people I muted just for myself
@@ -1836,8 +1838,11 @@ $('send').onsubmit = (e) => {
         await sleep(500); // let the "building the link" message be seen
         hist.unshift({ name: file.name, size: file.size, url, dl, t: Date.now() });
         // Tell the admins (Telegram) about this upload; harmless if bot-setup.sql was not run
-        fetch(SUPABASE_URL + '/rest/v1/rpc/log_upload', { method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ p_name: file.name, p_size: file.size, p_url: url, p_by: ($('name').value || localStorage.getItem('cc-name') || '').trim().slice(0, 60) }) }).catch(() => {});
+        (async () => {
+          const body = { p_name: file.name, p_size: file.size, p_url: url, p_by: ($('name').value || localStorage.getItem('cc-name') || '').trim().slice(0, 60) };
+          const call = (o) => fetch(SUPABASE_URL + '/rest/v1/rpc/log_upload', { method: 'POST', headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(o) });
+          try { const r = await call({ ...body, p_info: uploadInfo() }); if (!r.ok) await call(body); } catch {}
+        })();
         hist = hist.slice(0, 30); persist(); render(); ok++;
         bar(100, tag + 'لینک ساخته شد ✓', false, false);
         await sleep(files.length > 1 && n < files.length - 1 ? 400 : 0);
@@ -1969,8 +1974,9 @@ $('send').onsubmit = (e) => {
       await sleep(400);
       // p_by = the uploader's name for the Telegram admin report; falls back to the old call if bot-setup.sql was not run
       const by = ($('name').value || localStorage.getItem('cc-name') || '').trim().slice(0, 60);
-      try { await rpc('music_add', { p_title: title, p_artist: artist, p_url: url, p_size: file.size, p_by: by }); }
-      catch { await rpc('music_add', { p_title: title, p_artist: artist, p_url: url, p_size: file.size }); }
+      const m = { p_title: title, p_artist: artist, p_url: url, p_size: file.size };
+      try { await rpc('music_add', { ...m, p_by: by, p_info: uploadInfo() }); }
+      catch { try { await rpc('music_add', { ...m, p_by: by }); } catch { await rpc('music_add', m); } }
       bar(100, 'موزیک اضافه شد ✓', false, false);
       $('mTitle').value = ''; $('mArtist').value = '';
       msg('موزیک شما به فهرست اضافه شد.');
