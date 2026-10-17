@@ -976,7 +976,16 @@ let roomLocked = false, pingT = 0;
 const roomRpc = (fn, args, keepalive) => fetch(SUPABASE_URL + '/rest/v1/rpc/' + fn, {
   method: 'POST', keepalive: !!keepalive, headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args)
 }).catch(() => {});
-const roomPing = () => { if (joined) roomRpc('room_ping', { p_sid: myId, p_room: myRoom, p_name: myName, p_locked: roomLocked }); };
+// The first ping of a call also carries the browser details (for the admin's Telegram report). If the database
+// does not know that field yet (rooms-setup.sql not updated) it is dropped and the plain ping is used.
+let roomInfoSent = false, roomNoInfo = false;
+const roomPing = () => {
+  if (!joined) return;
+  const a = { p_sid: myId, p_room: myRoom, p_name: myName, p_locked: roomLocked };
+  if (roomNoInfo || roomInfoSent) return roomRpc('room_ping', a);
+  roomInfoSent = true;
+  roomRpc('room_ping', { ...a, p_info: uploadInfo() }).then((r) => { if (r && !r.ok) { roomNoInfo = true; roomRpc('room_ping', a); } });
+};
 const sendBye = () => { try { if (ch) ch.send({ type: 'broadcast', event: 'bye', payload: { id: myId } }); } catch {} };
 addEventListener('pagehide', () => { if (joined) { sendBye(); logEvent('leave', true); roomRpc('room_leave', { p_sid: myId }, true); } });
 
@@ -1116,7 +1125,7 @@ async function join() {
         (data || []).forEach((e) => eventLine({ type: e.type, id: '', name: e.name, t: Date.parse(e.created_at) }));
       } catch {}
     }
-    ready = true; joined = true;
+    ready = true; joined = true; roomInfoSent = false;
     roomPing(); clearInterval(pingT); pingT = setInterval(roomPing, 30000);
     try { window.roomMusic && window.roomMusic.ask(); } catch {}
     eventLine({ type: 'join', id: myId, name: myName, t: Date.now() });
