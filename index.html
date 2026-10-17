@@ -368,18 +368,123 @@ button.pill:hover{background:#2f4a60}
 /* ---------- Music explore ---------- */
 #music{display:none;position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;background:var(--night)}
 #music.open{display:block}
-#music input[type=text]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist)}
+#mUpload input[type=text]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--mist)}
 .explore{display:flex;align-items:center;gap:14px;width:100%;max-width:440px;margin-top:18px;padding:14px 16px;border-radius:18px;text-align:start;color:var(--mist);background:linear-gradient(120deg,rgba(155,140,255,.28),rgba(255,143,163,.22));border:1px solid rgba(255,255,255,.16);transition:transform .15s,filter .15s}
 .explore:hover{transform:translateY(-2px);filter:brightness(1.12)}
 .explore i{font-style:normal;font-size:1.5rem;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.14);flex:none}
 .explore b{display:block;font-size:1.02rem}
 .explore small{display:block;color:var(--mute);font-size:.8rem;margin-top:2px}
-.m-item{display:grid;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
-.m-item.playing{border-color:#9b8cff;box-shadow:0 0 0 1px #9b8cff inset}
-.m-title{font-weight:800;overflow-wrap:anywhere}
-.m-item audio{width:100%;height:40px}
-.m-item a.k-btn{text-decoration:none;display:inline-block}
 .m-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+/* ---------- Music explore ---------- */
+#music{--m-ink:#0a141d;--m-surface:#111f2c;--m-raise:#18293a;--m-line:rgba(255,255,255,.09);--m-text:#eaf1f5;--m-mute:#8fa6b8;--m-amber:#ffb454;background:var(--m-ink);color:var(--m-text)}
+.mx-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) clamp(14px,3vw,32px) 14px;background:linear-gradient(var(--m-ink) 72%,rgba(10,20,29,0))}
+.mx-ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--m-raise);color:var(--m-text);flex:none;text-decoration:none;padding:0}
+.mx-ic:hover{background:#22384d}
+.mx-ttl{font-size:1.25rem;font-weight:800;white-space:nowrap}
+.mx-search{flex:1;max-width:440px;margin-inline:auto;position:relative;display:flex;align-items:center;min-width:0}
+.mx-search .ic{position:absolute;inset-inline-start:13px;width:18px;height:18px;color:var(--m-mute);pointer-events:none}
+#music .mx-search input{width:100%;height:42px;padding:0 16px;padding-inline-start:40px;border-radius:99px;border:1px solid var(--m-line);background:var(--m-surface);color:var(--m-text)}
+#music .mx-search input::placeholder{color:#5f7587}
+.mx-upbtn{display:inline-flex;gap:8px;align-items:center;justify-content:center;height:42px;padding:0 18px;border-radius:99px;background:var(--m-amber);color:#2a1a00;font-weight:800;white-space:nowrap;flex:none}
+.mx-upbtn:hover{filter:brightness(1.06)}
+.mx-hero{--tint:rgba(255,180,84,.35);--lab:#ffb454;position:relative;margin:4px clamp(14px,3vw,32px) 6px;padding:clamp(20px,3.4vw,38px);border-radius:28px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,3vw,40px);align-items:center;overflow:hidden;background:radial-gradient(90% 130% at 88% 0,var(--tint),transparent 62%),linear-gradient(165deg,var(--m-surface),#0d1923)}
+.mx-hero[hidden]{display:none}
+.mx-sleeve{position:relative;width:clamp(140px,24vw,250px);aspect-ratio:1;margin-inline-end:clamp(26px,7vw,78px)}
+.mx-sleeve .cv{position:absolute;inset:0;z-index:2;border-radius:10px;overflow:hidden;box-shadow:0 22px 44px -14px rgba(0,0,0,.7)}
+.mx-sleeve .cv svg,.mx-cv svg,.mx-pcover svg{display:block;width:100%;height:100%}
+.mx-disc{position:absolute;z-index:1;top:5%;bottom:5%;inset-inline-end:-24%;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 20deg,rgba(255,255,255,0) 0 18%,rgba(255,255,255,.16) 25%,rgba(255,255,255,0) 32% 68%,rgba(255,255,255,.12) 75%,rgba(255,255,255,0) 82%),repeating-radial-gradient(circle,#07090c 0 2px,#161b21 2px 3px);box-shadow:0 12px 28px -10px rgba(0,0,0,.8);transition:inset-inline-end .6s cubic-bezier(.2,.8,.2,1)}
+.mx-disc::before{content:"";position:absolute;inset:33%;border-radius:50%;background:var(--lab);box-shadow:0 0 0 2px rgba(0,0,0,.25) inset}
+.mx-disc::after{content:"";position:absolute;inset:47.5%;border-radius:50%;background:#07090c}
+.mx-hero.playing .mx-disc{inset-inline-end:-34%;animation:mxspin 3.4s linear infinite}
+@keyframes mxspin{to{transform:rotate(360deg)}}
+.mx-htxt h2{font-size:clamp(1.5rem,4vw,2.7rem);font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.mx-htxt .by{margin-top:4px;color:#c3d1dc;font-size:1.08rem}
+.mx-htxt .meta{margin-top:12px;color:var(--m-mute);font-size:.88rem}
+.mx-hact{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.mx-pbtn,.mx-sbtn{display:inline-flex;align-items:center;gap:9px;height:48px;padding:0 24px;border-radius:99px;font-weight:800;text-decoration:none}
+.mx-pbtn{background:var(--m-amber);color:#2a1a00}
+.mx-sbtn{background:rgba(255,255,255,.07);border:1px solid var(--m-line);color:var(--m-text);font-weight:600}
+.mx-sbtn:hover{background:rgba(255,255,255,.12)}
+.mx-all{padding:20px clamp(14px,3vw,32px) 170px}
+.mx-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.mx-bar h3{font-size:1.15rem;font-weight:800}
+.mx-bar h3 small{color:var(--m-mute);font-weight:400;font-size:.88rem;margin-inline-start:8px}
+.mx-chips{display:flex;gap:6px;flex-wrap:wrap}
+.mx-chips button{padding:7px 14px;border-radius:99px;background:transparent;border:1px solid var(--m-line);color:var(--m-mute);font-size:.86rem}
+.mx-chips button:hover{color:var(--m-text)}
+.mx-chips button[aria-pressed=true]{background:var(--m-text);color:var(--m-ink);border-color:var(--m-text);font-weight:600}
+.mx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:24px 18px}
+.mx-card{position:relative;min-width:0}
+.mx-cv{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;box-shadow:0 12px 26px -16px rgba(0,0,0,.9);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.mx-card:hover .mx-cv{transform:translateY(-3px)}
+.mx-cvb{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;background:none}
+.mx-cvb .go{position:absolute;inset-inline-end:10px;bottom:10px;width:42px;height:42px;border-radius:50%;background:var(--m-amber);color:#2a1a00;display:grid;place-items:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s}
+.mx-cvb .go .ic{width:18px;height:18px}
+.mx-card:hover .go,.mx-cvb:focus-visible .go,.mx-card.cur .go{opacity:1;transform:none}
+.mx-card .dl{position:absolute;top:8px;inset-inline-end:8px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(10,20,29,.72);color:#fff;opacity:0;transition:opacity .2s}
+.mx-card .dl .ic{width:16px;height:16px}
+.mx-card:hover .dl,.mx-card .dl:focus-visible{opacity:1}
+.mx-card .eq{position:absolute;top:8px;inset-inline-start:8px;display:none;align-items:flex-end;gap:2px;height:22px;padding:5px 6px;border-radius:8px;background:rgba(10,20,29,.78)}
+.mx-card.cur .eq{display:flex}
+.eq i{display:block;width:3px;height:100%;border-radius:2px;background:var(--m-amber);transform:scaleY(.35);transform-origin:bottom}
+.mx-card.playing .eq i{animation:mxeq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.3s!important}.eq i:nth-child(3){animation-delay:-.6s!important}
+@keyframes mxeq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@media(hover:none){.mx-cvb .go{opacity:1;transform:none;width:36px;height:36px}.mx-card .dl{opacity:1}}
+.mx-card b{display:block;margin-top:10px;font-size:.98rem;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mx-card>span{display:block;color:var(--m-mute);font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mx-card.cur b{color:var(--m-amber)}
+.mx-empty{display:none;flex-direction:column;align-items:center;gap:16px;text-align:center;color:var(--m-mute);padding:44px 10px}
+.mx-player{position:fixed;inset-inline:0;bottom:0;z-index:8;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,1.6fr) minmax(0,1fr);align-items:center;gap:14px;padding:10px clamp(12px,3vw,28px) calc(10px + env(safe-area-inset-bottom));background:rgba(12,24,34,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--m-line);transform:translateY(115%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.mx-player.on{transform:none}
+.mx-now{display:flex;align-items:center;gap:12px;min-width:0}
+.mx-pcover{width:52px;height:52px;border-radius:8px;overflow:hidden;flex:none;background:var(--m-raise)}
+.mx-ptxt{min-width:0}
+.mx-ptxt b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mx-ptxt span{display:block;color:var(--m-mute);font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mx-mid{display:grid;gap:6px;min-width:0}
+.mx-ctl{display:flex;justify-content:center;align-items:center;gap:12px}
+.mx-ctl button{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:none;color:var(--m-text)}
+.mx-ctl button:hover{background:rgba(255,255,255,.08)}
+.mx-ctl .mx-play{width:46px;height:46px;background:var(--m-amber);color:#2a1a00}
+.mx-ctl .mx-play:hover{background:var(--m-amber);filter:brightness(1.07)}
+.mx-seek{display:flex;align-items:center;gap:10px;color:var(--m-mute);font-size:.78rem;font-variant-numeric:tabular-nums}
+.mx-seek span{min-width:34px;text-align:center}
+.mx-player input[type=range]{-webkit-appearance:none;appearance:none;height:16px;background:none;flex:1;min-width:0;cursor:pointer;margin:0;--p:0%}
+.mx-player input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:linear-gradient(to right,var(--m-amber) var(--p),rgba(255,255,255,.18) var(--p))}
+.mx-player input[type=range]::-moz-range-track{height:4px;border-radius:99px;background:rgba(255,255,255,.18)}
+.mx-player input[type=range]::-moz-range-progress{height:4px;border-radius:99px;background:var(--m-amber)}
+.mx-player input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.mx-player input[type=range]::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#fff}
+.mx-side{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.mx-vol{display:flex;align-items:center;gap:8px;color:var(--m-mute)}
+.mx-vol input{flex:none!important;width:92px!important}
+.mx-side .mx-ic{width:38px;height:38px;background:none}
+.mx-side .mx-ic:hover{background:rgba(255,255,255,.08)}
+.mx-sheet{display:none;position:fixed;inset:0;z-index:12;background:rgba(5,10,15,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+.mx-sheet.open{display:flex}
+.mx-sheet-card{width:min(560px,100%);max-height:92%;overflow:auto;background:var(--m-surface);border:1px solid var(--m-line);border-radius:26px 26px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom))}
+.mx-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mx-sheet-head h3{font-size:1.15rem;font-weight:800}
+.mx-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));z-index:9;max-width:min(92vw,460px);padding:11px 18px;border-radius:14px;background:#22384d;color:var(--m-text);font-size:.92rem;text-align:center;opacity:0;pointer-events:none;transform:translate(-50%,10px);transition:opacity .2s,transform .2s}
+.mx-toast.on{opacity:1;transform:translate(-50%,0)}
+#music.sheet-open .mx-toast{opacity:0}
+@media(min-width:700px){.mx-sheet{align-items:center}.mx-sheet-card{border-radius:26px}}
+@media(max-width:719px){
+  .mx-ttl,.mx-upbtn .lbl{display:none}
+  .mx-upbtn{width:42px;padding:0}
+  .mx-hero{grid-template-columns:1fr;justify-items:start;border-radius:22px}
+  .mx-sleeve{width:min(58vw,220px);margin-inline-end:0}
+  .mx-disc{inset-inline-end:-16%}
+  .mx-hero.playing .mx-disc{inset-inline-end:-24%}
+  .mx-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 14px}
+  .mx-player{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"now ctl side" "seek seek seek";gap:8px 10px}
+  .mx-now{grid-area:now}.mx-mid{display:contents}.mx-ctl{grid-area:ctl;gap:4px}.mx-seek{grid-area:seek}.mx-side{grid-area:side}
+  .mx-vol,#mpCopy{display:none}
+  .mx-ctl button{width:34px;height:34px}.mx-ctl .mx-play{width:42px;height:42px}
+}
+@media(prefers-reduced-motion:reduce){.mx-disc,.mx-player,.mx-cv,.mx-toast{transition:none}.mx-hero.playing .mx-disc,.mx-card.playing .eq i{animation:none}}
+
 @media(max-width:560px){.m-form{grid-template-columns:1fr}}
 
 /* ---------- Short link redirect ---------- */
@@ -596,14 +701,46 @@ html.redir body>*:not(#redirBox){display:none!important}
   </div>
 </div>
 <div id="music" role="dialog" aria-label="اکسپلور موزیک">
-  <div class="k-wrap">
-    <header class="k-head">
-      <button class="k-btn" id="mBack">← بازگشت</button>
-      <h2>🎵 اکسپلور موزیک</h2>
-      <button class="k-btn" id="mRefresh">تازه‌سازی</button>
-    </header>
-    <section class="k-card">
-      <h3>آپلود موزیک</h3>
+  <header class="mx-top">
+    <button class="mx-ic" id="mBack" aria-label="بازگشت"><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <h2 class="mx-ttl">اکسپلور موزیک</h2>
+    <label class="mx-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" id="mSearch" placeholder="جستجوی آهنگ یا خواننده" aria-label="جستجو" autocomplete="off"></label>
+    <button class="mx-ic" id="mRefresh" aria-label="تازه‌سازی فهرست"><svg class="ic" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
+    <button class="mx-upbtn" id="mOpenUp"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">آپلود موزیک</span></button>
+  </header>
+  <section class="mx-hero" id="mHero" hidden></section>
+  <main class="mx-all">
+    <div class="mx-bar">
+      <h3>همه آهنگ‌ها<small id="mCount"></small></h3>
+      <div class="mx-chips" id="mSort" role="group" aria-label="مرتب‌سازی">
+        <button data-sort="new" aria-pressed="true">تازه‌ترین</button>
+        <button data-sort="title" aria-pressed="false">نام آهنگ</button>
+        <button data-sort="artist" aria-pressed="false">خواننده</button>
+      </div>
+    </div>
+    <div id="mList" class="mx-grid"></div>
+    <div class="mx-empty" id="mEmpty"><p id="mEmptyTxt">هنوز موزیکی نیست. اولین آهنگ را شما بگذارید.</p><button class="mx-upbtn" id="mEmptyUp"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>آپلود موزیک</button></div>
+  </main>
+  <div class="mx-player" id="mPlayer" role="region" aria-label="پخش‌کننده">
+    <div class="mx-now"><div class="mx-pcover" id="mpCover"></div><div class="mx-ptxt"><b id="mpTitle"></b><span id="mpArtist"></span></div></div>
+    <div class="mx-mid">
+      <div class="mx-ctl" dir="ltr">
+        <button id="mpPrev" aria-label="آهنگ قبلی"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5v14" /><path d="M19 5L9 12l10 7z" fill="currentColor"/></svg></button>
+        <button id="mpPlay" class="mx-play" aria-label="پخش"></button>
+        <button id="mpNext" aria-label="آهنگ بعدی"><svg class="ic" viewBox="0 0 24 24"><path d="M18 5v14"/><path d="M5 5l10 7-10 7z" fill="currentColor"/></svg></button>
+      </div>
+      <div class="mx-seek" dir="ltr"><span id="mpCur">0:00</span><input type="range" id="mpSeek" min="0" max="1000" value="0" step="1" aria-label="موقعیت پخش"><span id="mpDur">0:00</span></div>
+    </div>
+    <div class="mx-side">
+      <label class="mx-vol" dir="ltr"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg><input type="range" id="mpVol" min="0" max="100" value="80" aria-label="بلندی صدا"></label>
+      <button class="mx-ic" id="mpCopy" aria-label="کپی لینک دانلود"><svg class="ic" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+      <a class="mx-ic" id="mpDl" href="#" download aria-label="دانلود"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></a>
+    </div>
+    <audio id="mAudio" preload="none"></audio>
+  </div>
+  <div class="mx-sheet" id="mUpload" role="dialog" aria-label="آپلود موزیک">
+    <div class="mx-sheet-card">
+      <div class="mx-sheet-head"><h3>آپلود موزیک</h3><button class="mx-ic" id="mUpClose" aria-label="بستن"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="m-form">
         <input type="text" id="mTitle" maxlength="100" placeholder="نام آهنگ">
         <input type="text" id="mArtist" maxlength="60" placeholder="خواننده (اختیاری)">
@@ -618,16 +755,9 @@ html.redir body>*:not(#redirBox){display:none!important}
         <div class="u-stat"><span id="mStat"></span><button class="k-btn" id="mCancel" style="padding:3px 12px">لغو</button></div>
       </div>
       <p class="k-msg" id="mMsg" role="alert"></p>
-    </section>
-    <section>
-      <div class="k-row">
-        <h3 style="font-weight:800">همه موزیک‌ها</h3>
-        <input type="text" id="mSearch" placeholder="جستجو…" style="flex:1;min-width:140px">
-      </div>
-      <div id="mList" class="k-list"></div>
-      <p class="k-empty" id="mEmpty">هنوز موزیکی نیست. اولین نفر باشید!</p>
-    </section>
+    </div>
   </div>
+  <div class="mx-toast" id="mToast" role="status"></div>
 </div>
 <div id="netbar" role="alert">اتصال شما قطع شد؛ در حال تلاش برای اتصال دوباره…</div>
 <div id="toast" role="status"></div>
@@ -1912,8 +2042,8 @@ $('send').onsubmit = (e) => {
     return r.json();
   };
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-  let tracks = [], busy = false, cur = null, msgT = 0, mc = null;
-  const msg = (t) => { $('mMsg').textContent = t; clearTimeout(msgT); if (t) msgT = setTimeout(() => ($('mMsg').textContent = ''), 12000); };
+  let tracks = [], busy = false, xhr = null, msgT = 0, mc = null;
+  const msg = (t) => { $('mMsg').textContent = t; $('mToast').textContent = t; $('mToast').classList.toggle('on', !!t); clearTimeout(msgT); if (t) msgT = setTimeout(() => { $('mMsg').textContent = ''; $('mToast').classList.remove('on'); }, 9000); };
   const dlUrl = (t) => t.url + '?download=' + encodeURIComponent(t.title + (((t.url.match(/\.[A-Za-z0-9]{1,5}$/) || [''])[0]) || ''));
   const bar = (pct, text, ind, canCancel = true) => {
     $('mProg').classList.add('on'); $('mBarWrap').classList.toggle('ind', !!ind);
@@ -1921,27 +2051,100 @@ $('send').onsubmit = (e) => {
     $('mStat').textContent = text; $('mCancel').style.display = canCancel ? '' : 'none';
   };
 
-  function render() {
+  // ---------- Look: record-sleeve covers made from the song itself (no image files needed) ----------
+  const ICON = {
+    play: '<svg class="ic" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg>',
+    pause: '<svg class="ic" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" stroke="none"/></svg>',
+    dl: '<svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>'
+  };
+  const PALS = [['#f2a93b', '#1d3b53', '#f7e3b5'], ['#1fb5a8', '#0f2a3a', '#f1d9a8'], ['#e8573b', '#2a1b3d', '#f6c9a0'], ['#2b3a8c', '#f1b24a', '#d8d3f5'],
+    ['#d9577a', '#3b1d3a', '#f4d1c4'], ['#7a9a4a', '#16301f', '#efe6c1'], ['#6fb2e8', '#14304f', '#fbe4a6'], ['#c9784a', '#1f2b3a', '#f0dcc0']];
+  const hashStr = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const rng = (a) => () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const rgba = (hex, a) => 'rgba(' + [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(',') + ',' + a + ')';
+  const covers = new Map();
+  function cover(t) {
+    const key = t.id + '|' + t.title + '|' + t.artist;
+    if (covers.has(key)) return covers.get(key);
+    const seed = hashStr((t.title || '') + '|' + (t.artist || '') + '|' + t.id), r = rng(seed), base = PALS[seed % PALS.length];
+    const o = [0, 1, 2]; for (let i = 2; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
+    const [bg, c1, c2] = o.map((i) => base[i]);
+    const R = (n) => Math.round(n * 10) / 10;
+    let g = '';
+    switch (Math.floor(r() * 7)) {
+      case 0: { const cx = 30 + r() * 40, cy = 30 + r() * 40; g = [58, 44, 30, 16].map((rad, i) => `<circle cx="${R(cx)}" cy="${R(cy)}" r="${rad}" fill="${i % 2 ? c2 : c1}"/>`).join(''); break; }
+      case 1: { const cx = 32 + r() * 36; g = `<circle cx="${R(cx)}" cy="46" r="21" fill="${c2}"/><rect y="58" width="100" height="42" fill="${c1}"/>` + [0, 1, 2].map((i) => `<rect y="${64 + i * 10}" width="100" height="${3 + i * 1.5}" fill="${bg}"/>`).join(''); break; }
+      case 2: g = [0, 1, 2].map((i) => { const h = 38 + r() * 40, x = 7 + i * 31; return `<path d="M${x} 100V${R(100 - h + 13)}a13 13 0 0 1 26 0V100z" fill="${i % 2 ? c2 : c1}"/>`; }).join(''); break;
+      case 3: g = `<polygon points="0,72 100,22 100,52 0,102" fill="${c1}"/><polygon points="0,40 100,-8 100,4 0,52" fill="${c2}"/><circle cx="${R(62 + r() * 24)}" cy="${R(20 + r() * 12)}" r="11" fill="${c2}"/>`; break;
+      case 4: for (let y = 0; y < 5; y++) for (let x = 0; x < 5; x++) g += `<circle cx="${10 + x * 20}" cy="${10 + y * 20}" r="${R(2.5 + r() * 7)}" fill="${r() < .5 ? c1 : c2}"/>`; break;
+      case 5: g = [0, 1, 2, 3, 4].map((i) => { const y = 14 + i * 18, a = 9 + r() * 8; return `<path d="M-5 ${y}Q20 ${R(y - a)} 45 ${y}T95 ${y}T145 ${y}" fill="none" stroke="${i % 2 ? c2 : c1}" stroke-width="7" stroke-linecap="round"/>`; }).join(''); break;
+      default: for (let y = 0; y < 2; y++) for (let x = 0; x < 2; x++) { const rot = Math.floor(r() * 4) * 90, f = [c1, c2, bg === c1 ? c2 : c1][Math.floor(r() * 3)]; g += `<path transform="translate(${x * 50} ${y * 50}) rotate(${rot} 25 25)" d="M0 0H50A50 50 0 0 1 0 50z" fill="${f}"/>`; }
+    }
+    const out = { svg: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="100" height="100" fill="${bg}"/>${g}</svg>`, bg, c1, c2 };
+    covers.set(key, out); return out;
+  }
+
+  let cur = null, sort = 'new';
+  const A = $('mAudio');
+  const same = (a, b) => a && b && String(a.id) === String(b.id);
+  const isPlaying = () => !!cur && !A.paused && !A.ended;
+  function sorted() {
     const q = $('mSearch').value.trim().toLowerCase();
-    const list = tracks.filter((t) => !q || (t.title + ' ' + t.artist).toLowerCase().includes(q));
-    $('mEmpty').style.display = list.length ? 'none' : 'block';
-    $('mEmpty').textContent = tracks.length ? 'موردی پیدا نشد.' : 'هنوز موزیکی نیست. اولین نفر باشید!';
-    $('mList').innerHTML = list.map((t) => `<div class="m-item" data-id="${t.id}">
-      <div class="m-title">${esc(t.title)}</div>
-      <div class="k-sub">${t.artist ? esc(t.artist) + ' — ' : ''}${bytes(t.size)} — ${new Date(t.created_at).toLocaleDateString('fa-IR')}</div>
-      <audio controls preload="none" src="${esc(t.url)}"></audio>
-      <div class="k-row">
-        <a class="k-btn" href="${esc(dlUrl(t))}" download>دانلود</a>
-        <button class="k-btn" data-a="copy">کپی لینک دانلود</button>
-      </div></div>`).join('');
+    let l = tracks.filter((t) => !q || (t.title + ' ' + t.artist).toLowerCase().includes(q));
+    if (sort === 'title') l = [...l].sort((a, b) => a.title.localeCompare(b.title, 'fa'));
+    else if (sort === 'artist') l = [...l].sort((a, b) => (a.artist ? 0 : 1) - (b.artist ? 0 : 1) || a.artist.localeCompare(b.artist, 'fa') || a.title.localeCompare(b.title, 'fa'));
+    return l;
+  }
+  const meta = (t) => bytes(t.size) + '، ' + new Date(t.created_at).toLocaleDateString('fa-IR');
+  function cardHTML(t) {
+    const c = cover(t), ti = esc(t.title);
+    return `<article class="mx-card" data-id="${t.id}">
+      <div class="mx-cv"><button class="mx-cvb" data-a="play" aria-label="پخش «${ti}»">${c.svg}<span class="go">${ICON.play}</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></button>
+      <a class="dl" href="${esc(dlUrl(t))}" download aria-label="دانلود «${ti}»">${ICON.dl}</a></div>
+      <b title="${ti}">${ti}</b><span>${t.artist ? esc(t.artist) : 'خواننده نامشخص'}</span></article>`;
+  }
+  function heroHTML(t) {
+    const c = cover(t), ti = esc(t.title);
+    return `<div class="mx-sleeve"><div class="mx-disc" aria-hidden="true"></div><div class="cv">${c.svg}</div></div>
+      <div class="mx-htxt"><h2>${ti}</h2><div class="by">${t.artist ? esc(t.artist) : 'خواننده نامشخص'}</div>
+      <div class="meta">آخرین آهنگ اضافه‌شده، ${meta(t)}</div>
+      <div class="mx-hact"><button class="mx-pbtn" id="mHeroPlay" data-a="hero"></button><a class="mx-sbtn" href="${esc(dlUrl(t))}" download>${ICON.dl}دانلود</a></div></div>`;
+  }
+  function render() {
+    const q = $('mSearch').value.trim(), l = sorted();
+    $('mCount').textContent = tracks.length ? fa(l.length) + ' آهنگ' : '';
+    const h = $('mHero'), top = tracks[0];
+    if (top && !q) {
+      const c = cover(top);
+      h.style.setProperty('--tint', rgba(c.bg, .5)); h.style.setProperty('--lab', c.c2);
+      h.innerHTML = heroHTML(top); h.hidden = false;
+    } else { h.hidden = true; h.innerHTML = ''; }
+    $('mList').innerHTML = l.map(cardHTML).join('');
+    $('mEmpty').style.display = l.length ? 'none' : 'flex';
+    $('mEmptyTxt').textContent = tracks.length ? 'موردی پیدا نشد.' : 'هنوز موزیکی نیست. اولین آهنگ را شما بگذارید.';
+    $('mEmptyUp').style.display = tracks.length ? 'none' : '';
+    sync();
+  }
+  // Refreshes only the "what is playing" marks (no re-render, so scrolling and hover are untouched)
+  function sync() {
+    const playing = isPlaying();
+    document.querySelectorAll('#mList .mx-card').forEach((el) => {
+      const on = !!cur && el.dataset.id === String(cur.id);
+      el.classList.toggle('cur', on); el.classList.toggle('playing', on && playing);
+    });
+    const top = tracks[0], heroOn = !!top && same(cur, top) && playing;
+    $('mHero').classList.toggle('playing', heroOn);
+    const hb = $('mHeroPlay'); if (hb) hb.innerHTML = heroOn ? ICON.pause + 'مکث' : ICON.play + 'پخش';
+    $('mpPlay').innerHTML = playing ? ICON.pause : ICON.play;
+    $('mpPlay').setAttribute('aria-label', playing ? 'مکث' : 'پخش');
   }
   async function load() {
     try { tracks = await rpc('music_list', { p_limit: 100 }); render(); }
-    catch { $('mEmpty').style.display = 'block'; $('mEmpty').textContent = 'فهرست بارگذاری نشد. اینترنت را بررسی کنید و مطمئن شوید music-setup.sql را در Supabase اجرا کرده‌اید.'; }
+    catch { $('mEmpty').style.display = 'flex'; $('mEmptyUp').style.display = 'none'; $('mEmptyTxt').textContent = 'فهرست بارگذاری نشد. اینترنت را بررسی کنید و مطمئن شوید music-setup.sql را در Supabase اجرا کرده‌اید.'; }
   }
   function xhrUpload(path, file, onP, onSent) {
     return new Promise((resolve, reject) => {
-      const x = (cur = new XMLHttpRequest());
+      const x = (xhr = new XMLHttpRequest());
       x.open('POST', SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path);
       x.setRequestHeader('apikey', SUPABASE_ANON_KEY);
       x.setRequestHeader('Authorization', 'Bearer ' + SUPABASE_ANON_KEY);
@@ -1990,6 +2193,7 @@ $('send').onsubmit = (e) => {
       $('mTitle').value = ''; $('mArtist').value = '';
       msg('موزیک شما به فهرست اضافه شد.');
       await load();
+      setTimeout(closeSheet, 1400);
       setTimeout(() => { if (!busy) $('mProg').classList.remove('on'); }, 3000);
     } catch (e) {
       $('mProg').classList.remove('on');
@@ -1998,9 +2202,9 @@ $('send').onsubmit = (e) => {
       else if (/maximum allowed size|too large|413/i.test(String(e && (e.message || e.error)))) msg('حجم فایل از حد مجاز بیشتر است.');
       else msg('آپلود انجام نشد. اینترنت را بررسی کنید و دوباره امتحان کنید.');
     }
-    $('mDrop').style.opacity = ''; cur = null; busy = false;
+    $('mDrop').style.opacity = ''; xhr = null; busy = false;
   }
-  $('mCancel').onclick = () => { if (cur) cur.abort(); };
+  $('mCancel').onclick = () => { if (xhr) xhr.abort(); };
   const drop = $('mDrop');
   drop.onclick = () => $('mFile').click();
   drop.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('mFile').click(); } };
@@ -2009,26 +2213,89 @@ $('send').onsubmit = (e) => {
   ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
   drop.addEventListener('drop', (e) => upload(e.dataTransfer.files[0]));
 
-  // Only one track plays at a time; when one ends, the next in the list starts
-  $('mList').addEventListener('play', (e) => {
-    document.querySelectorAll('#mList audio').forEach((a) => { if (a !== e.target) a.pause(); });
-    document.querySelectorAll('.m-item').forEach((i) => i.classList.toggle('playing', i.contains(e.target)));
-  }, true);
-  $('mList').addEventListener('ended', (e) => {
-    const next = e.target.closest('.m-item')?.nextElementSibling?.querySelector('audio');
-    if (next) next.play().catch(() => {});
-  }, true);
-  $('mList').onclick = async (e) => {
-    const b = e.target.closest('button[data-a="copy"]'); if (!b) return;
-    const t = tracks.find((x) => String(x.id) === b.closest('.m-item').dataset.id); if (!t) return;
-    try { await navigator.clipboard.writeText(dlUrl(t)); msg('لینک دانلود کپی شد.'); } catch { msg('کپی نشد. روی «دانلود» بزنید.'); }
+  // ---------- Player ----------
+  const fmt = (n) => (isFinite(n) && n >= 0 ? Math.floor(n / 60) + ':' + String(Math.floor(n % 60)).padStart(2, '0') : '0:00');
+  const seekEl = $('mpSeek'), paint = () => seekEl.style.setProperty('--p', seekEl.value / 10 + '%');
+  let seeking = false;
+  function showPlayer(t) {
+    $('mpCover').innerHTML = cover(t).svg; $('mpTitle').textContent = t.title; $('mpArtist').textContent = t.artist || 'خواننده نامشخص';
+    $('mpDl').href = dlUrl(t); $('mPlayer').classList.add('on');
+    seekEl.value = 0; paint(); $('mpCur').textContent = '0:00'; $('mpDur').textContent = '0:00';
+    try {
+      if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist || '' });
+    } catch {}
+  }
+  function play(id, force) {
+    const t = tracks.find((x) => String(x.id) === String(id)); if (!t) return;
+    if (same(cur, t) && !force) { A.paused ? A.play().catch(() => {}) : A.pause(); return; }
+    cur = t; A.src = t.url; showPlayer(t);
+    A.play().catch(() => msg('پخش نشد. یک بار دیگر روی آهنگ بزنید.'));
+    sync();
+  }
+  function step(d) {
+    const l = sorted(); if (!l.length) return;
+    let i = l.findIndex((x) => same(x, cur));
+    i = i < 0 ? 0 : (i + d + l.length) % l.length;
+    play(l[i].id, true);
+  }
+  ['play', 'pause', 'ended', 'emptied'].forEach((ev) => A.addEventListener(ev, sync));
+  A.addEventListener('ended', () => { if (sorted().length > 1) step(1); else { A.currentTime = 0; seekEl.value = 0; paint(); } });
+  A.addEventListener('timeupdate', () => {
+    $('mpCur').textContent = fmt(A.currentTime);
+    if (!seeking && A.duration) { seekEl.value = Math.round(A.currentTime / A.duration * 1000); paint(); }
+  });
+  A.addEventListener('loadedmetadata', () => { $('mpDur').textContent = fmt(A.duration); });
+  A.addEventListener('error', () => { if (cur) msg('این آهنگ پخش نشد. اگر فایل حذف شده، فهرست را تازه‌سازی کنید.'); });
+  seekEl.addEventListener('input', () => { seeking = true; paint(); $('mpCur').textContent = fmt(seekEl.value / 1000 * (A.duration || 0)); });
+  seekEl.addEventListener('change', () => { if (A.duration) A.currentTime = seekEl.value / 1000 * A.duration; seeking = false; });
+  const vol = $('mpVol');
+  try { const v = parseInt(localStorage.getItem('cc-mvol'), 10); if (v >= 0 && v <= 100) vol.value = v; } catch {}
+  const setVol = () => { A.volume = vol.value / 100; vol.style.setProperty('--p', vol.value + '%'); try { localStorage.setItem('cc-mvol', vol.value); } catch {} };
+  vol.oninput = setVol; setVol();
+  $('mpPlay').onclick = () => { if (cur) play(cur.id); };
+  $('mpPrev').onclick = () => { if (A.currentTime > 4) A.currentTime = 0; else step(-1); };
+  $('mpNext').onclick = () => step(1);
+  $('mpCopy').onclick = async () => {
+    if (!cur) return;
+    try { await navigator.clipboard.writeText(dlUrl(cur)); msg('لینک دانلود کپی شد.'); } catch { msg('کپی نشد. روی دکمه‌ی دانلود بزنید.'); }
   };
+  try {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => cur && A.play().catch(() => {}));
+      navigator.mediaSession.setActionHandler('pause', () => A.pause());
+      navigator.mediaSession.setActionHandler('previoustrack', () => step(-1));
+      navigator.mediaSession.setActionHandler('nexttrack', () => step(1));
+    }
+  } catch {}
+  $('mList').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-a="play"]'); if (b) play(b.closest('.mx-card').dataset.id);
+  });
+  $('mHero').addEventListener('click', (e) => { if (e.target.closest('#mHeroPlay') && tracks[0]) play(tracks[0].id); });
+  $('mSort').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-sort]'); if (!b) return;
+    sort = b.dataset.sort;
+    $('mSort').querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    render();
+  });
+
+  // ---------- Upload sheet, open / close ----------
+  function openSheet() { $('mUpload').classList.add('open'); $('music').classList.add('sheet-open'); setTimeout(() => $('mTitle').focus(), 50); }
+  function closeSheet() { if (busy) return; $('mUpload').classList.remove('open'); $('music').classList.remove('sheet-open'); }
+  $('mOpenUp').onclick = openSheet; $('mEmptyUp').onclick = openSheet; $('mUpClose').onclick = closeSheet;
+  $('mUpload').addEventListener('click', (e) => { if (e.target === $('mUpload')) closeSheet(); });
   $('mSearch').oninput = render;
   $('mRefresh').onclick = load;
   $('openMusic').onclick = () => { $('music').classList.add('open'); load(); };
-  const close = () => { $('music').classList.remove('open'); document.querySelectorAll('#mList audio').forEach((a) => a.pause()); };
+  const close = () => {
+    $('music').classList.remove('open'); closeSheet();
+    A.pause(); cur = null; $('mPlayer').classList.remove('on'); sync();
+  };
   $('mBack').onclick = close;
-  addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  addEventListener('keydown', (e) => {
+    if (!$('music').classList.contains('open')) return;
+    if (e.key === 'Escape') { if ($('mUpload').classList.contains('open')) closeSheet(); else close(); }
+    else if (e.key === ' ' && cur && !/^(INPUT|TEXTAREA|BUTTON|A|SELECT)$/.test((e.target.tagName || '')) && !e.target.closest('[role=button]')) { e.preventDefault(); play(cur.id); }
+  });
 })();
 // ---------- Shared music inside a call ----------
 // Everybody plays the same file on their own device and the "music" broadcast keeps the players in step.
