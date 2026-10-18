@@ -276,6 +276,45 @@ button.pill:hover{background:#2f4a60}
 .u-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lake),#3fd6a6);border-radius:99px;transition:width .15s}
 .u-bar.ind i{width:40%;animation:uslide 1.1s ease-in-out infinite alternate}
 @keyframes uslide{from{margin-left:0}to{margin-left:60%}}
+/* ---------- Uploader page (same family as the music explore) ---------- */
+#uploader{--m-ink:#0a141d;--m-surface:#111f2c;--m-raise:#18293a;--m-line:rgba(255,255,255,.09);--m-text:#eaf1f5;--m-mute:#8fa6b8;--m-amber:#ffb454;background:var(--m-ink);color:var(--m-text)}
+.ux-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:max(12px,env(safe-area-inset-top)) clamp(14px,3vw,32px) 14px;background:linear-gradient(var(--m-ink) 72%,rgba(10,20,29,0))}
+.ux-top h2{font-size:1.25rem;font-weight:800}
+.ux-main{max-width:880px;margin:0 auto;padding:6px clamp(14px,3vw,32px) calc(70px + env(safe-area-inset-bottom));display:grid;gap:30px}
+#uploader .u-drop{position:relative;justify-items:center;gap:10px;border:0;border-radius:28px;padding:clamp(30px,6vw,56px) 20px;background:radial-gradient(90% 130% at 88% 0,rgba(255,180,84,.28),transparent 62%),radial-gradient(80% 120% at 0 100%,rgba(46,196,182,.2),transparent 60%),linear-gradient(165deg,var(--m-surface),#0d1923);outline:2px dashed rgba(255,255,255,.16);outline-offset:-12px;transition:outline-color .15s,transform .2s}
+#uploader .u-drop:hover,#uploader .u-drop.over,#uploader .u-drop:focus-visible{outline-color:var(--m-amber);outline-style:solid;outline-width:2px}
+#uploader .u-drop.over{transform:scale(1.01)}
+#uploader .u-drop b{font-size:clamp(1.2rem,3.4vw,1.6rem);font-weight:800}
+#uploader .u-drop .k-sub{max-width:46ch;line-height:1.9;color:var(--m-mute)}
+.ux-ico{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:var(--m-amber);color:#2a1a00;box-shadow:0 16px 32px -12px rgba(255,180,84,.55);transition:transform .2s}
+.ux-ico .ic{width:32px;height:32px}
+#uploader .u-drop:hover .ux-ico,#uploader .u-drop.over .ux-ico{transform:translateY(-3px)}
+#uploader .ux-pick{margin-top:10px;pointer-events:none;width:auto;padding:0 24px}
+#uploader .u-prog{margin-top:16px;padding:14px 16px;border-radius:18px;background:var(--m-surface);border:1px solid var(--m-line)}
+#uploader .u-bar{height:8px;background:rgba(255,255,255,.12)}
+#uploader .u-bar i{background:var(--m-amber)}
+#uploader .k-btn{background:rgba(255,255,255,.07);border:1px solid var(--m-line);border-radius:99px;color:var(--m-text)}
+#uploader .k-btn:hover{background:rgba(255,255,255,.13)}
+#uploader .k-msg{color:var(--m-amber)}
+.ux-clear{padding:7px 14px;border-radius:99px;border:1px solid var(--m-line);background:none;color:var(--m-mute);font-size:.86rem}
+.ux-clear:hover{color:var(--m-text)}
+#uploader .mx-bar h3 small{color:var(--m-mute);font-weight:400;font-size:.88rem;margin-inline-start:8px}
+.ux-list{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,390px),1fr))}
+#uploader .u-item{background:var(--m-surface);border:1px solid var(--m-line);border-radius:22px;padding:16px;gap:14px;min-width:0}
+.ui-top{display:flex;align-items:center;gap:14px;min-width:0}
+.ui-ext{flex:none;width:48px;height:58px;display:grid;place-items:center;direction:ltr;font-size:.72rem;font-weight:800;background:hsl(var(--h) 45% 21%);color:hsl(var(--h) 85% 78%);border-radius:10px;clip-path:polygon(0 0,68% 0,100% 26%,100% 100%,0 100%)}
+.ui-txt{min-width:0;flex:1}
+#uploader .u-name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:700;line-height:1.6}
+.ui-link{display:flex;gap:8px;min-width:0}
+#uploader .u-link{flex:1;min-width:0;height:42px;padding:0 16px;border-radius:99px;background:var(--m-ink);border:1px solid var(--m-line);color:var(--m-mute)}
+.ui-copy{flex:none;height:42px;padding:0 20px;border-radius:99px;background:var(--m-amber);color:#2a1a00;font-weight:800}
+.ui-copy:hover{filter:brightness(1.06)}
+.ui-more{display:flex;gap:6px;flex-wrap:wrap}
+.ui-more button{padding:7px 14px;border-radius:99px;background:none;border:1px solid var(--m-line);color:var(--m-mute);font-size:.84rem}
+.ui-more button:hover{color:var(--m-text);background:rgba(255,255,255,.06)}
+#uploader .k-empty{border:1px dashed var(--m-line);border-radius:22px;padding:36px 10px}
+@media(prefers-reduced-motion:reduce){#uploader .u-drop,.ux-ico{transition:none}}
+
 .u-stat{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;font-size:.9rem;flex-wrap:wrap}
 
 /* ---------- Main page: separate tools area ---------- */
@@ -723,33 +762,35 @@ html.redir body>*:not(#redirBox){display:none!important}
   </div>
 </div>
 <div id="uploader" role="dialog" aria-label="آپلود فایل">
-  <div class="k-wrap">
-    <header class="k-head">
-      <button class="k-btn" id="uBack">← بازگشت</button>
-      <h2>آپلود فایل</h2>
-    </header>
-    <section class="k-card">
+  <header class="ux-top">
+    <button class="mx-ic" id="uBack" aria-label="بازگشت"><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <h2>آپلود فایل</h2>
+  </header>
+  <main class="ux-main">
+    <section>
       <div class="u-drop" id="uDrop" tabindex="0" role="button" aria-label="انتخاب فایل">
-        <b>فایل را اینجا بکشید یا برای انتخاب بزنید</b>
-        <span class="k-sub">بعد از آپلود، یک لینک می‌گیرید که می‌توانید برای هر کسی بفرستید. حداکثر حجم هر فایل ۵۰ مگابایت.</span>
+        <span class="ux-ico"><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"/></svg></span>
+        <b>فایل را اینجا رها کنید</b>
+        <span class="k-sub">یا برای انتخاب از دستگاه بزنید. بعد از آپلود یک لینک می‌گیرید که می‌توانید برای هر کسی بفرستید. حداکثر حجم هر فایل ۵۰ مگابایت.</span>
+        <span class="mx-upbtn ux-pick">انتخاب فایل</span>
       </div>
       <input type="file" id="uFile" multiple hidden>
       <div class="u-prog" id="uProg">
         <div class="u-bar" id="uBarWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="uBar"></i></div>
-        <div class="u-stat"><span id="uStat"></span><button class="k-btn" id="uCancel" style="padding:3px 12px">لغو</button></div>
+        <div class="u-stat"><span id="uStat"></span><button class="k-btn" id="uCancel" style="padding:3px 14px">لغو</button></div>
       </div>
       <p class="k-msg" id="uMsg" role="alert"></p>
     </section>
     <section>
-      <div class="k-row">
-        <h3 style="flex:1;font-weight:800">آپلودهای شما در این دستگاه</h3>
-        <button class="k-btn" id="uClear">پاک کردن فهرست</button>
+      <div class="mx-bar">
+        <h3>آپلودهای شما در این دستگاه<small id="uCount"></small></h3>
+        <button class="ux-clear" id="uClear">پاک کردن فهرست</button>
       </div>
-      <div id="uList" class="k-list"></div>
+      <div id="uList" class="ux-list"></div>
       <p class="k-empty" id="uEmpty">هنوز فایلی آپلود نکرده‌اید.</p>
       <p class="k-sub">پاک کردن فهرست فقط از همین صفحه حذف می‌کند و فایل‌ها هنوز با لینک باز می‌شوند.</p>
     </section>
-  </div>
+  </main>
 </div>
 <div id="music" role="dialog" aria-label="اکسپلور موزیک">
   <header class="mx-top">
@@ -1970,15 +2011,18 @@ $('send').onsubmit = (e) => {
   function render() {
     $('uEmpty').style.display = hist.length ? 'none' : 'block';
     $('uClear').style.display = hist.length ? '' : 'none';
+    $('uCount').textContent = hist.length ? hist.length.toLocaleString('fa-IR') + ' فایل' : '';
+    const hue = (n) => { const e = (String(n).split('.').pop() || '').toLowerCase(); let h = 0; for (const c of e) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+    const extOf = (n) => { const i = String(n).lastIndexOf('.'); return i > 0 && i < n.length - 1 ? n.slice(i + 1, i + 5).toUpperCase() : 'FILE'; };
     $('uList').innerHTML = hist.map((x, i) => `<div class="u-item" data-i="${i}">
-      <div class="u-name">${esc(x.name)}</div>
-      <div class="k-sub">${bytes(x.size)} — ${new Date(x.t).toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' })}</div>
-      <input class="u-link" readonly value="${esc(link(x))}" aria-label="لینک فایل">
-      <div class="k-row">
-        <button class="k-btn" data-a="copy">کپی لینک</button>
-        <button class="k-btn" data-a="dl">کپی لینک دانلود</button>
-        ${x.code ? '<button class="k-btn" data-a="long">کپی لینک اصلی (بلند)</button>' : '<button class="k-btn" data-a="short">کوتاه کردن لینک</button>'}
-        <button class="k-btn" data-a="open">باز کردن</button>
+      <div class="ui-top"><span class="ui-ext" style="--h:${hue(x.name)}" aria-hidden="true">${esc(extOf(x.name))}</span>
+        <div class="ui-txt"><div class="u-name" title="${esc(x.name)}">${esc(x.name)}</div>
+        <div class="k-sub">${bytes(x.size)}، ${new Date(x.t).toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' })}</div></div></div>
+      <div class="ui-link"><input class="u-link" readonly value="${esc(link(x))}" aria-label="لینک فایل"><button class="ui-copy" data-a="copy">کپی لینک</button></div>
+      <div class="ui-more">
+        <button data-a="dl">کپی لینک دانلود</button>
+        ${x.code ? '<button data-a="long">کپی لینک اصلی (بلند)</button>' : '<button data-a="short">کوتاه کردن لینک</button>'}
+        <button data-a="open">باز کردن</button>
       </div></div>`).join('');
   }
   function explain(e) {
