@@ -276,6 +276,57 @@ button.pill:hover{background:#2f4a60}
 .u-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lake),#3fd6a6);border-radius:99px;transition:width .15s}
 .u-bar.ind i{width:40%;animation:uslide 1.1s ease-in-out infinite alternate}
 @keyframes uslide{from{margin-left:0}to{margin-left:60%}}
+/* ---------- Home page + active rooms: same family as the music pages ---------- */
+#join{background:radial-gradient(55% 45% at 90% 4%,rgba(46,196,182,.22),transparent 70%),radial-gradient(45% 40% at 4% 98%,rgba(255,180,84,.16),transparent 70%),#0a141d}
+#join .card{background:#111f2c;border:1px solid rgba(255,255,255,.09);border-radius:28px;padding:clamp(20px,3vw,30px);box-shadow:0 30px 70px -30px rgba(0,0,0,.75);backdrop-filter:none;-webkit-backdrop-filter:none}
+#join .card input[type=text],#join .card input[type=password]{height:50px;padding:0 20px;border-radius:99px;background:#0a141d;border:1px solid rgba(255,255,255,.09)}
+#join .card input[type=text]:focus,#join .card input[type=password]:focus{border-color:var(--sun);box-shadow:0 0 0 3px rgba(255,180,84,.2)}
+#join .hint{line-height:1.9;margin-bottom:2px}
+#join .primary{height:56px;padding:0;border-radius:99px;background:var(--sun);color:#2a1a00;font-size:1.08rem;box-shadow:0 16px 30px -16px rgba(255,180,84,.75)}
+#join .primary:hover{filter:brightness(1.06);box-shadow:0 18px 34px -16px rgba(255,180,84,.85)}
+#join .tools-row{grid-template-columns:1fr;gap:10px}
+#join .tool{position:relative;gap:14px;padding:13px 16px;border-radius:22px;background:#111f2c;border:1px solid rgba(255,255,255,.09)}
+#join .tool:hover{background:#18293a;transform:translateY(-2px)}
+#join .tool::after{content:"";flex:none;width:9px;height:9px;margin-inline-start:auto;border-left:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg)}
+#join .tool i{width:46px;height:46px;border-radius:50%;background:var(--cb)}
+#join .tool i .ic{width:22px;height:22px;color:var(--c)}
+#join .tool b{font-size:1rem}
+#join .tool small{font-size:.8rem}
+#join .t-music{--c:#ffb454;--cb:rgba(255,180,84,.16)}
+#join .t-file{--c:#2ec4b6;--cb:rgba(46,196,182,.16)}
+#join .t-rooms{--c:#ff8fa3;--cb:rgba(255,143,163,.16)}
+#join .tool small.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#3fd6a6;margin-inline-end:6px;vertical-align:middle}
+#rooms{--m-ink:#0a141d;--m-surface:#111f2c;--m-raise:#18293a;--m-line:rgba(255,255,255,.09);--m-text:#eaf1f5;--m-mute:#8fa6b8;--m-amber:#ffb454;background:var(--m-ink);color:var(--m-text)}
+#rooms .ux-top h2{flex:1}
+#rooms .ux-top h2 small{margin-inline-start:10px;padding:2px 12px;border-radius:99px;background:rgba(63,214,166,.16);color:#3fd6a6;font-size:.85rem;font-weight:700}
+#rooms .ux-top h2 small:empty{display:none}
+.rx-name{display:grid;gap:8px;padding:16px 18px;border-radius:24px;background:var(--m-surface);border:1px solid var(--m-line)}
+.rx-name label{color:var(--m-mute);font-size:.9rem}
+#rooms input[type=text],#rooms input[type=password]{width:100%;height:48px;padding:0 20px;border-radius:99px;background:var(--m-ink);border:1px solid var(--m-line);color:var(--m-text)}
+#rooms input:focus{outline:0;border-color:var(--m-amber);box-shadow:0 0 0 3px rgba(255,180,84,.2)}
+#rooms .r-item{position:relative;gap:14px;padding:18px;border-radius:24px;background:var(--m-surface);border:1px solid var(--m-line)}
+#rooms .r-item.ask{border-color:var(--m-amber)}
+#rooms .r-top{display:flex;align-items:center;gap:12px;flex-wrap:nowrap}
+.r-dot{flex:none;width:10px;height:10px;border-radius:50%;background:#3fd6a6;box-shadow:0 0 0 4px rgba(63,214,166,.18)}
+.r-item.full .r-dot{background:#ef5b5b;box-shadow:0 0 0 4px rgba(239,91,91,.18)}
+#rooms .ux-list{align-items:start}
+#rooms .r-name{flex:0 1 auto;font-size:1.1rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-lock{margin-inline-start:auto;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,180,84,.14);color:var(--m-amber)}
+.r-lock .ic{width:16px;height:16px}
+.r-cap{display:flex;align-items:center;gap:12px;color:var(--m-mute);font-size:.84rem}
+.r-bar{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;direction:ltr}
+.r-bar i{display:block;height:100%;border-radius:99px;background:#3fd6a6}
+.r-item.full .r-bar i{background:#ef5b5b}
+#rooms .r-who span{background:var(--m-raise);padding:3px 12px 3px 4px}
+#rooms .k-sub{color:var(--m-mute);line-height:1.8}
+#rooms .r-go{height:46px;padding:0 22px;border-radius:99px;background:var(--m-amber);color:#2a1a00;font-weight:800}
+#rooms .r-item>.r-go{width:100%}
+#rooms .r-go:hover:not(:disabled){filter:brightness(1.06)}
+#rooms .r-go:disabled{background:rgba(255,255,255,.08);color:var(--m-mute);opacity:1}
+#rooms .r-pw{margin-top:-2px}
+#rooms .k-empty{border:1px dashed var(--m-line);border-radius:22px;padding:36px 10px}
+#rooms .k-msg{color:var(--m-amber)}
+
 /* ---------- Uploader page (same family as the music explore) ---------- */
 #uploader{--m-ink:#0a141d;--m-surface:#111f2c;--m-raise:#18293a;--m-line:rgba(255,255,255,.09);--m-text:#eaf1f5;--m-mute:#8fa6b8;--m-amber:#ffb454;background:var(--m-ink);color:var(--m-text)}
 .ux-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:max(12px,env(safe-area-inset-top)) clamp(14px,3vw,32px) 14px;background:linear-gradient(var(--m-ink) 72%,rgba(10,20,29,0))}
@@ -615,7 +666,6 @@ html.redir body>*:not(#redirBox){display:none!important}
       <h1>با هر کسی، از هر جا، <span class="grad">رو در رو</span> حرف بزنید</h1>
       <p>یک نام برای اتاق انتخاب کنید و لینکش را بفرستید. بدون ثبت‌نام.</p>
       <div class="chips"><span>بدون ثبت‌نام</span><span>تماس گروهی تا ۸ نفر</span><span>اشتراک صفحه</span></div>
-      <button class="explore" id="openMusic"><i>🎵</i><span><b>اکسپلور موزیک</b><small>موزیک آپلود کنید، گوش بدهید و دانلود کنید</small></span></button>
       <div class="faces" aria-hidden="true"><i style="background:#2ec4b6">ن</i><i style="background:#ffb454">ر</i><i style="background:#ff8fa3">س</i><i style="background:#9b8cff">م</i></div>
     </div>
     <div class="side">
@@ -632,8 +682,10 @@ html.redir body>*:not(#redirBox){display:none!important}
     </div>
     <div class="tools-title">ابزارهای دیگر</div>
     <div class="tools-row">
-      <button class="tool" id="openUploader"><i>📤</i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
-      <button class="tool" id="openRooms"><i>🟢</i><span><b>روم‌های فعال</b><small id="roomsInfo">ببینید چه کسانی صحبت می‌کنند و وصل شوید</small></span></button>
+      <button class="tool t-music" id="openMusic"><i><svg class="ic"><use href="#i-music"/></svg></i><span><b>اکسپلور موزیک</b><small>آپلود کنید، گوش بدهید و دانلود کنید</small></span></button>
+      <button class="tool t-file" id="openUploader"><i><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"/></svg></i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
+      <button class="tool t-rooms" id="openRooms"><i><svg class="ic"><use href="#i-users"/></svg></i><span><b>روم‌های فعال</b><small id="roomsInfo">ببینید چه کسانی صحبت می‌کنند و وصل شوید</small></span></button>
+    </div>
     </div>
     </div>
   </div>
@@ -743,23 +795,23 @@ html.redir body>*:not(#redirBox){display:none!important}
 </div>
 
 <div id="rooms" role="dialog" aria-label="روم‌های فعال">
-  <div class="k-wrap">
-    <header class="k-head">
-      <button class="k-btn" id="rBack">← بازگشت</button>
-      <h2>🟢 روم‌های فعال</h2>
-      <button class="k-btn" id="rRefresh">تازه‌سازی</button>
-    </header>
-    <section class="k-card">
-      <label class="k-sub" for="rName">نام شما (برای ورود به روم)</label>
+  <header class="ux-top">
+    <button class="mx-ic" id="rBack" aria-label="بازگشت"><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <h2>روم‌های فعال<small id="rCount"></small></h2>
+    <button class="mx-ic" id="rRefresh" aria-label="تازه‌سازی"><svg class="ic" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
+  </header>
+  <main class="ux-main">
+    <section class="rx-name">
+      <label for="rName">نام شما برای ورود به روم</label>
       <input type="text" id="rName" maxlength="30" autocomplete="nickname" placeholder="مثلاً سارا">
     </section>
     <section>
-      <div id="rList" class="k-list"></div>
+      <div id="rList" class="ux-list"></div>
       <p class="k-empty" id="rEmpty">در حال بارگذاری…</p>
       <p class="k-msg" id="rMsg" role="alert"></p>
       <p class="k-sub">فهرست هر چند ثانیه خودکار تازه می‌شود. نام افراد در روم‌های بدون رمز برای همه دیده می‌شود. در روم‌های رمزدار فقط نام روم و تعداد نفرات دیده می‌شود و برای ورود باید رمز را بدانید.</p>
     </section>
-  </div>
+  </main>
 </div>
 <div id="uploader" role="dialog" aria-label="آپلود فایل">
   <header class="ux-top">
@@ -1916,18 +1968,21 @@ $('send').onsubmit = (e) => {
   function render() {
     badge();
     $('rEmpty').style.display = rooms.length ? 'none' : 'block';
+    $('rCount').textContent = rooms.length ? fa(rooms.length) : '';
     if (!rooms.length) $('rEmpty').textContent = 'فعلاً کسی در تماس نیست. می‌توانید خودتان یک روم بسازید.';
     // keep the password box that is open (and what was typed) when the list refreshes
     const typed = askKey && document.querySelector('#rList .r-item.ask input') ? document.querySelector('#rList .r-item.ask input').value : '';
     $('rList').innerHTML = rooms.map((r, i) => {
       const full = r.n >= FULL;
       const who = r.locked
-        ? '<p class="k-sub">🔒 این روم رمز دارد.</p>'
+        ? '<p class="k-sub">این روم رمز دارد و نام افراد آن دیده نمی‌شود.</p>'
         : '<div class="r-who">' + (r.names || []).map((n) => `<span><i style="background:${colorOf(n)}">${esc(String(n).trim().charAt(0) || '?')}</i>${esc(n)}</span>`).join('') + '</div>';
-      return `<div class="r-item${askKey === key(r) ? ' ask' : ''}" data-i="${i}">
-        <div class="r-top"><span class="r-name" dir="auto">${r.locked ? '🔒 ' : ''}${esc(r.room)}</span><span class="r-n">${fa(r.n)} نفر</span>
-          <button class="r-go" data-a="go"${full ? ' disabled' : ''}>${full ? 'پر است' : 'اتصال'}</button></div>
+      const pct = Math.min(100, Math.round(r.n / FULL * 100));
+      return `<div class="r-item${askKey === key(r) ? ' ask' : ''}${full ? ' full' : ''}" data-i="${i}">
+        <div class="r-top"><span class="r-dot" aria-hidden="true"></span><span class="r-name" dir="auto">${esc(r.room)}</span>${r.locked ? '<span class="r-lock" title="رمزدار" aria-label="رمزدار"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>' : ''}</div>
+        <div class="r-cap"><div class="r-bar"><i style="width:${pct}%"></i></div><span>${fa(r.n)} از ${fa(FULL)} نفر</span></div>
         ${who}
+        <button class="r-go" data-a="go"${full ? ' disabled' : ''}>${full ? 'ظرفیت پر است' : r.locked ? 'ورود با رمز' : 'اتصال به روم'}</button>
         <div class="r-pw"><input type="password" dir="ltr" maxlength="40" placeholder="رمز روم" autocomplete="off"><button class="r-go" data-a="pw">ورود</button></div></div>`;
     }).join('');
     if (typed) { const inp = document.querySelector('#rList .r-item.ask input'); if (inp) inp.value = typed; }
