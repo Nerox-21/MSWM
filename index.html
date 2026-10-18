@@ -376,6 +376,53 @@ button.pill:hover{background:#2f4a60}
 .explore small{display:block;color:var(--mute);font-size:.8rem;margin-top:2px}
 .m-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 /* ---------- Music explore ---------- */
+
+.mx-cv img,.mx-sleeve .cv img,.mx-pcover img,.mx-qi .qc img,.mx-sleeve img{display:block;width:100%;height:100%;object-fit:cover}
+.mx-now{cursor:pointer;border-radius:10px}
+.mx-now:focus-visible{outline:2px solid var(--m-amber);outline-offset:3px}
+.mx-ptxt{position:relative}
+.mx-np{display:none;position:fixed;inset:0;z-index:11;background:rgba(5,10,15,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);justify-content:center}
+.mx-np.open{display:flex}
+.np-card{--tint:rgba(255,180,84,.3);width:min(470px,100%);height:100%;overflow-y:auto;background:radial-gradient(120% 55% at 50% 0,var(--tint),transparent 70%),var(--m-surface);border-inline:1px solid var(--m-line);padding:14px 22px calc(26px + env(safe-area-inset-bottom));animation:npin .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes npin{from{transform:translateY(24px);opacity:0}}
+.np-top{display:flex;justify-content:space-between;align-items:center;color:var(--m-mute);font-size:.9rem}
+.np-stage{position:relative;width:min(78vw,330px);aspect-ratio:1;margin:22px auto 8px}
+.np-vinyl{width:100%;height:100%;display:block;filter:drop-shadow(0 18px 24px rgba(0,0,0,.55))}
+.np-vinyl .rot{transform-origin:100px 100px;animation:mxspin 5s linear infinite;animation-play-state:paused}
+.np-stage.playing .rot{animation-play-state:running}
+.np-arm{position:absolute;top:-4%;right:-2%;width:34%;height:64%;transform-origin:78% 9%;transform:rotate(-34deg);transition:transform .8s cubic-bezier(.3,.7,.2,1);pointer-events:none}
+.np-stage.playing .np-arm{transform:rotate(4deg)}
+.np-t{text-align:center;margin-top:12px}
+.np-t h3{font-size:1.45rem;font-weight:800;line-height:1.5;overflow-wrap:anywhere}
+.np-t p{color:#c3d1dc;margin-top:2px}
+.np-t small{display:block;color:var(--m-mute);margin-top:4px}
+.np-prog{margin-top:18px}
+.np-acts{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:14px}
+.np-acts button,.np-acts a{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:none;color:var(--m-text);text-decoration:none}
+.np-acts button:hover,.np-acts a:hover{background:rgba(255,255,255,.08)}
+.np-acts .mx-play{width:64px;height:64px;background:var(--m-amber);color:#2a1a00}
+.np-acts .mx-play .ic{width:26px;height:26px}
+.np-acts .on{color:var(--m-amber)}
+.np-acts .rb{position:relative}
+.np-acts .rb i{position:absolute;inset-inline-end:7px;top:6px;font-size:.62rem;font-style:normal;font-weight:800}
+.np-sub{display:flex;justify-content:center;gap:10px;margin-top:6px}
+.np-sub .mx-sbtn{height:40px;padding:0 16px;font-size:.88rem}
+.np-q{margin-top:22px;border-top:1px solid var(--m-line);padding-top:14px}
+.np-q h4{font-size:1rem;font-weight:800;margin-bottom:6px}
+.np-q h4 small{color:var(--m-mute);font-weight:400;margin-inline-start:6px}
+.mx-qi{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border-radius:12px;background:none;color:var(--m-text);text-align:start}
+.mx-qi:hover{background:rgba(255,255,255,.06)}
+.mx-qi.cur{background:rgba(255,180,84,.12)}
+.mx-qi .qc{width:44px;height:44px;border-radius:8px;overflow:hidden;flex:none}
+.mx-qi .qc svg{display:block;width:100%;height:100%}
+.mx-qi .qt{min-width:0;flex:1}
+.mx-qi b{display:block;font-weight:600;font-size:.94rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mx-qi.cur b{color:var(--m-amber)}
+.mx-qi span{display:block;color:var(--m-mute);font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#music.np-open .mx-toast{z-index:14}
+@media(max-width:719px){.np-card{border-inline:0}}
+@media(prefers-reduced-motion:reduce){.np-vinyl .rot{animation:none}.np-arm,.np-card{transition:none;animation:none}}
+
 #music{--m-ink:#0a141d;--m-surface:#111f2c;--m-raise:#18293a;--m-line:rgba(255,255,255,.09);--m-text:#eaf1f5;--m-mute:#8fa6b8;--m-amber:#ffb454;background:var(--m-ink);color:var(--m-text)}
 .mx-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) clamp(14px,3vw,32px) 14px;background:linear-gradient(var(--m-ink) 72%,rgba(10,20,29,0))}
 .mx-ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--m-raise);color:var(--m-text);flex:none;text-decoration:none;padding:0}
@@ -393,7 +440,7 @@ button.pill:hover{background:#2f4a60}
 .mx-sleeve .cv{position:absolute;inset:0;z-index:2;border-radius:10px;overflow:hidden;box-shadow:0 22px 44px -14px rgba(0,0,0,.7)}
 .mx-sleeve .cv svg,.mx-cv svg,.mx-pcover svg{display:block;width:100%;height:100%}
 .mx-disc{position:absolute;z-index:1;top:5%;bottom:5%;inset-inline-end:-24%;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 20deg,rgba(255,255,255,0) 0 18%,rgba(255,255,255,.16) 25%,rgba(255,255,255,0) 32% 68%,rgba(255,255,255,.12) 75%,rgba(255,255,255,0) 82%),repeating-radial-gradient(circle,#07090c 0 2px,#161b21 2px 3px);box-shadow:0 12px 28px -10px rgba(0,0,0,.8);transition:inset-inline-end .6s cubic-bezier(.2,.8,.2,1)}
-.mx-disc::before{content:"";position:absolute;inset:33%;border-radius:50%;background:var(--lab);box-shadow:0 0 0 2px rgba(0,0,0,.25) inset}
+.mx-disc::before{content:"";position:absolute;inset:33%;border-radius:50%;background:var(--labimg,none) center/cover,var(--lab);box-shadow:0 0 0 2px rgba(0,0,0,.25) inset}
 .mx-disc::after{content:"";position:absolute;inset:47.5%;border-radius:50%;background:#07090c}
 .mx-hero.playing .mx-disc{inset-inline-end:-34%;animation:mxspin 3.4s linear infinite}
 @keyframes mxspin{to{transform:rotate(360deg)}}
@@ -438,7 +485,11 @@ button.pill:hover{background:#2f4a60}
 .mx-player{position:fixed;inset-inline:0;bottom:0;z-index:8;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,1.6fr) minmax(0,1fr);align-items:center;gap:14px;padding:10px clamp(12px,3vw,28px) calc(10px + env(safe-area-inset-bottom));background:rgba(12,24,34,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--m-line);transform:translateY(115%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .mx-player.on{transform:none}
 .mx-now{display:flex;align-items:center;gap:12px;min-width:0}
-.mx-pcover{width:52px;height:52px;border-radius:8px;overflow:hidden;flex:none;background:var(--m-raise)}
+.mx-pcover{position:relative;width:54px;height:54px;border-radius:50%;overflow:hidden;flex:none;background:#0a0d11;box-shadow:0 0 0 3px #10161c,0 0 0 4px rgba(255,255,255,.12)}
+.mx-pcover::after{content:"";position:absolute;inset:43%;border-radius:50%;background:#0a141d;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.mx-pcover img{display:block;width:100%;height:100%;object-fit:cover}
+.mx-player.playing .mx-pcover{animation:mxspin 3.4s linear infinite}
+@media(prefers-reduced-motion:reduce){.mx-player.playing .mx-pcover{animation:none}}
 .mx-ptxt{min-width:0}
 .mx-ptxt b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mx-ptxt span{display:block;color:var(--m-mute);font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -722,7 +773,7 @@ html.redir body>*:not(#redirBox){display:none!important}
     <div class="mx-empty" id="mEmpty"><p id="mEmptyTxt">هنوز موزیکی نیست. اولین آهنگ را شما بگذارید.</p><button class="mx-upbtn" id="mEmptyUp"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>آپلود موزیک</button></div>
   </main>
   <div class="mx-player" id="mPlayer" role="region" aria-label="پخش‌کننده">
-    <div class="mx-now"><div class="mx-pcover" id="mpCover"></div><div class="mx-ptxt"><b id="mpTitle"></b><span id="mpArtist"></span></div></div>
+    <div class="mx-now" id="mpOpen" role="button" tabindex="0" aria-label="باز کردن صفحه پخش"><div class="mx-pcover" id="mpCover"></div><div class="mx-ptxt"><b id="mpTitle"></b><span id="mpArtist"></span></div></div>
     <div class="mx-mid">
       <div class="mx-ctl" dir="ltr">
         <button id="mpPrev" aria-label="آهنگ قبلی"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5v14" /><path d="M19 5L9 12l10 7z" fill="currentColor"/></svg></button>
@@ -755,6 +806,23 @@ html.redir body>*:not(#redirBox){display:none!important}
         <div class="u-stat"><span id="mStat"></span><button class="k-btn" id="mCancel" style="padding:3px 12px">لغو</button></div>
       </div>
       <p class="k-msg" id="mMsg" role="alert"></p>
+    </div>
+  </div>
+  <div class="mx-np" id="mNow" role="dialog" aria-label="در حال پخش">
+    <div class="np-card" id="npCard">
+      <div class="np-top"><button class="mx-ic" id="mnClose" aria-label="بستن"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><span>در حال پخش</span><span style="width:42px"></span></div>
+      <div class="np-stage" id="mnStage"></div>
+      <div class="np-t"><h3 id="mnTitle"></h3><p id="mnArtist"></p><small id="mnMeta"></small></div>
+      <div class="np-prog"><div class="mx-seek" dir="ltr"><span id="mnCur">0:00</span><input type="range" id="mnSeek" min="0" max="1000" value="0" step="1" aria-label="موقعیت پخش"><span id="mnDur">0:00</span></div></div>
+      <div class="np-acts" dir="ltr">
+        <button id="mnShuf" aria-label="پخش تصادفی" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24"><path d="M3 7h3c5 0 6 10 11 10h4M3 17h3c1.6 0 2.8-.8 3.8-2M14 9c.9-1.3 2-2 3.6-2H21M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button>
+        <button id="mnPrev" aria-label="آهنگ قبلی"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M19 5L9 12l10 7z" fill="currentColor"/></svg></button>
+        <button id="mnPlay" class="mx-play" aria-label="پخش"></button>
+        <button id="mnNext" aria-label="آهنگ بعدی"><svg class="ic" viewBox="0 0 24 24"><path d="M18 5v14"/><path d="M5 5l10 7-10 7z" fill="currentColor"/></svg></button>
+        <button id="mnRep" class="rb" aria-label="تکرار"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11V9a3 3 0 0 1 3-3h12M16 3l3 3-3 3M20 13v2a3 3 0 0 1-3 3H5M8 21l-3-3 3-3"/></svg><i></i></button>
+      </div>
+      <div class="np-sub"><a class="mx-sbtn" id="mnDl" href="#" download><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>دانلود</a><button class="mx-sbtn" id="mnCopy"><svg class="ic" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>کپی لینک</button></div>
+      <div class="np-q"><h4>صف پخش<small id="mnQn"></small></h4><div id="mnQ"></div></div>
     </div>
   </div>
   <div class="mx-toast" id="mToast" role="status"></div>
@@ -2062,29 +2130,90 @@ $('send').onsubmit = (e) => {
   const hashStr = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
   const rng = (a) => () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const rgba = (hex, a) => 'rgba(' + [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(',') + ',' + a + ')';
-  const covers = new Map();
+  // One default cover for songs that have no picture of their own
+  const DEFCOVER = '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="100" height="100" fill="#16384a"/><circle cx="50" cy="50" r="46" fill="#0d2230"/><circle cx="50" cy="50" r="34" fill="none" stroke="#2ec4b6" stroke-opacity=".3" stroke-width="1.4"/><circle cx="50" cy="50" r="24" fill="none" stroke="#2ec4b6" stroke-opacity=".22" stroke-width="1.2"/><circle cx="50" cy="50" r="14" fill="#ffb454"/><circle cx="48.6" cy="55" r="3.6" fill="#2a1a00"/><path d="M52.2 55V41.5l6.4 1.8v4l-4-1.1V55z" fill="#2a1a00"/></svg>';
+  const covers = new Map(), art = new Map(); // art: id -> blob URL (own cover inside the file) or false (none)
+  const artUrl = (t) => art.get(String(t.id)) || '';
   function cover(t) {
-    const key = t.id + '|' + t.title + '|' + t.artist;
+    const key = t.id + '|' + t.title + '|' + t.artist + (artUrl(t) ? '|a' : '');
     if (covers.has(key)) return covers.get(key);
-    const seed = hashStr((t.title || '') + '|' + (t.artist || '') + '|' + t.id), r = rng(seed), base = PALS[seed % PALS.length];
-    const o = [0, 1, 2]; for (let i = 2; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
-    const [bg, c1, c2] = o.map((i) => base[i]);
-    const R = (n) => Math.round(n * 10) / 10;
-    let g = '';
-    switch (Math.floor(r() * 7)) {
-      case 0: { const cx = 30 + r() * 40, cy = 30 + r() * 40; g = [58, 44, 30, 16].map((rad, i) => `<circle cx="${R(cx)}" cy="${R(cy)}" r="${rad}" fill="${i % 2 ? c2 : c1}"/>`).join(''); break; }
-      case 1: { const cx = 32 + r() * 36; g = `<circle cx="${R(cx)}" cy="46" r="21" fill="${c2}"/><rect y="58" width="100" height="42" fill="${c1}"/>` + [0, 1, 2].map((i) => `<rect y="${64 + i * 10}" width="100" height="${3 + i * 1.5}" fill="${bg}"/>`).join(''); break; }
-      case 2: g = [0, 1, 2].map((i) => { const h = 38 + r() * 40, x = 7 + i * 31; return `<path d="M${x} 100V${R(100 - h + 13)}a13 13 0 0 1 26 0V100z" fill="${i % 2 ? c2 : c1}"/>`; }).join(''); break;
-      case 3: g = `<polygon points="0,72 100,22 100,52 0,102" fill="${c1}"/><polygon points="0,40 100,-8 100,4 0,52" fill="${c2}"/><circle cx="${R(62 + r() * 24)}" cy="${R(20 + r() * 12)}" r="11" fill="${c2}"/>`; break;
-      case 4: for (let y = 0; y < 5; y++) for (let x = 0; x < 5; x++) g += `<circle cx="${10 + x * 20}" cy="${10 + y * 20}" r="${R(2.5 + r() * 7)}" fill="${r() < .5 ? c1 : c2}"/>`; break;
-      case 5: g = [0, 1, 2, 3, 4].map((i) => { const y = 14 + i * 18, a = 9 + r() * 8; return `<path d="M-5 ${y}Q20 ${R(y - a)} 45 ${y}T95 ${y}T145 ${y}" fill="none" stroke="${i % 2 ? c2 : c1}" stroke-width="7" stroke-linecap="round"/>`; }).join(''); break;
-      default: for (let y = 0; y < 2; y++) for (let x = 0; x < 2; x++) { const rot = Math.floor(r() * 4) * 90, f = [c1, c2, bg === c1 ? c2 : c1][Math.floor(r() * 3)]; g += `<path transform="translate(${x * 50} ${y * 50}) rotate(${rot} 25 25)" d="M0 0H50A50 50 0 0 1 0 50z" fill="${f}"/>`; }
-    }
-    const out = { svg: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="100" height="100" fill="${bg}"/>${g}</svg>`, bg, c1, c2 };
+    const out = { svg: DEFCOVER, bg: '#16384a', c1: '#2ec4b6', c2: '#ffb454' };
+    if (artUrl(t)) out.svg = `<img src="${artUrl(t)}" alt="">`;
     covers.set(key, out); return out;
   }
 
-  let cur = null, sort = 'new';
+
+  // ---------- Real cover art: read the picture embedded in the mp3 (ID3 tag), otherwise the made-up sleeve stays ----------
+  async function headBytes(url, n) {
+    const ac = new AbortController();
+    try {
+      const r = await fetch(url, { headers: { Range: 'bytes=0-' + (n - 1) }, signal: ac.signal });
+      if (!r.ok || !r.body) return null;
+      const rd = r.body.getReader(), parts = []; let got = 0;
+      while (got < n) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; }
+      ac.abort();
+      const out = new Uint8Array(Math.min(got, n)); let o = 0;
+      for (const v of parts) { const k = Math.min(v.length, out.length - o); out.set(v.subarray(0, k), o); o += k; if (o >= out.length) break; }
+      return out;
+    } catch { return null; }
+  }
+  const ss = (b, i) => ((b[i] & 127) << 21) | ((b[i + 1] & 127) << 14) | ((b[i + 2] & 127) << 7) | (b[i + 3] & 127);
+  function id3Pic(b, total) {
+    const ver = b[3]; if (ver < 2 || ver > 4) return null;
+    let pos = 10;
+    if (b[5] & 0x40 && ver >= 3) pos += ver === 4 ? ss(b, 10) : 4 + ((b[10] << 24 | b[11] << 16 | b[12] << 8 | b[13]) >>> 0);
+    const hdr = ver === 2 ? 6 : 10, end = Math.min(total, b.length);
+    while (pos + hdr <= end) {
+      if (!b[pos]) break;
+      const id = String.fromCharCode(...b.subarray(pos, pos + (ver === 2 ? 3 : 4)));
+      const size = ver === 2 ? (b[pos + 3] << 16 | b[pos + 4] << 8 | b[pos + 5]) : ver === 4 ? ss(b, pos + 4) : ((b[pos + 4] << 24 | b[pos + 5] << 16 | b[pos + 6] << 8 | b[pos + 7]) >>> 0);
+      const st = pos + hdr;
+      if (size <= 0 || st + size > b.length) break;
+      if (id === 'APIC' || id === 'PIC') {
+        const d = b.subarray(st, st + size), enc = d[0]; let i = 1;
+        if (ver === 2) i += 3; else { while (i < d.length && d[i]) i++; i++; }
+        i++; // picture type
+        if (enc === 0 || enc === 3) { while (i < d.length && d[i]) i++; i++; } else { while (i + 1 < d.length && !(d[i] === 0 && d[i + 1] === 0)) i += 2; i += 2; }
+        const img = d.subarray(i);
+        const type = img[0] === 0xFF && img[1] === 0xD8 ? 'image/jpeg' : img[0] === 0x89 && img[1] === 0x50 ? 'image/png' : img[0] === 0x52 && img[1] === 0x49 ? 'image/webp' : '';
+        return type && img.length > 100 ? new Blob([img], { type }) : null;
+      }
+      pos = st + size;
+    }
+    return null;
+  }
+  async function fetchArt(t) {
+    let b = await headBytes(t.url, 65536);
+    if (!b || b.length < 10 || b[0] !== 0x49 || b[1] !== 0x44 || b[2] !== 0x33) return '';
+    const total = ss(b, 6) + 10;
+    if (total > 6e6) return '';
+    if (b.length < total) { b = await headBytes(t.url, total); if (!b) return ''; }
+    const blob = id3Pic(b, total);
+    return blob ? URL.createObjectURL(blob) : '';
+  }
+  const artQ = [], artWait = new Set(); let artBusy = 0, artT = 0;
+  function ensureArt(t, first) {
+    const k = String(t.id);
+    if (!t || art.has(k) || artWait.has(k) || !/\.mp3(\?|$)/i.test(t.url)) return;
+    artWait.add(k); first ? artQ.unshift(t) : artQ.push(t); pump();
+  }
+  function pump() {
+    while (artBusy < 2 && artQ.length) {
+      const t = artQ.shift(); artBusy++;
+      fetchArt(t).then((u) => { art.set(String(t.id), u || false); if (u) { clearTimeout(artT); artT = setTimeout(artChanged, 120); } }, () => art.set(String(t.id), false))
+        .finally(() => { artBusy--; artWait.delete(String(t.id)); pump(); });
+    }
+  }
+  function artChanged() {
+    render();
+    if (cur) { $('mpCover').innerHTML = cover(cur).svg; if ($('mNow').classList.contains('open')) fillNow(); }
+  }
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return; io.unobserve(e.target);
+    const t = tracks.find((x) => String(x.id) === e.target.dataset.id); if (t) ensureArt(t);
+  }), { rootMargin: '300px' }) : null;
+
+  let cur = null, sort = 'new', shuf = false, rep = 'all';
   const A = $('mAudio');
   const same = (a, b) => a && b && String(a.id) === String(b.id);
   const isPlaying = () => !!cur && !A.paused && !A.ended;
@@ -2107,23 +2236,32 @@ $('send').onsubmit = (e) => {
     const c = cover(t), ti = esc(t.title);
     return `<div class="mx-sleeve"><div class="mx-disc" aria-hidden="true"></div><div class="cv">${c.svg}</div></div>
       <div class="mx-htxt"><h2>${ti}</h2><div class="by">${t.artist ? esc(t.artist) : 'خواننده نامشخص'}</div>
-      <div class="meta">آخرین آهنگ اضافه‌شده، ${meta(t)}</div>
+      <div class="meta">${same(cur, t) ? 'در حال پخش، ' : 'آخرین آهنگ اضافه‌شده، '}${meta(t)}</div>
       <div class="mx-hact"><button class="mx-pbtn" id="mHeroPlay" data-a="hero"></button><a class="mx-sbtn" href="${esc(dlUrl(t))}" download>${ICON.dl}دانلود</a></div></div>`;
+  }
+  const heroTrack = () => cur || tracks[0];
+  function renderHero() {
+    const h = $('mHero'), top = heroTrack(), q = $('mSearch').value.trim();
+    if (top && (!q || cur)) {
+      const c = cover(top);
+      h.style.setProperty('--tint', rgba(c.bg, .5)); h.style.setProperty('--lab', c.c2);
+      h.style.setProperty('--labimg', artUrl(top) ? 'url("' + artUrl(top) + '")' : 'none');
+      h.innerHTML = heroHTML(top); h.hidden = false;
+    } else { h.hidden = true; h.innerHTML = ''; }
+    sync();
   }
   function render() {
     const q = $('mSearch').value.trim(), l = sorted();
     $('mCount').textContent = tracks.length ? fa(l.length) + ' آهنگ' : '';
-    const h = $('mHero'), top = tracks[0];
-    if (top && !q) {
-      const c = cover(top);
-      h.style.setProperty('--tint', rgba(c.bg, .5)); h.style.setProperty('--lab', c.c2);
-      h.innerHTML = heroHTML(top); h.hidden = false;
-    } else { h.hidden = true; h.innerHTML = ''; }
+    renderHero();
     $('mList').innerHTML = l.map(cardHTML).join('');
     $('mEmpty').style.display = l.length ? 'none' : 'flex';
     $('mEmptyTxt').textContent = tracks.length ? 'موردی پیدا نشد.' : 'هنوز موزیکی نیست. اولین آهنگ را شما بگذارید.';
     $('mEmptyUp').style.display = tracks.length ? 'none' : '';
+    if (tracks[0]) ensureArt(tracks[0], true);
+    if (io) document.querySelectorAll('#mList .mx-card').forEach((el) => { const k = el.dataset.id; if (!art.has(k)) io.observe(el); });
     sync();
+    if ($('mNow').classList.contains('open')) fillQueue();
   }
   // Refreshes only the "what is playing" marks (no re-render, so scrolling and hover are untouched)
   function sync() {
@@ -2132,11 +2270,13 @@ $('send').onsubmit = (e) => {
       const on = !!cur && el.dataset.id === String(cur.id);
       el.classList.toggle('cur', on); el.classList.toggle('playing', on && playing);
     });
-    const top = tracks[0], heroOn = !!top && same(cur, top) && playing;
+    const heroOn = playing; $('mPlayer').classList.toggle('playing', playing);
     $('mHero').classList.toggle('playing', heroOn);
     const hb = $('mHeroPlay'); if (hb) hb.innerHTML = heroOn ? ICON.pause + 'مکث' : ICON.play + 'پخش';
     $('mpPlay').innerHTML = playing ? ICON.pause : ICON.play;
     $('mpPlay').setAttribute('aria-label', playing ? 'مکث' : 'پخش');
+    $('mnPlay').innerHTML = playing ? ICON.pause : ICON.play; $('mnPlay').setAttribute('aria-label', playing ? 'مکث' : 'پخش');
+    $('mnStage').classList.toggle('playing', playing);
   }
   async function load() {
     try { tracks = await rpc('music_list', { p_limit: 100 }); render(); }
@@ -2220,6 +2360,7 @@ $('send').onsubmit = (e) => {
   function showPlayer(t) {
     $('mpCover').innerHTML = cover(t).svg; $('mpTitle').textContent = t.title; $('mpArtist').textContent = t.artist || 'خواننده نامشخص';
     $('mpDl').href = dlUrl(t); $('mPlayer').classList.add('on');
+    ensureArt(t, true); fillNow();
     seekEl.value = 0; paint(); $('mpCur').textContent = '0:00'; $('mpDur').textContent = '0:00';
     try {
       if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist || '' });
@@ -2228,23 +2369,31 @@ $('send').onsubmit = (e) => {
   function play(id, force) {
     const t = tracks.find((x) => String(x.id) === String(id)); if (!t) return;
     if (same(cur, t) && !force) { A.paused ? A.play().catch(() => {}) : A.pause(); return; }
-    cur = t; A.src = t.url; showPlayer(t);
+    cur = t; A.src = t.url; showPlayer(t); ensureArt(t, true);
     A.play().catch(() => msg('پخش نشد. یک بار دیگر روی آهنگ بزنید.'));
-    sync();
+    renderHero();
   }
-  function step(d) {
+  function step(d, auto) {
     const l = sorted(); if (!l.length) return;
     let i = l.findIndex((x) => same(x, cur));
-    i = i < 0 ? 0 : (i + d + l.length) % l.length;
+    if (shuf && l.length > 1) { let j; do { j = Math.floor(Math.random() * l.length); } while (j === i); i = j; }
+    else {
+      i = i < 0 ? 0 : i + d;
+      if (auto && rep === 'off' && i >= l.length) { A.pause(); A.currentTime = 0; sync(); return; }
+      i = (i + l.length) % l.length;
+    }
     play(l[i].id, true);
   }
   ['play', 'pause', 'ended', 'emptied'].forEach((ev) => A.addEventListener(ev, sync));
-  A.addEventListener('ended', () => { if (sorted().length > 1) step(1); else { A.currentTime = 0; seekEl.value = 0; paint(); } });
-  A.addEventListener('timeupdate', () => {
-    $('mpCur').textContent = fmt(A.currentTime);
-    if (!seeking && A.duration) { seekEl.value = Math.round(A.currentTime / A.duration * 1000); paint(); }
+  A.addEventListener('ended', () => {
+    if (rep === 'one' || sorted().length < 2 && rep !== 'off') { A.currentTime = 0; A.play().catch(() => {}); }
+    else step(1, true);
   });
-  A.addEventListener('loadedmetadata', () => { $('mpDur').textContent = fmt(A.duration); });
+  A.addEventListener('timeupdate', () => {
+    $('mpCur').textContent = fmt(A.currentTime); $('mnCur').textContent = fmt(A.currentTime);
+    if (!seeking && A.duration) { seekEl.value = Math.round(A.currentTime / A.duration * 1000); paint(); nSeek.value = seekEl.value; nPaint(); }
+  });
+  A.addEventListener('loadedmetadata', () => { $('mpDur').textContent = fmt(A.duration); $('mnDur').textContent = fmt(A.duration); });
   A.addEventListener('error', () => { if (cur) msg('این آهنگ پخش نشد. اگر فایل حذف شده، فهرست را تازه‌سازی کنید.'); });
   seekEl.addEventListener('input', () => { seeking = true; paint(); $('mpCur').textContent = fmt(seekEl.value / 1000 * (A.duration || 0)); });
   seekEl.addEventListener('change', () => { if (A.duration) A.currentTime = seekEl.value / 1000 * A.duration; seeking = false; });
@@ -2270,13 +2419,64 @@ $('send').onsubmit = (e) => {
   $('mList').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-a="play"]'); if (b) play(b.closest('.mx-card').dataset.id);
   });
-  $('mHero').addEventListener('click', (e) => { if (e.target.closest('#mHeroPlay') && tracks[0]) play(tracks[0].id); });
+  $('mHero').addEventListener('click', (e) => { if (e.target.closest('#mHeroPlay') && heroTrack()) play(heroTrack().id); });
   $('mSort').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-sort]'); if (!b) return;
     sort = b.dataset.sort;
     $('mSort').querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
     render();
   });
+
+
+  // ---------- Now playing panel: spinning record with the song name written on it ----------
+  const nSeek = $('mnSeek'), nPaint = () => nSeek.style.setProperty('--p', nSeek.value / 10 + '%');
+  function vinylSVG(t) {
+    const c = cover(t), u = artUrl(t), tx = esc(t.title + (t.artist ? '  •  ' + t.artist : '')) + '  •  ';
+    const label = u ? `<image href="${u}" x="60" y="60" width="80" height="80" preserveAspectRatio="xMidYMid slice" clip-path="url(#npLc)"/>`
+      : '<circle cx="100" cy="100" r="40" fill="#16384a"/><circle cx="100" cy="100" r="31" fill="none" stroke="#2ec4b6" stroke-opacity=".35" stroke-width="1"/><circle cx="100" cy="100" r="20" fill="none" stroke="#ffb454" stroke-width="3.5"/>';
+    return `<svg class="np-vinyl" viewBox="0 0 200 200" aria-hidden="true"><defs><clipPath id="npLc"><circle cx="100" cy="100" r="40"/></clipPath>
+      <path id="npPath" d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0"/>
+      <radialGradient id="npSh" cx=".3" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+      <g class="rot"><circle cx="100" cy="100" r="98" fill="#0a0d11"/>
+      ${[92, 86, 80, 74, 68, 62, 56, 50].map((r) => `<circle cx="100" cy="100" r="${r}" fill="none" stroke="#1d242c" stroke-width=".7"/>`).join('')}
+      <text font-size="8.5" fill="rgba(255,255,255,.62)" font-family="Vazirmatn,sans-serif" letter-spacing=".6"><textPath href="#npPath">${tx.repeat(5)}</textPath></text>
+      ${label}<circle cx="100" cy="100" r="40" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="1.4"/><circle cx="100" cy="100" r="4.5" fill="#0a0d11"/></g>
+      <circle cx="100" cy="100" r="98" fill="url(#npSh)"/></svg>
+      <svg class="np-arm" viewBox="0 0 70 130" aria-hidden="true"><circle cx="55" cy="12" r="10" fill="#2c3a47" stroke="#4a5d6e" stroke-width="2"/><path d="M55 12L55 82L28 118" fill="none" stroke="#c7d3dc" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="18" y="112" width="20" height="10" rx="3" transform="rotate(-35 28 117)" fill="#ffb454"/></svg>`;
+  }
+  function fillNow() {
+    if (!cur) return;
+    $('mnStage').innerHTML = vinylSVG(cur);
+    $('mnTitle').textContent = cur.title; $('mnArtist').textContent = cur.artist || 'خواننده نامشخص';
+    $('mnMeta').textContent = meta(cur); $('mnDl').href = dlUrl(cur);
+    $('npCard').style.setProperty('--tint', rgba(cover(cur).bg, .5));
+    fillQueue(); sync();
+  }
+  function fillQueue() {
+    const l = sorted(); $('mnQn').textContent = fa(l.length) + ' آهنگ';
+    $('mnQ').innerHTML = l.map((t) => `<button class="mx-qi${same(cur, t) ? ' cur' : ''}" data-id="${t.id}"><span class="qc" style="display:block">${cover(t).svg}</span><span class="qt" style="display:block"><b>${esc(t.title)}</b><span>${t.artist ? esc(t.artist) : 'خواننده نامشخص'}</span></span></button>`).join('');
+  }
+  function openNow() { if (!cur) return; fillNow(); $('mNow').classList.add('open'); $('music').classList.add('np-open'); $('mnPlay').focus(); }
+  function closeNow() { $('mNow').classList.remove('open'); $('music').classList.remove('np-open'); }
+  $('mpOpen').onclick = openNow;
+  $('mpOpen').onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); openNow(); } };
+  $('mnClose').onclick = closeNow;
+  $('mNow').addEventListener('click', (e) => { if (e.target === $('mNow')) closeNow(); });
+  $('mnQ').addEventListener('click', (e) => { const b = e.target.closest('.mx-qi'); if (b) play(b.dataset.id); });
+  $('mnPlay').onclick = () => { if (cur) play(cur.id); };
+  $('mnPrev').onclick = () => $('mpPrev').click();
+  $('mnNext').onclick = () => step(1);
+  $('mnCopy').onclick = () => $('mpCopy').click();
+  nSeek.addEventListener('input', () => { seeking = true; nPaint(); $('mnCur').textContent = fmt(nSeek.value / 1000 * (A.duration || 0)); });
+  nSeek.addEventListener('change', () => { if (A.duration) A.currentTime = nSeek.value / 1000 * A.duration; seeking = false; });
+  function syncModes() {
+    $('mnShuf').classList.toggle('on', shuf); $('mnShuf').setAttribute('aria-pressed', String(shuf));
+    $('mnRep').classList.toggle('on', rep !== 'off'); $('mnRep').querySelector('i').textContent = rep === 'one' ? '1' : '';
+    $('mnRep').setAttribute('aria-label', rep === 'one' ? 'تکرار یک آهنگ' : rep === 'all' ? 'تکرار همه' : 'بدون تکرار');
+  }
+  $('mnShuf').onclick = () => { shuf = !shuf; syncModes(); msg(shuf ? 'پخش تصادفی روشن شد.' : 'پخش تصادفی خاموش شد.'); };
+  $('mnRep').onclick = () => { rep = rep === 'all' ? 'one' : rep === 'one' ? 'off' : 'all'; syncModes(); msg(rep === 'one' ? 'تکرار یک آهنگ' : rep === 'all' ? 'تکرار همه آهنگ‌ها' : 'بدون تکرار'); };
+  syncModes(); nPaint();
 
   // ---------- Upload sheet, open / close ----------
   function openSheet() { $('mUpload').classList.add('open'); $('music').classList.add('sheet-open'); setTimeout(() => $('mTitle').focus(), 50); }
@@ -2287,13 +2487,13 @@ $('send').onsubmit = (e) => {
   $('mRefresh').onclick = load;
   $('openMusic').onclick = () => { $('music').classList.add('open'); load(); };
   const close = () => {
-    $('music').classList.remove('open'); closeSheet();
-    A.pause(); cur = null; $('mPlayer').classList.remove('on'); sync();
+    $('music').classList.remove('open'); closeSheet(); closeNow();
+    A.pause(); cur = null; $('mPlayer').classList.remove('on'); renderHero();
   };
   $('mBack').onclick = close;
   addEventListener('keydown', (e) => {
     if (!$('music').classList.contains('open')) return;
-    if (e.key === 'Escape') { if ($('mUpload').classList.contains('open')) closeSheet(); else close(); }
+    if (e.key === 'Escape') { if ($('mUpload').classList.contains('open')) closeSheet(); else if ($('mNow').classList.contains('open')) closeNow(); else close(); }
     else if (e.key === ' ' && cur && !/^(INPUT|TEXTAREA|BUTTON|A|SELECT)$/.test((e.target.tagName || '')) && !e.target.closest('[role=button]')) { e.preventDefault(); play(cur.id); }
   });
 })();
