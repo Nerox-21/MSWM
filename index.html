@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f1e2b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تماس و چت">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>تماس و چت</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
@@ -373,6 +380,18 @@ button.pill:hover{background:#2f4a60}
 .tools-title{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:.82rem}
 .tools-title::before,.tools-title::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12)}
 .tools-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pwa-btn{display:none;width:100%;margin-top:10px;align-items:center;gap:12px;padding:11px 16px;border-radius:18px;background:rgba(46,196,182,.12);border:1px dashed rgba(46,196,182,.45);color:var(--mist);text-align:start;transition:background .15s}
+.pwa-btn:hover{background:rgba(46,196,182,.2)}
+.pwa-btn.show{display:flex}
+.pwa-btn i{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:rgba(46,196,182,.22);color:var(--lake)}
+.pwa-btn span{display:grid;gap:1px;min-width:0}.pwa-btn b{font-size:.92rem;font-weight:600}.pwa-btn small{color:var(--mute);font-size:.78rem}
+#pwaHint{position:fixed;inset:0;z-index:80;display:none;place-items:end center;background:rgba(5,12,19,.6);padding:16px}
+#pwaHint.on{display:grid}
+#pwaHint .box{width:min(440px,100%);background:#13232f;border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+#pwaHint h3{margin:0 0 8px;font-size:1.05rem}
+#pwaHint ol{margin:0;padding-inline-start:22px;color:var(--mist);line-height:2;font-size:.92rem}
+#pwaHint p{margin:10px 0 0;color:var(--mute);font-size:.8rem}
+#pwaHint button{margin-top:14px;width:100%;padding:12px;border-radius:14px;background:var(--lake);color:#06231f;font-weight:700}
 .tool{display:flex;gap:10px;align-items:center;text-align:start;padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--mist);transition:transform .15s,background .15s}
 .tool:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
 .tool i{font-style:normal;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:1.3rem;flex:none;background:rgba(46,196,182,.2)}
@@ -686,10 +705,17 @@ html.redir body>*:not(#redirBox){display:none!important}
       <button class="tool t-file" id="openUploader"><i><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"/></svg></i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
       <button class="tool t-rooms" id="openRooms"><i><svg class="ic"><use href="#i-users"/></svg></i><span><b>روم‌های فعال</b><small id="roomsInfo">ببینید چه کسانی صحبت می‌کنند و وصل شوید</small></span></button>
     </div>
+    <button class="pwa-btn" id="pwaBtn" type="button"><i><svg class="ic" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M12 8v6m0 0l-2.5-2.5M12 14l2.5-2.5"/></svg></i><span><b>نصب برنامه روی گوشی</b><small>مثل یک برنامه باز می‌شود، بدون فروشگاه</small></span></button>
     </div>
     </div>
   </div>
 </main>
+<div id="pwaHint" role="dialog" aria-modal="true" aria-label="نصب برنامه"><div class="box">
+  <h3>نصب روی آیفون و آیپد</h3>
+  <ol><li>در <b>سافاری</b> دکمه‌ی اشتراک‌گذاری (مربع با فلش رو به بالا) را بزنید.</li><li>پایین بروید و <b>Add to Home Screen</b> (افزودن به صفحه‌ی اصلی) را انتخاب کنید.</li><li>روی <b>Add</b> بزنید. آیکون برنامه روی صفحه‌ی اصلی می‌نشیند.</li></ol>
+  <p>اگر این سایت را در مرورگر دیگری باز کرده‌اید، آدرس را در سافاری باز کنید.</p>
+  <button type="button" id="pwaHintOk">متوجه شدم</button>
+</div></div>
 
 <div id="app">
   <section id="stage">
@@ -2760,6 +2786,27 @@ $('send').onsubmit = (e) => {
     stopIfBy: (id) => { if (st.url && st.owner === id && iAmAdmin) send({ a: 'stop' }); } // the admin blocks the person who is playing
   };
   applyVol(); ui();
+})();
+</script>
+<script>
+// Install as an app (Android/desktop Chrome: real install prompt; iPhone: a short how-to) + offline copy of the page
+(function () {
+  var btn = document.getElementById('pwaBtn'), hint = document.getElementById('pwaHint'), deferred = null;
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+  if (standalone || !btn) return;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; btn.classList.add('show'); });
+  window.addEventListener('appinstalled', function () { deferred = null; btn.classList.remove('show'); });
+  if (ios) btn.classList.add('show');
+  btn.onclick = function () {
+    if (deferred) { deferred.prompt(); deferred.userChoice.then(function () { deferred = null; btn.classList.remove('show'); }).catch(function () {}); }
+    else hint.classList.add('on');
+  };
+  document.getElementById('pwaHintOk').onclick = function () { hint.classList.remove('on'); };
+  hint.onclick = function (e) { if (e.target === hint) hint.classList.remove('on'); };
 })();
 </script>
 </body>
