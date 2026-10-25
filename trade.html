@@ -797,6 +797,39 @@ const Market = (function () {
   const fa = (c, a) => (/^#[0-9a-f]{6}$/i.test(c) ? c + a : c);
   const fillSt = (c) => ({ style: 'stroke_fill', color: fa(c, '26'), borderColor: c, borderSize: 1.5 });
   if (KC) {
+    // RSI and MACD are redone the way TradingView does them (the library's own versions are a different, older recipe)
+    const ema = (vals, n) => { const out = new Array(vals.length); let prev = null, cnt = 0, sum = 0, k = 2 / (n + 1); for (let i = 0; i < vals.length; i++) { const v = vals[i]; if (v == null) continue; if (prev == null) { sum += v; if (++cnt === n) { prev = sum / n; out[i] = prev; } } else { prev = v * k + prev * (1 - k); out[i] = prev; } } return out; };
+    KC.registerIndicator({
+      name: 'MACD', shortName: 'MACD', calcParams: [12, 26, 9],
+      figures: [{ key: 'dif', title: 'MACD: ', type: 'line' }, { key: 'dea', title: 'Signal: ', type: 'line' },
+        { key: 'macd', title: 'Hist: ', type: 'bar', baseValue: 0, styles: (d, ind, def) => {
+          const pv = d.prev.indicatorData && d.prev.indicatorData.macd, cv = d.current.indicatorData && d.current.indicatorData.macd, b = (ind.styles && ind.styles.bars && ind.styles.bars[0]) || {}, db = def.bars[0];
+          const col = cv > 0 ? (b.upColor || db.upColor) : cv < 0 ? (b.downColor || db.downColor) : (b.noChangeColor || db.noChangeColor);
+          return { style: pv != null && pv < cv ? 'stroke' : 'fill', color: col, borderColor: col };
+        } }],
+      calc: (list, ind) => {
+        const pr = ind.calcParams, cl = list.map((x) => x.close), f = ema(cl, pr[0]), sl = ema(cl, pr[1]);
+        const m = cl.map((_, i) => (f[i] != null && sl[i] != null ? f[i] - sl[i] : null)), sg = ema(m, pr[2]);
+        return cl.map((_, i) => { const o = {}; if (m[i] != null) o.dif = m[i]; if (sg[i] != null) { o.dea = sg[i]; o.macd = m[i] - sg[i]; } return o; });
+      }
+    });
+    KC.registerIndicator({
+      name: 'RSI', shortName: 'RSI', calcParams: [14],
+      figures: [{ key: 'rsi1', title: 'RSI: ', type: 'line' }],
+      regenerateFigures: (ps) => ps.map((p, i) => ({ key: 'rsi' + (i + 1), title: 'RSI' + (ps.length > 1 ? i + 1 : '') + ': ', type: 'line' })),
+      calc: (list, ind) => {
+        const out = list.map(() => ({}));
+        ind.calcParams.forEach((p, k) => {
+          let ag = 0, al = 0; const key = 'rsi' + (k + 1);
+          for (let i = 1; i < list.length; i++) {
+            const ch = list[i].close - list[i - 1].close, g = ch > 0 ? ch : 0, l = ch < 0 ? -ch : 0;
+            if (i <= p) { ag += g; al += l; if (i === p) { ag /= p; al /= p; out[i][key] = al === 0 ? 100 : 100 - 100 / (1 + ag / al); } }
+            else { ag = (ag * (p - 1) + g) / p; al = (al * (p - 1) + l) / p; out[i][key] = al === 0 ? 100 : 100 - 100 / (1 + ag / al); }
+          }
+        });
+        return out;
+      }
+    });
     const base = { needDefaultPointFigure: true, needDefaultXAxisFigure: true, needDefaultYAxisFigure: true };
     KC.registerOverlay(Object.assign({ name: 'cc_rect', totalStep: 3, createPointFigures: ({ coordinates, overlay }) => {
       if (coordinates.length < 2) return []; const a = coordinates[0], b = coordinates[1];
