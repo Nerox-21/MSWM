@@ -302,6 +302,7 @@ button.pill:hover{background:#2f4a60}
 #join .t-music{--c:#ffb454;--cb:rgba(255,180,84,.16)}
 #join .t-file{--c:#2ec4b6;--cb:rgba(46,196,182,.16)}
 #join .t-rooms{--c:#ff8fa3;--cb:rgba(255,143,163,.16)}
+#join .t-trade{--c:#9b8cff;--cb:rgba(155,140,255,.16)}
 #join .tool small.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#3fd6a6;margin-inline-end:6px;vertical-align:middle}
 #rooms{--m-ink:#0a141d;--m-surface:#111f2c;--m-raise:#18293a;--m-line:rgba(255,255,255,.09);--m-text:#eaf1f5;--m-mute:#8fa6b8;--m-amber:#ffb454;background:var(--m-ink);color:var(--m-text)}
 #rooms .ux-top h2{flex:1}
@@ -704,6 +705,7 @@ html.redir body>*:not(#redirBox){display:none!important}
       <button class="tool t-music" id="openMusic"><i><svg class="ic"><use href="#i-music"/></svg></i><span><b>اکسپلور موزیک</b><small>آپلود کنید، گوش بدهید و دانلود کنید</small></span></button>
       <button class="tool t-file" id="openUploader"><i><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"/></svg></i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
       <button class="tool t-rooms" id="openRooms"><i><svg class="ic"><use href="#i-users"/></svg></i><span><b>روم‌های فعال</b><small id="roomsInfo">ببینید چه کسانی صحبت می‌کنند و وصل شوید</small></span></button>
+      <button class="tool t-trade" id="openTrade"><i><svg class="ic" viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-6"/></svg></i><span><b>شبیه‌ساز معاملات</b><small>با پول مجازی، لانگ و شورت را تمرین کنید</small></span></button>
     </div>
     <button class="pwa-btn" id="pwaBtn" type="button"><i><svg class="ic" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M12 8v6m0 0l-2.5-2.5M12 14l2.5-2.5"/></svg></i><span><b>نصب برنامه روی گوشی</b><small>مثل یک برنامه باز می‌شود، بدون فروشگاه</small></span></button>
     </div>
@@ -2048,6 +2050,7 @@ $('send').onsubmit = (e) => {
   };
   function close() { $('rooms').classList.remove('open'); clearInterval(timer); askKey = ''; }
   $('openRooms').onclick = open;
+  $('openTrade').onclick = () => { location.href = 'trade.html'; };
   $('rBack').onclick = close;
   $('rRefresh').onclick = () => load();
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
