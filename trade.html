@@ -175,6 +175,10 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:60;display:grid;gap:8px;width:min(92vw,420px)}
 #toast div{background:#17283a;border:1px solid var(--line);border-inline-start:4px solid var(--lake);border-radius:12px;padding:10px 14px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 #toast .ok{border-inline-start-color:var(--up)}#toast .bad{border-inline-start-color:var(--dn)}
+#auth{position:fixed;inset:0;z-index:71;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}#auth.on{display:grid}
+#auth .box{width:min(400px,100%);background:#13232f;border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:10px}
+#auth p{color:var(--mut);font-size:.85rem}#auth input{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--tx)}
+#auth .row{display:flex;gap:10px}#auth .row button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--field)}#auth .aerr{color:var(--dn);min-height:1.1em;font-size:.85rem}#auth a{color:var(--lake);text-align:center;font-size:.85rem}
 #modal{position:fixed;inset:0;z-index:70;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}
 #modal.on{display:grid}
 #modal .box{width:min(400px,100%);background:#13232f;border:1px solid var(--line);border-radius:20px;padding:20px}
@@ -207,6 +211,7 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
   <div class="tools">
     <select id="src" aria-label="منبع قیمت"><option value="auto">منبع: خودکار</option><option value="binance">Binance</option><option value="nobitex">نوبیتکس</option><option value="sim">آزمایشی (ساختگی)</option></select>
     <select id="speed" aria-label="سرعت شبیه‌سازی" hidden><option value="1">سرعت ×۱</option><option value="5">سرعت ×۵</option><option value="20">سرعت ×۲۰</option></select>
+    <button class="btn" id="acctBtn">👤 ورود / ثبت‌نام</button>
     <button class="btn danger" id="resetBtn">بازنشانی حساب</button>
   </div>
 </header>
@@ -272,11 +277,18 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
       <button data-t="ord">سفارش‌های باز<em id="c-ord">0</em></button>
       <button data-t="oh">تاریخچه سفارش‌ها<em id="c-oh">0</em></button>
       <button data-t="th">تاریخچه معاملات<em id="c-th">0</em></button>
+      <button data-t="jr">ژورنال معاملات<em id="c-jr">0</em></button>
     </div>
     <div class="tw" id="tabBody"></div>
   </section>
 </main>
 <div id="toast" aria-live="polite"></div>
+<div id="auth"><div class="box"><h3 id="aTitle">ورود به حساب</h3>
+  <p>با حساب کاربری، معاملات و تنظیمات شما روی سرور ذخیره می‌شود و در هر دستگاه در دسترس است. (پول همچنان مجازی است.)</p>
+  <input id="aUser" placeholder="نام کاربری (انگلیسی)" autocomplete="username" dir="ltr"><input id="aPass" type="password" placeholder="رمز عبور (حداقل ۶ نویسه)" autocomplete="current-password" dir="ltr">
+  <div class="aerr" id="aErr"></div>
+  <div class="row"><button id="aGo" class="ok">ورود</button><button id="aClose">بستن</button></div>
+  <a href="#" id="aSwitch">حساب ندارید؟ ثبت‌نام</a></div></div>
 <div id="modal"><div class="box"><h3 id="mTitle"></h3><p id="mText"></p><div class="row"><button id="mNo">انصراف</button><button class="ok" id="mYes">تأیید</button></div></div></div>
 
 <!-- =====================================================================================
@@ -293,7 +305,7 @@ const Engine = (function () {
   const MAX_LEV = 50, MIN_NOTIONAL = 5, START = 10000;
   const r = (n, d = 2) => { const k = Math.pow(10, d); return Math.round(n * k) / k; };
 
-  const newState = () => ({ balance: START, start: START, positions: [], orders: [], orderHist: [], tradeHist: [], nextId: 1 });
+  const newState = () => ({ balance: START, start: START, positions: [], orders: [], orderHist: [], tradeHist: [], journal: [], src: '', nextId: 1 });
 
   // ---------- pure formulas ----------
   const pnl = (side, entry, price, qty) => side === 'long' ? (price - entry) * qty : (entry - price) * qty;
@@ -351,6 +363,8 @@ const Engine = (function () {
     s.balance -= fee;
     const p = { id: s.nextId++, side: o.side, entry: price, qty, margin: o.margin, lev: o.lev, tp: o.tp ?? null, sl: o.sl ?? null, liq: liqPrice(o.side, price, o.lev), time: now, fee };
     s.positions.push(p);
+    (s.journal = s.journal || []).unshift({ id: p.id, side: o.side, type: o.type === 'limit' ? 'limit' : 'market', entry: price, qty, lev: o.lev, margin: o.margin, tp: p.tp, sl: p.sl, src: s.src || '', openT: now, closeT: null, exit: null, reason: null, pnl: null });
+    if (s.journal.length > 500) s.journal.length = 500;
     s.tradeHist.unshift({ id: p.id, time: now, side: o.side, action: 'open', reason: o.type === 'limit' ? 'لیمیت' : 'مارکت', price, qty, fee, pnl: null });
     if (s.tradeHist.length > 300) s.tradeHist.length = 300;
     return p;
@@ -394,6 +408,8 @@ const Engine = (function () {
     s.balance += net;
     if (s.balance < 0) s.balance = 0;
     s.positions.splice(i, 1);
+    const jr = (s.journal || []).find((x) => x.id === p.id);
+    if (jr) { jr.closeT = now; jr.exit = price; jr.reason = reason; jr.pnl = net; }
     s.tradeHist.unshift({ id: p.id, time: now, side: p.side, action: 'close', reason, price, qty: p.qty, fee, pnl: net });
     if (s.tradeHist.length > 300) s.tradeHist.length = 300;
     return { ok: true, pnl: net, msg: 'پوزیشن ' + (p.side === 'long' ? 'لانگ' : 'شورت') + ' بسته شد (' + reason + '): ' + (net >= 0 ? 'سود ' : 'زیان ') + r(Math.abs(net), 2) + ' USDT', kind: net >= 0 ? 'ok' : 'bad' };
@@ -649,7 +665,49 @@ const Market = (function () {
   const cfg = Object.assign({ tf: '4h', n: 100, color: '#ffb454', fees: false }, LS.get('cc_trade_chart', {}));
   E.setFees(cfg.fees);
     let trades = [], prevPx = 0, dirUp = true, pref = 'auto', failedLive = false;
-  const save = () => LS.set(KEY, { state: S, price: M.last });
+  // ---------- account (Supabase functions in trade-setup.sql; passwords never leave as plain text in the table) ----------
+  const SB = 'https://oeehbcttertgewkhfzes.supabase.co', SBK = 'sb_publishable__6iqYESMfzjNeukvnh_Zww_THGAbnKB';
+  const rpc = (fn, args, keep) => fetch(SB + '/rest/v1/rpc/' + fn, { method: 'POST', keepalive: !!keep, headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify(args) }).then((r) => r.json());
+  const acct = { user: null, tok: LS.get('cc_trade_tok', null), sent: '', last: 0, busy: false };
+  const mode = () => (M.mode === 'live' ? 'live' : 'sim');
+  const drawAcctBtn = () => { $('acctBtn').textContent = acct.user ? '👤 ' + acct.user + ' · خروج' : '👤 ورود / ثبت‌نام'; };
+  async function pushState(force, keep) {
+    if (!acct.tok || !S || (acct.busy && !force)) return;
+    const js = JSON.stringify(S); if (js === acct.sent) return;
+    acct.busy = true;
+    try { const r = await rpc('trade_save', { tok: acct.tok, m: mode(), st: S }, keep); if (r && r.ok) acct.sent = js; else if (r && r.error === 'auth') { acct.tok = null; acct.user = null; LS.set('cc_trade_tok', null); drawAcctBtn(); toast('نشست شما منقضی شد؛ دوباره وارد شوید.', 'bad'); } } catch (e) {}
+    acct.busy = false;
+  }
+  async function syncAccount(first) {
+    if (!acct.tok) return;
+    try {
+      const r = await rpc('trade_load', { tok: acct.tok });
+      if (!r || !r.ok) { if (r && r.error === 'auth') { acct.tok = null; LS.set('cc_trade_tok', null); } return; }
+      acct.user = r.username; drawAcctBtn();
+      const st = r.states && r.states[mode()];
+      if (st && Array.isArray(st.positions)) { S = st; acct.sent = JSON.stringify(S); toast('حساب «' + acct.user + '» بارگذاری شد.', 'ok'); }
+      else { acct.sent = ''; await pushState(true); toast('حساب «' + acct.user + '» ساخته شد و وضعیت فعلی روی آن ذخیره شد.', 'ok'); }
+      S.src = M.label; if (!first) drawAll();
+    } catch (e) { if (!first) toast('اتصال به سرور حساب برقرار نشد.', 'bad'); }
+  }
+  function authDialog() {
+    let reg = false;
+    const set = () => { $('aTitle').textContent = reg ? 'ثبت‌نام' : 'ورود به حساب'; $('aGo').textContent = reg ? 'ساخت حساب' : 'ورود'; $('aSwitch').textContent = reg ? 'حساب دارید؟ ورود' : 'حساب ندارید؟ ثبت‌نام'; $('aErr').textContent = ''; };
+    set(); $('auth').classList.add('on'); $('aUser').focus();
+    const close = () => $('auth').classList.remove('on');
+    $('aClose').onclick = close; $('auth').onclick = (e) => { if (e.target === $('auth')) close(); };
+    $('aSwitch').onclick = (e) => { e.preventDefault(); reg = !reg; set(); };
+    $('aGo').onclick = async () => {
+      $('aErr').textContent = ''; $('aGo').disabled = true;
+      try {
+        const r = await rpc(reg ? 'trade_register' : 'trade_login', { u: $('aUser').value, p: $('aPass').value });
+        if (!r || !r.ok) { $('aErr').textContent = (r && r.error) || 'خطا در ارتباط با سرور.'; }
+        else { acct.tok = r.token; LS.set('cc_trade_tok', r.token); $('aPass').value = ''; close(); await syncAccount(false); }
+      } catch (e) { $('aErr').textContent = 'اتصال به سرور برقرار نشد. اینترنت یا فیلترشکن را بررسی کنید (یا فایل trade-setup.sql هنوز اجرا نشده است).'; }
+      $('aGo').disabled = false;
+    };
+  }
+  const save = () => { if (S) S.src = M.label; LS.set(KEY, { state: S, price: M.last }); };
   const saveCfg = () => LS.set('cc_trade_chart', cfg);
 
   // ---------- toast + confirm box ----------
@@ -1331,11 +1389,11 @@ const Market = (function () {
   }
 
   // ---------- tabs ----------
-  const emptyMsg = { pos: 'هنوز پوزیشن بازی ندارید. از پنل ثبت سفارش یک لانگ یا شورت باز کنید.', ord: 'سفارش بازی ندارید. یک سفارش «لیمیت» ثبت کنید تا اینجا بماند.', oh: 'هنوز سفارشی ثبت نشده است.', th: 'هنوز معامله‌ای انجام نشده است.' };
+  const emptyMsg = { pos: 'هنوز پوزیشن بازی ندارید. از پنل ثبت سفارش یک لانگ یا شورت باز کنید.', ord: 'سفارش بازی ندارید. یک سفارش «لیمیت» ثبت کنید تا اینجا بماند.', oh: 'هنوز سفارشی ثبت نشده است.', th: 'هنوز معامله‌ای انجام نشده است.', jr: 'هنوز معامله‌ای ثبت نشده است. هر معامله با اهرم، حد سود/ضرر و منبع قیمت اینجا ذخیره می‌شود.' };
   const side = (s) => '<span class="chip ' + (s === 'long' ? 'l' : 's') + '">' + (s === 'long' ? 'لانگ' : 'شورت') + '</span>';
   const stName = { filled: 'انجام شد', cancelled: 'لغو شد', open: 'باز' };
   function drawTabs(px_) {
-    $('c-pos').textContent = S.positions.length; $('c-ord').textContent = S.orders.length; $('c-oh').textContent = S.orderHist.length; $('c-th').textContent = S.tradeHist.length;
+    $('c-pos').textContent = S.positions.length; $('c-ord').textContent = S.orders.length; $('c-oh').textContent = S.orderHist.length; $('c-th').textContent = S.tradeHist.length; $('c-jr').textContent = (S.journal || []).length;
     let rows = [], head = [];
     if (ui.tab === 'pos') {
       head = ['جهت', 'حجم (BTC)', 'ورود', 'قیمت فعلی', 'لیکوئید', 'مارجین', 'سود/زیان', 'TP / SL', ''];
@@ -1346,6 +1404,9 @@ const Market = (function () {
     } else if (ui.tab === 'oh') {
       head = ['زمان', 'نوع', 'جهت', 'قیمت', 'حجم (BTC)', 'مارجین', 'اهرم', 'وضعیت'];
       rows = S.orderHist.map((o) => [stamp(o.time), o.type === 'limit' ? 'لیمیت' : 'مارکت', side(o.side), fmt(o.price), fmt(o.qty, 5), fmt(o.margin), o.lev + '×', stName[o.status] || o.status]);
+    } else if (ui.tab === 'jr') {
+      head = ['باز شد', 'بسته شد', 'جهت', 'اهرم', 'ورود', 'خروج', 'TP / SL', 'نتیجه', 'سود/زیان', 'منبع قیمت'];
+      rows = (S.journal || []).map((j) => [stamp(j.openT), j.closeT ? stamp(j.closeT) : '<span class="mut">باز</span>', side(j.side), j.lev + '×', fmt(j.entry), j.exit != null ? fmt(j.exit) : '—', (j.tp ? fmt(j.tp) : '—') + ' / ' + (j.sl ? fmt(j.sl) : '—'), j.reason || '—', j.pnl == null ? '—' : '<span class="' + cls(j.pnl) + '">' + sgn(j.pnl) + '</span>', (j.src === 'آزمایشی' || !j.src ? 'آزمایشی (ساختگی)' : j.src) + (j.type === 'limit' ? ' · لیمیت' : '')]);
     } else {
       head = ['زمان', 'جهت', 'عملیات', 'قیمت', 'حجم (BTC)', 'کارمزد', 'سود/زیان محقق'];
       rows = S.tradeHist.map((t) => [stamp(t.time), side(t.side), (t.action === 'open' ? 'باز کردن' : 'بستن') + ' · ' + t.reason, fmt(t.price), fmt(t.qty, 5), fmt(t.fee, 4), t.pnl == null ? '—' : '<span class="' + cls(t.pnl) + '">' + sgn(t.pnl) + '</span>']);
@@ -1396,6 +1457,12 @@ const Market = (function () {
       S = E.newState(); save(); drawAll(); toast('حساب آزمایشی بازنشانی شد.', 'ok');
     };
     $('feeOn').checked = cfg.fees; $('feeOn').onchange = () => { cfg.fees = $('feeOn').checked; E.setFees(cfg.fees); saveCfg(); drawSum(); toast(cfg.fees ? 'کارمزد روشن شد (۰٫۰۵٪ مارکت، ۰٫۰۲٪ لیمیت). برای معاملات بعدی اعمال می‌شود.' : 'کارمزد خاموش شد.'); };
+    $('acctBtn').onclick = async () => {
+      if (!acct.user) return authDialog();
+      if (!(await ask('خروج از حساب', 'از حساب «' + acct.user + '» خارج می‌شوید. معاملات شما روی سرور می‌ماند و با ورود دوباره برمی‌گردد.', 'خروج'))) return;
+      await pushState(true); try { rpc('trade_logout', { tok: acct.tok }); } catch (e) {}
+      acct.tok = null; acct.user = null; acct.sent = ''; LS.set('cc_trade_tok', null); drawAcctBtn(); toast('از حساب خارج شدید.', 'ok');
+    };
     $('speed').onchange = () => M.setSpeed(+$('speed').value);
     $('src').onchange = () => { try { localStorage.setItem('cc_trade_src', $('src').value); } catch (e) {} location.reload(); };
   }
@@ -1425,10 +1492,11 @@ const Market = (function () {
     KEY = 'cc_trade_v2_' + M.mode;
     const sv = LS.get(KEY, null); S = sv && sv.state && Array.isArray(sv.state.positions) ? sv.state : E.newState();
     $('speed').hidden = M.mode !== 'sim';
-    $('boot').remove();
+    $('boot').remove(); S.src = M.label; drawAcctBtn(); await syncAccount(true);
     prevPx = M.last; chartEvents(); formEvents(); drawAll();
     if (failedLive) toast('قیمت زنده در دسترس نبود؛ با داده‌ی آزمایشی ادامه می‌دهیم.', 'bad');
-    setInterval(loop, 500);
+    setInterval(loop, 500); setInterval(() => pushState(false), 3000);
+    window.addEventListener('pagehide', () => pushState(true, true));
     document.addEventListener('visibilitychange', () => { if (!document.hidden) drawAll(); });
   }
   boot();
