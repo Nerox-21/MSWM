@@ -807,6 +807,8 @@ html.redir body>*:not(#redirBox){display:none!important}
       <label for="sens">حساسیت تشخیص صحبت</label>
       <input type="range" id="sens" min="0" max="100">
       <p class="note">خط سفید روی نوار، مرز صحبت کردن است. وقتی صدای شما از آن رد شود، برای بقیه سبز می‌شوید. حساسیت را بیشتر کنید تا صدای آرام هم تشخیص داده شود.</p>
+      <label class="sw"><input type="checkbox" id="optGate"> قطع صدای کمتر از این مرز (نویزگیت)</label>
+      <p class="note">وقتی روشن باشد، صدایی که از خط سفید پایین‌تر است اصلاً برای بقیه فرستاده نمی‌شود. اگر آرام صحبت می‌کنید و صدایتان بریده می‌شود، حساسیت را بیشتر کنید یا این گزینه را خاموش کنید.</p>
       <label class="sw"><input type="checkbox" id="optNs"> حذف نویز</label>
       <label class="sw"><input type="checkbox" id="optEc"> حذف اکو</label>
       <label class="sw"><input type="checkbox" id="optAgc"> تنظیم خودکار بلندی صدا</label>
@@ -1175,7 +1177,7 @@ function makePC(id, name) {
   const pc = new RTCPeerConnection(ICE);
   pc.pending = [];
   pcs[id] = pc;
-  local.getTracks().forEach((t) => pc.addTrack(t, local));
+  local.getTracks().forEach((t) => pc.addTrack(t.kind === 'audio' ? sendTrack(t) : t, local));
   pc.onicecandidate = (e) => e.candidate && sendSignal(id, { candidate: e.candidate });
   pc.ontrack = (e) => { tile(id, name, e.streams[0]); watchSpeaker(id, e.streams[0]); };
   pc.oniceconnectionstatechange = () => { const t = $('t-' + id); if (t) t.dataset.state = pc.iceConnectionState; };
@@ -1326,6 +1328,7 @@ async function join() {
   $('err').textContent = '';
   try {
     local = await getMedia('audio');
+    await gateAttach(local.getAudioTracks()[0]);
     blank = blank || makeBlankTrack();
     local.addTrack(blank); // placeholder video, replaced by camera or screen later
   } catch (e) {
@@ -1649,6 +1652,58 @@ setInterval(() => {
   }
 }, 120);
 
+// ---------- Noise gate: sound below the white line on the level bar is not sent to the others ----------
+// The gate runs on the audio thread (AudioWorklet), so it keeps working when the tab is in the background.
+const GATE_JS = `class G extends AudioWorkletProcessor{
+  constructor(){super();this.t=0.1;this.on=true;this.g=1;this.hold=0;this.port.onmessage=(e)=>{if(e.data.thr!==undefined)this.t=e.data.thr;if(e.data.on!==undefined)this.on=e.data.on;};}
+  process(inp,outp){
+    const a=inp[0]&&inp[0][0],o=outp[0]&&outp[0][0]; if(!o) return true; if(!a){o.fill(0);return true;}
+    let pk=0; for(let k=0;k<a.length;k++){const v=Math.abs(a[k]); if(v>pk)pk=v;}
+    const dt=a.length/sampleRate;
+    if(!this.on||pk>this.t) this.hold=0.4; else this.hold=Math.max(0,this.hold-dt);
+    const tg=this.hold>0?1:0, step=tg>this.g?dt/0.005:dt/0.08;
+    const ng=tg>this.g?Math.min(1,this.g+step):Math.max(0,this.g-step);
+    for(let k=0;k<a.length;k++) o[k]=a[k]*(this.g+(ng-this.g)*(k/a.length));
+    this.g=ng; return true;
+  }
+}
+registerProcessor('gate',G);`;
+const gate = { ok: false, loaded: false, node: null, src: null, dst: null, track: null, raw: null, bypass: false };
+const sendTrack = (raw) => (gate.ok && !gate.bypass && gate.track ? gate.track : raw);
+function gateSync() {
+  if (gate.node) gate.node.port.postMessage({ thr: thr('me') / 128, on: !!S.gate });
+}
+async function gateAttach(raw) {
+  gate.raw = raw;
+  try {
+    if (!AC) return;
+    const c = getCtx();
+    if (!c.audioWorklet) return;
+    if (!gate.loaded) { await c.audioWorklet.addModule(URL.createObjectURL(new Blob([GATE_JS], { type: 'application/javascript' }))); gate.loaded = true; }
+    if (!gate.node) {
+      gate.node = new AudioWorkletNode(c, 'gate', { numberOfInputs: 1, numberOfOutputs: 1, channelCount: 1, channelCountMode: 'explicit', outputChannelCount: [1] });
+      gate.dst = c.createMediaStreamDestination(); gate.node.connect(gate.dst);
+      gate.track = gate.dst.stream.getAudioTracks()[0];
+    }
+    if (gate.src) { try { gate.src.disconnect(); } catch {} }
+    gate.src = c.createMediaStreamSource(new MediaStream([raw])); gate.src.connect(gate.node);
+    gate.ok = true; gateSync();
+  } catch (e) { gate.ok = false; }
+}
+// If the browser pauses the audio engine the gate would send silence, so then the raw microphone is sent instead
+setInterval(() => {
+  if (!gate.ok) return;
+  const bad = !actx || actx.state !== 'running';
+  if (bad) { try { actx && actx.resume(); } catch {} }
+  if (bad !== gate.bypass) {
+    gate.bypass = bad;
+    for (const pc of Object.values(pcs)) {
+      const snd = pc.getSenders().find((x) => x.track && x.track.kind === 'audio');
+      if (snd) { try { snd.replaceTrack(sendTrack(gate.raw)); } catch {} }
+    }
+  }
+}, 1500);
+
 function renderPeople() {
   if (!ch) return;
   const list = Object.entries(ch.presenceState()).map(([id, v]) => {
@@ -1761,7 +1816,7 @@ function checkSuccession() {
 
 // ---------- Settings (saved in this browser) ----------
 const S = Object.assign(
-  { mic: '', cam: '', sens: 50, ns: true, ec: true, agc: true, q: 'mid', mirror: true, sounds: true },
+  { mic: '', cam: '', sens: 50, gate: true, ns: true, ec: true, agc: true, q: 'mid', mirror: true, sounds: true },
   (() => { try { return JSON.parse(localStorage.getItem('cc-settings')) || {}; } catch { return {}; } })()
 );
 const saveS = () => { try { localStorage.setItem('cc-settings', JSON.stringify(S)); } catch {} };
@@ -1769,7 +1824,7 @@ const QUALITY = { low: { width: 426, height: 240, frameRate: 15 }, mid: { width:
 const peerSens = {};
 // Each person's own sensitivity decides when they count as "speaking"
 const thr = (id) => Math.max(3, 34 - 0.4 * (id === 'me' ? S.sens : (peerSens[id] ?? 50)));
-const updateMarker = () => { $('thrMark').style.left = Math.min(100, thr('me') / 60 * 100) + '%'; };
+const updateMarker = () => { $('thrMark').style.left = Math.min(100, thr('me') / 60 * 100) + '%'; gateSync(); };
 
 function mediaConstraints(kind, useDevice) {
   if (kind === 'audio') {
@@ -1796,8 +1851,9 @@ async function applyMic() {
   local.addTrack(nt);
   for (const pc of Object.values(pcs)) {
     const snd = pc.getSenders().find((x) => x.track && x.track.kind === 'audio');
-    if (snd) { try { await snd.replaceTrack(nt); } catch {} }
+    if (snd) { try { await snd.replaceTrack(sendTrack(nt)); } catch {} }
   }
+  await gateAttach(nt);
   delete meters.me; watchSpeaker('me', local);
 }
 async function applyCam() {
@@ -1826,7 +1882,7 @@ async function renderDevices() {
 }
 function syncSettingsUI() {
   $('sens').value = S.sens; $('optNs').checked = S.ns; $('optEc').checked = S.ec;
-  $('optAgc').checked = S.agc; $('optMirror').checked = S.mirror; $('optSounds').checked = S.sounds; $('qSel').value = S.q;
+  $('optGate').checked = S.gate; $('optAgc').checked = S.agc; $('optMirror').checked = S.mirror; $('optSounds').checked = S.sounds; $('qSel').value = S.q;
   updateMarker();
 }
 
@@ -1931,6 +1987,7 @@ $('sens').onchange = () => { saveS(); trackMe(); };
 [['optNs', 'ns'], ['optEc', 'ec'], ['optAgc', 'agc']].forEach(([id, k]) => {
   $(id).onchange = (e) => { S[k] = e.target.checked; saveS(); applyMic(); };
 });
+$('optGate').onchange = (e) => { S.gate = e.target.checked; saveS(); gateSync(); };
 $('optMirror').onchange = (e) => { S.mirror = e.target.checked; saveS(); syncMirror(); };
 $('optSounds').onchange = (e) => { S.sounds = e.target.checked; saveS(); if (S.sounds) playSound('join'); };
 if (navigator.mediaDevices) navigator.mediaDevices.ondevicechange = renderDevices;
