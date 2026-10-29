@@ -199,16 +199,17 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
 <div id="boot"><div class="box"><div class="spin"></div><b>در حال اتصال به قیمت زنده بیت‌کوین…</b><div id="bootLog">Binance و نوبیتکس را امتحان می‌کنم</div><button class="btn" id="bootSkip" hidden>ادامه با داده‌ی آزمایشی</button></div></div>
 <header>
   <a class="back" href="./">→ بازگشت به سایت</a>
-  <div class="pair">BTC/USDT<small>فیوچرز دائمی · شبیه‌ساز</small></div>
+  <div class="pair"><span id="pairTxt">BTC/USDT</span><small>فیوچرز دائمی · شبیه‌ساز</small></div>
   <div class="last num" id="lastPx">—</div>
   <span class="src" id="srcBadge"><i></i><span id="srcText">…</span></span>
   <div class="stats">
     <div>تغییر ۲۴ ساعت<b class="num" id="st-chg">—</b></div>
     <div>بیشترین ۲۴س<b class="num" id="st-hi">—</b></div>
     <div>کمترین ۲۴س<b class="num" id="st-lo">—</b></div>
-    <div>حجم ۲۴س (BTC)<b class="num" id="st-vol">—</b></div>
+    <div>حجم ۲۴س (<span class="un">BTC</span>)<b class="num" id="st-vol">—</b></div>
   </div>
   <div class="tools">
+    <select id="sym" aria-label="بازار"></select>
     <select id="src" aria-label="منبع قیمت"><option value="auto">منبع: خودکار</option><option value="binance">Binance</option><option value="nobitex">نوبیتکس</option><option value="sim">آزمایشی (ساختگی)</option></select>
     <select id="speed" aria-label="سرعت شبیه‌سازی" hidden><option value="1">سرعت ×۱</option><option value="5">سرعت ×۵</option><option value="20">سرعت ×۲۰</option></select>
     <button class="btn" id="acctBtn">👤 ورود / ثبت‌نام</button>
@@ -221,7 +222,7 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
 
 <main>
   <section class="panel" id="pChart">
-    <div class="ph"><span>نمودار BTC/USDT <span class="tag" id="tagChart">…</span></span></div>
+    <div class="ph"><span>نمودار <span class="pr">BTC/USDT</span> <span class="tag" id="tagChart">…</span></span></div>
     <div class="ctl" id="topBar">
       <span id="tfBar"><button data-tf="1h">۱ ساعت</button><button data-tf="2h">۲ ساعت</button><button data-tf="4h" class="on">۴ ساعت</button><button data-tf="1d">۱ روز</button><button data-tf="1w">۱ هفته</button></span>
       <span class="vr"></span>
@@ -243,7 +244,7 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
   <div id="pBook"><div id="bookWrap">
     <section class="panel">
       <div class="ph"><span>دفتر سفارشات <span class="tag" id="tagBook">…</span></span></div>
-      <div class="book"><div class="bh"><span>قیمت</span><span>حجم (BTC)</span><span>مجموع</span></div><div id="asks"></div><div class="mid num" id="midPx">—</div><div id="bids"></div><div style="height:6px"></div></div>
+      <div class="book"><div class="bh"><span>قیمت</span><span>حجم (<span class="un">BTC</span>)</span><span>مجموع</span></div><div id="asks"></div><div class="mid num" id="midPx">—</div><div id="bids"></div><div style="height:6px"></div></div>
     </section>
     <section class="panel">
       <div class="ph"><span>معاملات اخیر <span class="tag" id="tagTr">…</span></span></div>
@@ -256,9 +257,9 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
     <div class="of">
       <div class="seg side" id="sideSeg"><button class="on l" data-side="long">لانگ (خرید)</button><button class="s" data-side="short">شورت (فروش)</button></div>
       <div class="seg" id="typeSeg"><button class="on" data-type="market">مارکت</button><button data-type="limit">لیمیت</button></div>
-      <div class="f" id="limitBox" hidden><label><span>قیمت لیمیت (USDT)</span><button class="mut" id="useLast" type="button">قیمت فعلی</button></label><input id="limitPx" type="number" step="0.5" min="0" inputmode="decimal"></div>
+      <div class="f" id="limitBox" hidden><label><span>قیمت لیمیت (<span class="qn">USDT</span>)</span><button class="mut" id="useLast" type="button">قیمت فعلی</button></label><input id="limitPx" type="number" step="0.5" min="0" inputmode="decimal"></div>
       <div class="f"><label><span>اهرم</span><b class="num" id="levVal">10×</b></label><input id="lev" type="range" min="1" max="50" value="10"></div>
-      <div class="f"><label><span>مبلغ مارجین (USDT)</span><span class="mut">قابل استفاده: <b class="num" id="availHint">0</b></span></label><input id="margin" type="number" step="0.01" min="0" inputmode="decimal" placeholder="مثلاً 100">
+      <div class="f"><label><span>مبلغ مارجین (<span class="qn">USDT</span>)</span><span class="mut">قابل استفاده: <b class="num" id="availHint">0</b></span></label><input id="margin" type="number" step="0.01" min="0" inputmode="decimal" placeholder="مثلاً 100">
         <div class="pct"><button data-p="25">۲۵٪</button><button data-p="50">۵۰٪</button><button data-p="75">۷۵٪</button><button data-p="100">۱۰۰٪</button></div></div>
       <div class="two">
         <div class="f"><label><span>حد سود (TP)</span><span class="mut">اختیاری</span></label><input id="tp" type="number" step="0.5" min="0" inputmode="decimal"></div>
@@ -297,6 +298,22 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
      ===================================================================================== -->
 <script src="klinecharts.min.js"></script>
 <script>
+// The markets you can trade. bin = Binance symbol, nob = Nobitex symbol, sc = multiplier for the price (Nobitex quotes Rial; x0.1 = Toman)
+const ASSETS = [
+  { id: 'BTC', g: 'c', name: 'بیت‌کوین', unit: 'BTC', bin: 'BTCUSDT', nob: 'BTCUSDT', dec: 2, tick: 0.5, price: 65000 },
+  { id: 'ETH', g: 'c', name: 'اتریوم', unit: 'ETH', bin: 'ETHUSDT', nob: 'ETHUSDT', dec: 2, tick: 0.01, price: 2600 },
+  { id: 'BNB', g: 'c', name: 'بایننس‌کوین', unit: 'BNB', bin: 'BNBUSDT', nob: 'BNBUSDT', dec: 2, tick: 0.01, price: 600 },
+  { id: 'SOL', g: 'c', name: 'سولانا', unit: 'SOL', bin: 'SOLUSDT', nob: 'SOLUSDT', dec: 2, tick: 0.01, price: 150 },
+  { id: 'XRP', g: 'c', name: 'ریپل', unit: 'XRP', bin: 'XRPUSDT', nob: 'XRPUSDT', dec: 4, tick: 0.0001, price: 0.55 },
+  { id: 'DOGE', g: 'c', name: 'دوج‌کوین', unit: 'DOGE', bin: 'DOGEUSDT', nob: 'DOGEUSDT', dec: 5, tick: 0.00001, price: 0.15 },
+  { id: 'ADA', g: 'c', name: 'کاردانو', unit: 'ADA', bin: 'ADAUSDT', nob: 'ADAUSDT', dec: 4, tick: 0.0001, price: 0.45 },
+  { id: 'XAU', g: 'm', name: 'طلا (PAXG)', unit: 'PAXG', bin: 'PAXGUSDT', nob: null, dec: 2, tick: 0.1, price: 3500 },
+  { id: 'EUR', g: 'm', name: 'یورو / دلار', unit: 'EUR', bin: 'EURUSDT', nob: null, dec: 4, tick: 0.0001, price: 1.1 },
+  { id: 'USDIRT', g: 'm', name: 'دلار (تتر) به تومان', unit: 'USDT', bin: null, nob: 'USDTIRT', sc: 0.1, dec: 0, tick: 10, price: 100000, quote: 'تومان', start: 500000000 }
+];
+const A = (function () { let id = 'BTC'; try { id = localStorage.getItem('cc_trade_sym') || 'BTC'; } catch (e) {} return ASSETS.find((x) => x.id === id) || ASSETS[0]; })();
+</script>
+<script>
 const Engine = (function () {
   let TAKER = 0.0005;          // 0.05 % fee for market orders  (setFees(false) makes every fee zero)
   let MAKER = 0.0002;          // 0.02 % fee for limit orders that wait in the book
@@ -305,7 +322,7 @@ const Engine = (function () {
   const MAX_LEV = 50, MIN_NOTIONAL = 5, START = 10000;
   const r = (n, d = 2) => { const k = Math.pow(10, d); return Math.round(n * k) / k; };
 
-  const newState = () => ({ balance: START, start: START, positions: [], orders: [], orderHist: [], tradeHist: [], journal: [], src: '', nextId: 1 });
+  const newState = (a) => ({ balance: (a && a.start) || START, start: (a && a.start) || START, unit: a ? a.unit : 'BTC', dec: a ? a.dec : 2, quote: (a && a.quote) || 'USDT', positions: [], orders: [], orderHist: [], tradeHist: [], journal: [], src: '', nextId: 1 });
 
   // ---------- pure formulas ----------
   const pnl = (side, entry, price, qty) => side === 'long' ? (price - entry) * qty : (entry - price) * qty;
@@ -328,14 +345,14 @@ const Engine = (function () {
     if (o.side !== 'long' && o.side !== 'short') return 'جهت سفارش نامعتبر است.';
     if (!num(o.margin) || o.margin <= 0) return 'مبلغ مارجین باید بزرگ‌تر از صفر باشد.';
     if (!num(o.lev) || o.lev < 1 || o.lev > MAX_LEV || Math.floor(o.lev) !== o.lev) return 'اهرم باید عددی صحیح بین ۱ تا ' + MAX_LEV + ' باشد.';
-    if (notional(o.margin, o.lev) < MIN_NOTIONAL) return 'حجم پوزیشن (مارجین × اهرم) باید حداقل ' + MIN_NOTIONAL + ' USDT باشد.';
+    if (notional(o.margin, o.lev) < MIN_NOTIONAL) return 'حجم پوزیشن (مارجین × اهرم) باید حداقل ' + MIN_NOTIONAL + ' ' + (s.quote || 'USDT') + ' باشد.';
     let ref;
     if (o.type === 'limit') {
       if (!num(o.limit) || o.limit <= 0) return 'قیمت لیمیت باید بزرگ‌تر از صفر باشد.';
       ref = o.limit;
     } else ref = o.side === 'long' ? ask : bid;
     const fee = feeOf(notional(o.margin, o.lev), TAKER);
-    if (o.margin + fee > available(s) + 1e-9) return 'موجودی قابل استفاده کافی نیست (مارجین + کارمزد ≈ ' + r(o.margin + fee, 2) + ' USDT).';
+    if (o.margin + fee > available(s) + 1e-9) return 'موجودی قابل استفاده کافی نیست (مارجین + کارمزد ≈ ' + r(o.margin + fee, 2) + ' ' + (s.quote || 'USDT') + ').';
     if (o.tp != null) {
       if (!num(o.tp) || o.tp <= 0) return 'قیمت حد سود نامعتبر است.';
       if (o.side === 'long' ? o.tp <= ref : o.tp >= ref) return o.side === 'long' ? 'حد سود لانگ باید بالاتر از قیمت ورود باشد.' : 'حد سود شورت باید پایین‌تر از قیمت ورود باشد.';
@@ -344,7 +361,7 @@ const Engine = (function () {
       if (!num(o.sl) || o.sl <= 0) return 'قیمت حد ضرر نامعتبر است.';
       if (o.side === 'long' ? o.sl >= ref : o.sl <= ref) return o.side === 'long' ? 'حد ضرر لانگ باید پایین‌تر از قیمت ورود باشد.' : 'حد ضرر شورت باید بالاتر از قیمت ورود باشد.';
       const liq = liqPrice(o.side, ref, o.lev);
-      if (o.side === 'long' ? o.sl <= liq : o.sl >= liq) return 'حد ضرر پشت قیمت لیکوئید است و هرگز فعال نمی‌شود (لیکوئید ≈ ' + r(liq, 2) + ').';
+      if (o.side === 'long' ? o.sl <= liq : o.sl >= liq) return 'حد ضرر پشت قیمت لیکوئید است و هرگز فعال نمی‌شود (لیکوئید ≈ ' + r(liq, s.dec == null ? 2 : s.dec) + ').';
     }
     return null;
   }
@@ -363,7 +380,7 @@ const Engine = (function () {
     s.balance -= fee;
     const p = { id: s.nextId++, side: o.side, entry: price, qty, margin: o.margin, lev: o.lev, tp: o.tp ?? null, sl: o.sl ?? null, liq: liqPrice(o.side, price, o.lev), time: now, fee };
     s.positions.push(p);
-    (s.journal = s.journal || []).unshift({ id: p.id, side: o.side, type: o.type === 'limit' ? 'limit' : 'market', entry: price, qty, lev: o.lev, margin: o.margin, tp: p.tp, sl: p.sl, src: s.src || '', openT: now, closeT: null, exit: null, reason: null, pnl: null });
+    (s.journal = s.journal || []).unshift({ id: p.id, side: o.side, type: o.type === 'limit' ? 'limit' : 'market', entry: price, qty, lev: o.lev, margin: o.margin, tp: p.tp, sl: p.sl, src: s.src || '', sym: s.sym || '', openT: now, closeT: null, exit: null, reason: null, pnl: null });
     if (s.journal.length > 500) s.journal.length = 500;
     s.tradeHist.unshift({ id: p.id, time: now, side: o.side, action: 'open', reason: o.type === 'limit' ? 'لیمیت' : 'مارکت', price, qty, fee, pnl: null });
     if (s.tradeHist.length > 300) s.tradeHist.length = 300;
@@ -379,7 +396,7 @@ const Engine = (function () {
       o.qty = qtyFor(o.margin, o.lev, price);
       openPosition(s, o, price, TAKER, now);
       logOrder(s, o, 'filled', price, now);
-      return { ok: true, msg: (o.side === 'long' ? 'لانگ' : 'شورت') + ' باز شد: ' + r(o.qty, 5) + ' BTC با قیمت ' + r(price, 2), kind: 'ok' };
+      return { ok: true, msg: (o.side === 'long' ? 'لانگ' : 'شورت') + ' باز شد: ' + r(o.qty, 5) + ' ' + (s.unit || 'BTC') + ' با قیمت ' + r(price, s.dec == null ? 2 : s.dec), kind: 'ok' };
     }
     o.qty = qtyFor(o.margin, o.lev, o.limit);
     o.price = o.limit;
@@ -387,7 +404,7 @@ const Engine = (function () {
     o.time = now;
     s.orders.push(o);
     logOrder(s, o, 'open', o.limit, now);
-    return { ok: true, msg: 'سفارش لیمیت ثبت شد؛ با رسیدن قیمت به ' + r(o.limit, 2) + ' انجام می‌شود.', kind: 'ok' };
+    return { ok: true, msg: 'سفارش لیمیت ثبت شد؛ با رسیدن قیمت به ' + r(o.limit, s.dec == null ? 2 : s.dec) + ' انجام می‌شود.', kind: 'ok' };
   }
   function cancelOrder(s, id) {
     const i = s.orders.findIndex((o) => o.id === id);
@@ -412,7 +429,7 @@ const Engine = (function () {
     if (jr) { jr.closeT = now; jr.exit = price; jr.reason = reason; jr.pnl = net; }
     s.tradeHist.unshift({ id: p.id, time: now, side: p.side, action: 'close', reason, price, qty: p.qty, fee, pnl: net });
     if (s.tradeHist.length > 300) s.tradeHist.length = 300;
-    return { ok: true, pnl: net, msg: 'پوزیشن ' + (p.side === 'long' ? 'لانگ' : 'شورت') + ' بسته شد (' + reason + '): ' + (net >= 0 ? 'سود ' : 'زیان ') + r(Math.abs(net), 2) + ' USDT', kind: net >= 0 ? 'ok' : 'bad' };
+    return { ok: true, pnl: net, msg: 'پوزیشن ' + (p.side === 'long' ? 'لانگ' : 'شورت') + ' بسته شد (' + reason + '): ' + (net >= 0 ? 'سود ' : 'زیان ') + r(Math.abs(net), 2) + ' ' + (s.quote || 'USDT'), kind: net >= 0 ? 'ok' : 'bad' };
   }
   // called on every price change: fills limit orders, then checks liquidation / stop loss / take profit
   function tick(s, price, bid, ask, now) {
@@ -425,7 +442,7 @@ const Engine = (function () {
       o.qty = qtyFor(o.margin, o.lev, o.limit);
       openPosition(s, o, o.limit, MAKER, now);
       setOrderStatus(s, o.id, 'filled', o.limit);
-      ev.push({ msg: 'سفارش لیمیت ' + (o.side === 'long' ? 'لانگ' : 'شورت') + ' انجام شد (قیمت ' + r(o.limit, 2) + ')', kind: 'ok' });
+      ev.push({ msg: 'سفارش لیمیت ' + (o.side === 'long' ? 'لانگ' : 'شورت') + ' انجام شد (قیمت ' + r(o.limit, s.dec == null ? 2 : s.dec) + ')', kind: 'ok' });
     }
     for (const p of s.positions.slice()) {
       const L = p.side === 'long';
@@ -448,10 +465,10 @@ const Engine = (function () {
      ===================================================================================== -->
 <script>
 const Market = (function () {
-  const HOUR = 3600000, DAY = 86400000, WEEK = 7 * DAY, TICK = 0.5;
+  const HOUR = 3600000, DAY = 86400000, WEEK = 7 * DAY, TICK = A.tick, SC = A.sc || 1, PK = Math.pow(10, A.dec + 2);
   const TF = { '1h': HOUR, '2h': 2 * HOUR, '4h': 4 * HOUR, '1d': DAY, '1w': WEEK };
   let H = [], D = [];                         // hourly and daily candles {t,o,h,l,c,v}
-  let last = 65000, bid = 0, ask = 0, book = null, mode = 'sim', label = 'آزمایشی', lastData = 0, speed = 1;
+  let last = A.price, bid = 0, ask = 0, book = null, mode = 'sim', label = 'آزمایشی', lastData = 0, speed = 1;
   let newTrades = [], seen = new Set(), prov = null, running = false, wsAt = 0, ws = null, onState = () => {};
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -495,8 +512,8 @@ const Market = (function () {
   const gauss = (R) => { let u = 0, v = 0; while (!u) u = R(); while (!v) v = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
   const SIG_H = 0.0055;                        // typical 1-hour move of the made-up price (0.55 %)
   function initSim(saved) {
-    mode = 'sim'; label = 'آزمایشی'; last = saved || 65000; H = []; D = [];
-    const R = rng(20261024), N = 9600, closes = new Array(N); closes[N - 1] = last;
+    mode = 'sim'; label = 'آزمایشی'; last = saved || A.price; H = []; D = [];
+    const R = rng(20261024 + ASSETS.indexOf(A) * 7919), N = 9600, closes = new Array(N); closes[N - 1] = last;
     for (let i = N - 2; i >= 0; i--) closes[i] = closes[i + 1] / Math.exp(gauss(R) * SIG_H * (0.6 + 1.1 * Math.abs(Math.sin(i / 240))));
     const now = Math.floor(Date.now() / HOUR) * HOUR;
     for (let i = 0; i < N; i++) {
@@ -507,18 +524,18 @@ const Market = (function () {
   }
   function stepSim() {                         // called twice a second
     const sig = SIG_H / Math.sqrt(7200) * speed, burst = Math.random() < 0.02 ? 3 : 1;
-    last = Math.max(100, last * Math.exp(gauss(Math.random) * sig * burst));
+    last = Math.max(A.price * 0.02, last * Math.exp(gauss(Math.random) * sig * burst));
     applyPrice(last, Date.now(), 0.05 + Math.random() * 0.3); setQuote(last); lastData = Date.now();
     const n = Math.random() < 0.5 ? 1 : 0, prev = newTrades.length ? newTrades[0].p : last;
     for (let i = 0; i < n; i++) newTrades.unshift({ t: Date.now(), p: last, q: 0.001 + Math.random() * Math.random() * 0.9, up: last >= prev });
   }
-  function setQuote(p) { last = p; bid = Math.round((p - TICK / 2) * 100) / 100; ask = Math.round((p + TICK / 2) * 100) / 100; }
+  function setQuote(p) { last = p; bid = Math.round((p - TICK / 2) * PK) / PK; ask = Math.round((p + TICK / 2) * PK) / PK; }
   function simBook(depth) {
     const m = Math.floor(Date.now() / 3000);
     const size = (i, s) => { const x = Math.sin(i * 12.9898 + s * 78.233 + m * 0.7) * 43758.5453; return 0.05 + (x - Math.floor(x)) * 1.6 + i * 0.03; };
     const asks = [], bids = []; let ta = 0, tb = 0;
-    for (let i = 0; i < depth; i++) { const q = size(i, 1); ta += q; asks.push({ p: ask + i * TICK, q, t: ta }); }
-    for (let i = 0; i < depth; i++) { const q = size(i, 2); tb += q; bids.push({ p: bid - i * TICK, q, t: tb }); }
+    for (let i = 0; i < depth; i++) { const q = size(i, 1); ta += q; asks.push({ p: Math.round((ask + i * TICK) * PK) / PK, q, t: ta }); }
+    for (let i = 0; i < depth; i++) { const q = size(i, 2); tb += q; bids.push({ p: Math.round((bid - i * TICK) * PK) / PK, q, t: tb }); }
     return { asks, bids };
   }
 
@@ -528,7 +545,7 @@ const Market = (function () {
     get(path) { return Promise.any(this.hosts.map((h) => fetchJSON(h + path))); },
     async candles(quick) {
       const row = (a) => ({ t: a[0], o: num(a[1]), h: num(a[2]), l: num(a[3]), c: num(a[4]), v: num(a[5]) });
-      const q = async (i, more) => (await this.get('/api/v3/klines?symbol=BTCUSDT&interval=' + i + '&limit=1000' + (more || ''))).map(row);
+      const q = async (i, more) => (await this.get('/api/v3/klines?symbol=' + A.bin + '&interval=' + i + '&limit=1000' + (more || ''))).map(row);
       const [h, d] = await Promise.all([q('1h'), q('1d')]);
       if (quick || !h.length) return { H: h, D: d };
       // five more pages of hourly history (about 7 months) so slow indicators (EMA 200, RSI, MACD) warm up like they do on TradingView
@@ -538,13 +555,13 @@ const Market = (function () {
       return { H: all, D: d };
     },
     async poll() {
-      const [d, t] = await Promise.all([this.get('/api/v3/depth?symbol=BTCUSDT&limit=20'), this.get('/api/v3/trades?symbol=BTCUSDT&limit=30')]);
+      const [d, t] = await Promise.all([this.get('/api/v3/depth?symbol=' + A.bin + '&limit=20'), this.get('/api/v3/trades?symbol=' + A.bin + '&limit=30')]);
       const tr = t.map((x) => ({ id: 'b' + x.id, t: x.time, p: num(x.price), q: num(x.qty), up: !x.isBuyerMaker }));
       return { asks: d.asks.map((x) => [num(x[0]), num(x[1])]), bids: d.bids.map((x) => [num(x[0]), num(x[1])]), trades: tr, last: tr.length ? tr[tr.length - 1].p : null };
     },
     openWS(onTrade, onDepth) {                 // optional: faster updates when the browser can reach the stream
-      const urls = ['wss://data-stream.binance.vision/stream?streams=btcusdt@trade/btcusdt@depth20@100ms', 'wss://stream.binance.com:9443/stream?streams=btcusdt@trade/btcusdt@depth20@100ms'];
-      let i = 0;
+      const sl = String(A.bin).toLowerCase(); let i = 0;
+      const urls = ['wss://data-stream.binance.vision/stream?streams=' + sl + '@trade/' + sl + '@depth20@100ms', 'wss://stream.binance.com:9443/stream?streams=' + sl + '@trade/' + sl + '@depth20@100ms'];
       const open = () => {
         if (!running || prov !== Binance) return;
         let s; try { s = new WebSocket(urls[i % urls.length]); } catch (e) { return; }
@@ -561,21 +578,21 @@ const Market = (function () {
     name: 'نوبیتکس', base: 'https://api.nobitex.ir',
     async udf(res, from) {
       const now = Math.floor(Date.now() / 1000);
-      const j = await fetchJSON(this.base + '/market/udf/history?symbol=BTCUSDT&resolution=' + res + '&from=' + from + '&to=' + now, 9000);
+      const j = await fetchJSON(this.base + '/market/udf/history?symbol=' + A.nob + '&resolution=' + res + '&from=' + from + '&to=' + now, 9000);
       if (!j || j.s !== 'ok' || !j.t || !j.t.length) throw new Error('no candles');
-      return j.t.map((t, i) => ({ t: t * 1000, o: num(j.o[i]), h: num(j.h[i]), l: num(j.l[i]), c: num(j.c[i]), v: num(j.v ? j.v[i] : 0) }));
+      return j.t.map((t, i) => ({ t: t * 1000, o: num(j.o[i]) * SC, h: num(j.h[i]) * SC, l: num(j.l[i]) * SC, c: num(j.c[i]) * SC, v: num(j.v ? j.v[i] : 0) }));
     },
     async candles() {
       const now = Math.floor(Date.now() / 1000);
       const [h, d] = await Promise.all([this.udf('60', now - 1000 * 3600), this.udf('D', now - 900 * 86400)]); return { H: h, D: d };
     },
     async poll() {
-      const [b, t] = await Promise.all([fetchJSON(this.base + '/v3/orderbook/BTCUSDT'), fetchJSON(this.base + '/v2/trades/BTCUSDT').catch(() => null)]);
+      const [b, t] = await Promise.all([fetchJSON(this.base + '/v3/orderbook/' + A.nob), fetchJSON(this.base + '/v2/trades/' + A.nob).catch(() => null)]);
       if (!b || b.status === 'failed') throw new Error('orderbook');
-      const asks = (b.asks || []).map((x) => [num(x[0]), num(x[1])]).sort((x, y) => x[0] - y[0]), bids = (b.bids || []).map((x) => [num(x[0]), num(x[1])]).sort((x, y) => y[0] - x[0]);
+      const asks = (b.asks || []).map((x) => [num(x[0]) * SC, num(x[1])]).sort((x, y) => x[0] - y[0]), bids = (b.bids || []).map((x) => [num(x[0]) * SC, num(x[1])]).sort((x, y) => y[0] - x[0]);
       let tr = [];
-      if (t && Array.isArray(t.trades)) tr = t.trades.map((x) => { const ts = num(x.time); return { id: 'n' + ts + '_' + x.price + '_' + x.volume, t: ts < 1e12 ? ts * 1000 : ts, p: num(x.price), q: num(x.volume), up: x.type === 'buy' }; }).sort((x, y) => x.t - y.t);
-      return { asks, bids, trades: tr, last: num(b.lastTradePrice) || (tr.length ? tr[tr.length - 1].p : null) };
+      if (t && Array.isArray(t.trades)) tr = t.trades.map((x) => { const ts = num(x.time); return { id: 'n' + ts + '_' + x.price + '_' + x.volume, t: ts < 1e12 ? ts * 1000 : ts, p: num(x.price) * SC, q: num(x.volume), up: x.type === 'buy' }; }).sort((x, y) => x.t - y.t);
+      return { asks, bids, trades: tr, last: num(b.lastTradePrice) * SC || (tr.length ? tr[tr.length - 1].p : null) };
     }
   };
 
@@ -630,7 +647,8 @@ const Market = (function () {
   // pref: auto | binance | nobitex | sim.  Resolves when the data is ready.
   async function start(pref, savedSimPrice, log, skipped) {
     if (pref === 'sim') { initSim(savedSimPrice); return mode; }
-    const list = pref === 'binance' ? [Binance] : pref === 'nobitex' ? [Nobitex] : [Binance, Nobitex];
+    const list = (pref === 'binance' ? [Binance] : pref === 'nobitex' ? [Nobitex] : [Binance, Nobitex]).filter((p) => (p === Binance ? A.bin : A.nob));
+    if (!list.length) { log('این بازار از این منبع پشتیبانی نمی‌شود'); initSim(savedSimPrice); return mode; }
     const attempt = Promise.any(list.map((p) => tryProvider(p, log))).then((r) => ({ r })).catch(() => ({ r: null }));
     const res = await Promise.race([attempt, skipped.then(() => ({ r: null, skip: true }))]);
     if (res.r) adopt(res.r); else { log(res.skip ? 'با داده‌ی آزمایشی ادامه می‌دهیم' : 'قیمت زنده در دسترس نیست'); initSim(savedSimPrice); }
@@ -653,6 +671,7 @@ const Market = (function () {
 (function () {
   const $ = (id) => document.getElementById(id);
   const E = Engine, M = Market;
+  const QN = A.quote || 'USDT', P = (n) => fmt(n, A.dec), symKey = (k) => (A.id === 'BTC' ? '' : A.id + '_') + k, pairOf = (a) => a.bin ? a.unit + '/USDT' : a.unit + '/' + (a.quote || 'USDT');
   const fmt = (n, d = 2) => (isFinite(n) ? n : 0).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
   const sgn = (n, d = 2) => (n > 0 ? '+' : '') + fmt(n, d);
   const cls = (n) => n > 0 ? 'up' : n < 0 ? 'dn' : '';
@@ -669,7 +688,7 @@ const Market = (function () {
   const SB = 'https://oeehbcttertgewkhfzes.supabase.co', SBK = 'sb_publishable__6iqYESMfzjNeukvnh_Zww_THGAbnKB';
   const rpc = (fn, args, keep) => fetch(SB + '/rest/v1/rpc/' + fn, { method: 'POST', keepalive: !!keep, headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify(args) }).then((r) => r.json());
   const acct = { user: null, tok: LS.get('cc_trade_tok', null), sent: '', last: 0, busy: false };
-  const mode = () => (M.mode === 'live' ? 'live' : 'sim');
+  const mode = () => (A.id === 'BTC' ? '' : A.id + ':') + (M.mode === 'live' ? 'live' : 'sim');
   const drawAcctBtn = () => { $('acctBtn').textContent = acct.user ? '👤 ' + acct.user + ' · خروج' : '👤 ورود / ثبت‌نام'; };
   async function pushState(force, keep) {
     if (!acct.tok || !S || (acct.busy && !force)) return;
@@ -729,10 +748,10 @@ const Market = (function () {
   // ---------- header, notice, account ----------
   function drawHeader(px) {
     const live = M.mode === 'live', ok = M.alive();
-    const el = $('lastPx'); el.textContent = fmt(px); el.className = 'last num ' + (dirUp ? 'up' : 'dn');
+    const el = $('lastPx'); el.textContent = P(px); el.className = 'last num ' + (dirUp ? 'up' : 'dn');
     const st = M.stats();
     $('st-chg').textContent = sgn(st.chg) + '٪'; $('st-chg').className = 'num ' + cls(st.chg);
-    $('st-hi').textContent = fmt(st.hi); $('st-lo').textContent = fmt(st.lo); $('st-vol').textContent = fmt(st.vol, 0);
+    $('st-hi').textContent = P(st.hi); $('st-lo').textContent = P(st.lo); $('st-vol').textContent = fmt(st.vol, 0);
     $('srcBadge').className = 'src ' + (live ? (ok ? 'live' : 'off') : '');
     $('srcText').textContent = live ? (ok ? 'قیمت زنده · ' + M.label : 'ارتباط قطع شد · ' + M.label) : 'داده‌ی آزمایشی';
     const n = $('notice');
@@ -741,11 +760,11 @@ const Market = (function () {
     else { n.className = 'notice'; n.innerHTML = '⚠️ <b>شبیه‌ساز آموزشی با پول مجازی.</b> ' + (failedLive ? 'به قیمت زنده وصل نشدیم، پس ' : '') + 'قیمت‌ها، نمودار، دفتر سفارشات و معاملات اخیر <b>داده‌ی آزمایشی و ساختگی</b> هستند و ربطی به بازار واقعی بیت‌کوین ندارند. وقتی صفحه بسته است، شبیه‌سازی متوقف است.'; }
     const t = live ? 'زنده' : 'آزمایشی';
     ['tagChart', 'tagBook', 'tagTr'].forEach((id) => { $(id).textContent = t; $(id).className = 'tag' + (live ? ' live' : ''); });
-    document.title = fmt(px) + ' · شبیه‌ساز معاملات';
+    document.title = P(px) + ' ' + A.unit + ' · شبیه‌ساز معاملات';
   }
   function drawAcct(px) {
     const u = E.unreal(S, px), eq = E.equity(S, px);
-    const cards = [['موجودی کیف پول', fmt(S.balance) + ' USDT', ''], ['ارزش کل حساب', fmt(eq) + ' USDT', ''], ['سود/زیان باز', sgn(u) + ' USDT', cls(u)], ['مارجین درگیر', fmt(E.usedMargin(S) + E.reserved(S)) + ' USDT', ''], ['قابل استفاده', fmt(Math.max(0, E.available(S))) + ' USDT', '']];
+    const cards = [['موجودی کیف پول', fmt(S.balance) + ' ' + QN, ''], ['ارزش کل حساب', fmt(eq) + ' ' + QN, ''], ['سود/زیان باز', sgn(u) + ' ' + QN, cls(u)], ['مارجین درگیر', fmt(E.usedMargin(S) + E.reserved(S)) + ' ' + QN, ''], ['قابل استفاده', fmt(Math.max(0, E.available(S))) + ' ' + QN, '']];
     $('acct').innerHTML = cards.map((c) => '<div><small>' + c[0] + '</small><b class="num ' + c[2] + '">' + c[1] + '</b></div>').join('');
     $('availHint').textContent = fmt(Math.max(0, E.available(S)));
   }
@@ -837,8 +856,8 @@ const Market = (function () {
   const LOOKS = { classic: ['#2ebd85', '#f6465d', 'سبز بالا / قرمز پایین'], inverse: ['#f6465d', '#2ebd85', 'قرمز بالا / سبز پایین'], blue: ['#4da3ff', '#ffb454', 'آبی / نارنجی (مناسب کوررنگی)'], mono: ['#e6edf3', '#5b6b7a', 'سفید / خاکستری'] };
   const BGS = { navy: ['', 'سرمه‌ای (پیش‌فرض)'], dark: ['#0a1017', 'تیره‌تر'], black: ['#000000', 'مشکی'], slate: ['#161b26', 'خاکستری تیره'] };
   cfg.grp = cfg.grp || {}; cfg.ctype = cfg.ctype || 'candle_solid'; cfg.scale = cfg.scale || 'normal'; cfg.magnet = cfg.magnet || 'normal';
-  let drawings = LS.get('cc_trade_draw2', []), selId = null, tool = 'cursor', curId = null, hoverOv = false, lockAll = false, hideAll = false, measId = null;
-  const saveDraw = () => LS.set('cc_trade_draw2', drawings.map((d) => ({ id: d.id, name: d.name, points: d.points, color: d.color, ext: d.ext || null })));
+  let drawings = LS.get('cc_trade_draw2' + (A.id === 'BTC' ? '' : '_' + A.id), []), selId = null, tool = 'cursor', curId = null, hoverOv = false, lockAll = false, hideAll = false, measId = null;
+  const saveDraw = () => LS.set('cc_trade_draw2' + (A.id === 'BTC' ? '' : '_' + A.id), drawings.map((d) => ({ id: d.id, name: d.name, points: d.points, color: d.color, ext: d.ext || null })));
 
   // ----- small helpers: floating menu, dialog -----
   function closePop() { const p = $('pop'); p.hidden = true; p.innerHTML = ''; }
@@ -944,7 +963,7 @@ const Market = (function () {
       const p = overlay.points; if (coordinates.length < 2 || !p[0] || !p[1] || p[0].value == null || p[1].value == null) return [];
       const a = coordinates[0], b = coordinates[1], dv = p[1].value - p[0].value, pct = dv / p[0].value * 100, up = dv >= 0, col = up ? '#2ebd85' : '#f6465d';
       const bars = Math.abs((p[1].dataIndex || 0) - (p[0].dataIndex || 0)), hrs = bars * (TFMS[cfg.tf] || 3600e3) / 3600e3, dur = hrs >= 24 ? Math.floor(hrs / 24) + 'd ' + Math.round(hrs % 24) + 'h' : hrs + 'h';
-      const txt = (up ? '+' : '') + fmt(dv) + '  (' + (up ? '+' : '') + pct.toFixed(2) + '%)   ' + bars + ' bars · ' + dur;
+      const txt = (up ? '+' : '') + P(dv) + '  (' + (up ? '+' : '') + pct.toFixed(2) + '%)   ' + bars + ' bars · ' + dur;
       const top = Math.min(a.y, b.y), bot = Math.max(a.y, b.y);
       return [
         { type: 'rect', attrs: { x: Math.min(a.x, b.x), y: top, width: Math.abs(a.x - b.x), height: Math.abs(a.y - b.y) }, styles: { style: 'stroke_fill', color: fa(col, '22'), borderColor: col, borderSize: 1, borderStyle: 'dashed', borderDashedValue: [4, 3] } },
@@ -979,8 +998,8 @@ const Market = (function () {
         { type: 'rect', attrs: { x: left, y: Math.min(a.y, b.y), width: w, height: Math.abs(a.y - b.y) }, styles: { style: 'stroke_fill', color: 'rgba(46,189,133,.22)', borderColor: '#2ebd85', borderSize: 1 } },
         { type: 'rect', attrs: { x: left, y: Math.min(a.y, slY), width: w, height: Math.abs(a.y - slY) }, styles: { style: 'stroke_fill', color: 'rgba(246,70,93,.22)', borderColor: '#f6465d', borderSize: 1 } },
         { type: 'line', attrs: { coordinates: [{ x: left, y: a.y }, { x: left + w, y: a.y }] }, styles: { color: '#fff', size: 1.2 } },
-        lbl(left + 4, b.y < a.y ? b.y + 3 : b.y - 3, 'TP ' + fmt(tp) + ' (' + sg(pct(tp)) + ')', '#2ebd85', b.y < a.y ? 'top' : 'bottom'),
-        lbl(left + 4, slY > a.y ? slY - 3 : slY + 3, 'SL ' + fmt(sl) + ' (' + sg(pct(sl)) + ')', '#f6465d', slY > a.y ? 'bottom' : 'top'),
+        lbl(left + 4, b.y < a.y ? b.y + 3 : b.y - 3, 'TP ' + P(tp) + ' (' + sg(pct(tp)) + ')', '#2ebd85', b.y < a.y ? 'top' : 'bottom'),
+        lbl(left + 4, slY > a.y ? slY - 3 : slY + 3, 'SL ' + P(sl) + ' (' + sg(pct(sl)) + ')', '#f6465d', slY > a.y ? 'bottom' : 'top'),
         lbl(left + 4, a.y + (slY > a.y ? -3 : 3), (tp > entry ? 'LONG' : 'SHORT') + '  R:R ' + rr.toFixed(2), '#4da3ff', slY > a.y ? 'bottom' : 'top')
       ];
     } }, base));
@@ -1021,7 +1040,7 @@ const Market = (function () {
       crosshair: { horizontal: { line: { color: 'rgba(255,255,255,.3)' }, text: { backgroundColor: '#26394a', borderColor: '#26394a' } }, vertical: { line: { color: 'rgba(255,255,255,.3)' }, text: { backgroundColor: '#26394a', borderColor: '#26394a' } } }
     });
     chart.setPaneOptions({ id: 'candle_pane', axisOptions: { scrollZoomEnabled: false } }); hookAxis(); chart.setStyles({ yAxis: { type: cfg.scale } });
-    chart.setPriceVolumePrecision(2, 3);
+    chart.setPriceVolumePrecision(A.dec, 3);
     chart.setOffsetRightDistance(60);
     applyCType(); applyLook();
     Object.keys(cfg.inds).forEach((k) => addInd(k));
@@ -1279,12 +1298,12 @@ const Market = (function () {
   function syncTradeLines(last) {
     const L = [];
     S.positions.forEach((p) => {
-      L.push([p.entry, p.side === 'long' ? '#2ebd85' : '#f6465d', (p.side === 'long' ? 'لانگ ' : 'شورت ') + fmt(p.entry, 1)]);
-      L.push([p.liq, '#ffb454', 'لیکوئید ' + fmt(p.liq, 1), [2, 3]]);
-      if (p.tp) L.push([p.tp, '#2ec4b6', 'TP ' + fmt(p.tp, 1), [2, 3]]);
-      if (p.sl) L.push([p.sl, '#ff8fa3', 'SL ' + fmt(p.sl, 1), [2, 3]]);
+      L.push([p.entry, p.side === 'long' ? '#2ebd85' : '#f6465d', (p.side === 'long' ? 'لانگ ' : 'شورت ') + P(p.entry)]);
+      L.push([p.liq, '#ffb454', 'لیکوئید ' + P(p.liq), [2, 3]]);
+      if (p.tp) L.push([p.tp, '#2ec4b6', 'TP ' + P(p.tp), [2, 3]]);
+      if (p.sl) L.push([p.sl, '#ff8fa3', 'SL ' + P(p.sl), [2, 3]]);
     });
-    S.orders.forEach((o) => L.push([o.limit, '#9b8cff', 'سفارش ' + fmt(o.limit, 1), [8, 4]]));
+    S.orders.forEach((o) => L.push([o.limit, '#9b8cff', 'سفارش ' + P(o.limit), [8, 4]]));
     const sig = JSON.stringify(L) + last.t; if (sig === tradeSig) return; tradeSig = sig;
     tradeIds.forEach((id) => chart.removeOverlay({ id })); tradeIds = [];
     L.forEach((l) => { const id = chart.createOverlay({ name: 'tradeLine', points: [{ timestamp: last.t, value: l[0] }], lock: true, extendData: { color: l[1], label: l[2], dash: l[3] } }); if (id) tradeIds.push(id); });
@@ -1334,7 +1353,7 @@ const Market = (function () {
   function shot() {
     try {
       const url = chart.getConvertPictureUrl(true, 'png', '#0b141d'), a = document.createElement('a');
-      a.href = url; a.download = 'BTCUSDT-' + cfg.tf + '-' + new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.png'; document.body.appendChild(a); a.click(); a.remove();
+      a.href = url; a.download = (A.bin || A.nob) + '-' + cfg.tf + '-' + new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.png'; document.body.appendChild(a); a.click(); a.remove();
       toast('عکس نمودار ذخیره شد.', 'ok');
     } catch (e) { toast('گرفتن عکس ممکن نشد.', 'bad'); }
   }
@@ -1381,11 +1400,11 @@ const Market = (function () {
   // ---------- order book + recent trades ----------
   function drawBook(px_) {
     const b = M.book(12), mx = Math.max(b.asks[b.asks.length - 1].t, b.bids[b.bids.length - 1].t) || 1;
-    const row = (x, c) => '<div class="br ' + c + '"><i style="width:' + (x.t / mx * 100) + '%"></i><span class="' + (c === 'a' ? 'dn' : 'up') + '">' + fmt(x.p, 1) + '</span><span>' + fmt(x.q, 3) + '</span><span>' + fmt(x.t, 3) + '</span></div>';
+    const row = (x, c) => '<div class="br ' + c + '"><i style="width:' + (x.t / mx * 100) + '%"></i><span class="' + (c === 'a' ? 'dn' : 'up') + '">' + P(x.p) + '</span><span>' + fmt(x.q, 3) + '</span><span>' + fmt(x.t, 3) + '</span></div>';
     $('asks').innerHTML = b.asks.slice().reverse().map((x) => row(x, 'a')).join('');
     $('bids').innerHTML = b.bids.map((x) => row(x, 'b')).join('');
-    const m = $('midPx'); m.textContent = fmt(px_) + (dirUp ? ' ▲' : ' ▼'); m.className = 'mid num ' + (dirUp ? 'up' : 'dn');
-    $('tradesList').innerHTML = trades.map((t) => '<div class="tr"><span class="' + (t.up ? 'up' : 'dn') + '">' + fmt(t.p, 1) + '</span><span>' + fmt(t.q, 4) + '</span><span>' + clock(t.t) + '</span></div>').join('');
+    const m = $('midPx'); m.textContent = P(px_) + (dirUp ? ' ▲' : ' ▼'); m.className = 'mid num ' + (dirUp ? 'up' : 'dn');
+    $('tradesList').innerHTML = trades.map((t) => '<div class="tr"><span class="' + (t.up ? 'up' : 'dn') + '">' + P(t.p) + '</span><span>' + fmt(t.q, 4) + '</span><span>' + clock(t.t) + '</span></div>').join('');
   }
 
   // ---------- tabs ----------
@@ -1396,20 +1415,20 @@ const Market = (function () {
     $('c-pos').textContent = S.positions.length; $('c-ord').textContent = S.orders.length; $('c-oh').textContent = S.orderHist.length; $('c-th').textContent = S.tradeHist.length; $('c-jr').textContent = (S.journal || []).length;
     let rows = [], head = [];
     if (ui.tab === 'pos') {
-      head = ['جهت', 'حجم (BTC)', 'ورود', 'قیمت فعلی', 'لیکوئید', 'مارجین', 'سود/زیان', 'TP / SL', ''];
-      rows = S.positions.map((p) => { const u = E.pnl(p.side, p.entry, px_, p.qty), roe = u / p.margin * 100; return [side(p.side) + ' <span class="mut num">' + p.lev + '×</span>', fmt(p.qty, 5), fmt(p.entry), fmt(px_), fmt(p.liq), fmt(p.margin), '<span class="' + cls(u) + '">' + sgn(u) + ' (' + sgn(roe, 1) + '٪)</span>', (p.tp ? fmt(p.tp) : '—') + ' / ' + (p.sl ? fmt(p.sl) : '—'), '<button class="mini" data-close="' + p.id + '">بستن</button>']; });
+      head = ['جهت', 'حجم (' + A.unit + ')', 'ورود', 'قیمت فعلی', 'لیکوئید', 'مارجین', 'سود/زیان', 'TP / SL', ''];
+      rows = S.positions.map((p) => { const u = E.pnl(p.side, p.entry, px_, p.qty), roe = u / p.margin * 100; return [side(p.side) + ' <span class="mut num">' + p.lev + '×</span>', fmt(p.qty, 5), P(p.entry), P(px_), P(p.liq), fmt(p.margin), '<span class="' + cls(u) + '">' + sgn(u) + ' (' + sgn(roe, 1) + '٪)</span>', (p.tp ? P(p.tp) : '—') + ' / ' + (p.sl ? P(p.sl) : '—'), '<button class="mini" data-close="' + p.id + '">بستن</button>']; });
     } else if (ui.tab === 'ord') {
-      head = ['زمان', 'نوع', 'جهت', 'قیمت', 'حجم (BTC)', 'مارجین', 'اهرم', ''];
-      rows = S.orders.map((o) => [stamp(o.time), 'لیمیت', side(o.side), fmt(o.limit), fmt(o.qty, 5), fmt(o.margin), o.lev + '×', '<button class="mini" data-cancel="' + o.id + '">لغو</button>']);
+      head = ['زمان', 'نوع', 'جهت', 'قیمت', 'حجم (' + A.unit + ')', 'مارجین', 'اهرم', ''];
+      rows = S.orders.map((o) => [stamp(o.time), 'لیمیت', side(o.side), P(o.limit), fmt(o.qty, 5), fmt(o.margin), o.lev + '×', '<button class="mini" data-cancel="' + o.id + '">لغو</button>']);
     } else if (ui.tab === 'oh') {
-      head = ['زمان', 'نوع', 'جهت', 'قیمت', 'حجم (BTC)', 'مارجین', 'اهرم', 'وضعیت'];
-      rows = S.orderHist.map((o) => [stamp(o.time), o.type === 'limit' ? 'لیمیت' : 'مارکت', side(o.side), fmt(o.price), fmt(o.qty, 5), fmt(o.margin), o.lev + '×', stName[o.status] || o.status]);
+      head = ['زمان', 'نوع', 'جهت', 'قیمت', 'حجم (' + A.unit + ')', 'مارجین', 'اهرم', 'وضعیت'];
+      rows = S.orderHist.map((o) => [stamp(o.time), o.type === 'limit' ? 'لیمیت' : 'مارکت', side(o.side), P(o.price), fmt(o.qty, 5), fmt(o.margin), o.lev + '×', stName[o.status] || o.status]);
     } else if (ui.tab === 'jr') {
       head = ['باز شد', 'بسته شد', 'جهت', 'اهرم', 'ورود', 'خروج', 'TP / SL', 'نتیجه', 'سود/زیان', 'منبع قیمت'];
-      rows = (S.journal || []).map((j) => [stamp(j.openT), j.closeT ? stamp(j.closeT) : '<span class="mut">باز</span>', side(j.side), j.lev + '×', fmt(j.entry), j.exit != null ? fmt(j.exit) : '—', (j.tp ? fmt(j.tp) : '—') + ' / ' + (j.sl ? fmt(j.sl) : '—'), j.reason || '—', j.pnl == null ? '—' : '<span class="' + cls(j.pnl) + '">' + sgn(j.pnl) + '</span>', (j.src === 'آزمایشی' || !j.src ? 'آزمایشی (ساختگی)' : j.src) + (j.type === 'limit' ? ' · لیمیت' : '')]);
+      rows = (S.journal || []).map((j) => [stamp(j.openT), j.closeT ? stamp(j.closeT) : '<span class="mut">باز</span>', side(j.side), j.lev + '×', P(j.entry), j.exit != null ? P(j.exit) : '—', (j.tp ? P(j.tp) : '—') + ' / ' + (j.sl ? P(j.sl) : '—'), j.reason || '—', j.pnl == null ? '—' : '<span class="' + cls(j.pnl) + '">' + sgn(j.pnl) + '</span>', (j.src === 'آزمایشی' || !j.src ? 'آزمایشی (ساختگی)' : j.src) + (j.type === 'limit' ? ' · لیمیت' : '')]);
     } else {
-      head = ['زمان', 'جهت', 'عملیات', 'قیمت', 'حجم (BTC)', 'کارمزد', 'سود/زیان محقق'];
-      rows = S.tradeHist.map((t) => [stamp(t.time), side(t.side), (t.action === 'open' ? 'باز کردن' : 'بستن') + ' · ' + t.reason, fmt(t.price), fmt(t.qty, 5), fmt(t.fee, 4), t.pnl == null ? '—' : '<span class="' + cls(t.pnl) + '">' + sgn(t.pnl) + '</span>']);
+      head = ['زمان', 'جهت', 'عملیات', 'قیمت', 'حجم (' + A.unit + ')', 'کارمزد', 'سود/زیان محقق'];
+      rows = S.tradeHist.map((t) => [stamp(t.time), side(t.side), (t.action === 'open' ? 'باز کردن' : 'بستن') + ' · ' + t.reason, P(t.price), fmt(t.qty, 5), fmt(t.fee, 4), t.pnl == null ? '—' : '<span class="' + cls(t.pnl) + '">' + sgn(t.pnl) + '</span>']);
     }
     $('tabBody').innerHTML = rows.length ? '<table><thead><tr>' + head.map((h) => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + r.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody></table>' : '<div class="empty">' + emptyMsg[ui.tab] + '</div>';
   }
@@ -1421,14 +1440,14 @@ const Market = (function () {
     const o = formOrder(), sp = M.spread(), ref = ui.type === 'limit' && o.limit > 0 ? o.limit : (o.side === 'long' ? sp.ask : sp.bid);
     $('levVal').textContent = o.lev + '×';
     const valid = o.margin > 0, n = valid ? E.notional(o.margin, o.lev) : 0;
-    $('sum').innerHTML = [['قیمت ورود', fmt(ref) + ' USDT'], ['حجم پوزیشن', fmt(n) + ' USDT'], ['مقدار', fmt(valid ? n / ref : 0, 5) + ' BTC'], ['قیمت لیکوئید', valid ? fmt(E.liqPrice(o.side, ref, o.lev)) : '—']].concat(cfg.fees ? [['کارمزد تقریبی', fmt(E.feeOf(n, E.TAKER), 3) + ' USDT']] : []).map((r) => '<div><span>' + r[0] + '</span><b class="num">' + r[1] + '</b></div>').join('');
+    $('sum').innerHTML = [['قیمت ورود', P(ref) + ' ' + QN], ['حجم پوزیشن', fmt(n) + ' ' + QN], ['مقدار', fmt(valid ? n / ref : 0, 5) + ' ' + A.unit], ['قیمت لیکوئید', valid ? P(E.liqPrice(o.side, ref, o.lev)) : '—']].concat(cfg.fees ? [['کارمزد تقریبی', fmt(E.feeOf(n, E.TAKER), 3) + ' ' + QN]] : []).map((r) => '<div><span>' + r[0] + '</span><b class="num">' + r[1] + '</b></div>').join('');
     const go = $('goBtn'); go.className = 'go ' + (ui.side === 'long' ? 'l' : 's'); go.textContent = (ui.side === 'long' ? 'باز کردن لانگ' : 'باز کردن شورت') + (ui.type === 'limit' ? ' (لیمیت)' : '');
   }
   function formEvents() {
     $('sideSeg').querySelectorAll('button').forEach((b) => b.onclick = () => { ui.side = b.dataset.side; $('sideSeg').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); drawSum(); });
-    $('typeSeg').querySelectorAll('button').forEach((b) => b.onclick = () => { ui.type = b.dataset.type; $('typeSeg').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); $('limitBox').hidden = ui.type !== 'limit'; if (ui.type === 'limit' && !$('limitPx').value) $('limitPx').value = M.last.toFixed(1); drawSum(); });
+    $('typeSeg').querySelectorAll('button').forEach((b) => b.onclick = () => { ui.type = b.dataset.type; $('typeSeg').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); $('limitBox').hidden = ui.type !== 'limit'; if (ui.type === 'limit' && !$('limitPx').value) $('limitPx').value = M.last.toFixed(A.dec); drawSum(); });
     ['lev', 'margin', 'limitPx', 'tp', 'sl'].forEach((id) => $(id).addEventListener('input', () => { $('ferr').textContent = ''; drawSum(); }));
-    $('useLast').onclick = () => { $('limitPx').value = M.last.toFixed(1); drawSum(); };
+    $('useLast').onclick = () => { $('limitPx').value = M.last.toFixed(A.dec); drawSum(); };
     document.querySelectorAll('.pct [data-p]').forEach((b) => b.onclick = () => { const a = Math.max(0, E.available(S)) / (1 + E.TAKER * +$('lev').value); $('margin').value = (Math.floor(a * +b.dataset.p) / 100).toFixed(2); drawSum(); });
     $('goBtn').onclick = () => {
       $('ferr').textContent = '';
@@ -1447,14 +1466,14 @@ const Market = (function () {
         const p = S.positions.find((x) => x.id === +c.dataset.close); if (!p) return;
         if (!M.alive()) return toast('ارتباط با قیمت زنده قطع است؛ کمی صبر کنید.', 'bad');
         const u = E.pnl(p.side, p.entry, M.last, p.qty);
-        if (!(await ask('بستن پوزیشن', (p.side === 'long' ? 'لانگ' : 'شورت') + ' ' + fmt(p.qty, 5) + ' BTC\nسود/زیان فعلی: ' + sgn(u) + ' USDT\nبا قیمت بازار بسته می‌شود.', 'بستن پوزیشن', true))) return;
+        if (!(await ask('بستن پوزیشن', (p.side === 'long' ? 'لانگ' : 'شورت') + ' ' + fmt(p.qty, 5) + ' ' + A.unit + '\nسود/زیان فعلی: ' + sgn(u) + ' ' + QN + '\nبا قیمت بازار بسته می‌شود.', 'بستن پوزیشن', true))) return;
         const sp = M.spread(); if (!S.positions.find((x) => x.id === p.id)) return;
         const res = E.closePosition(S, p.id, p.side === 'long' ? sp.bid : sp.ask, 'دستی', Date.now()); toast(res.msg, res.kind); save(); drawAll();
       } else if (k) { const res = E.cancelOrder(S, +k.dataset.cancel); toast(res.msg, res.ok ? 'ok' : 'bad'); save(); drawAll(); }
     });
     $('resetBtn').onclick = async () => {
-      if (!(await ask('بازنشانی حساب آزمایشی', 'همه‌ی پوزیشن‌ها، سفارش‌ها و تاریخچه‌ی این حساب پاک می‌شود و موجودی به ' + fmt(E.START, 0) + ' USDT برمی‌گردد.', 'بازنشانی', true))) return;
-      S = E.newState(); save(); drawAll(); toast('حساب آزمایشی بازنشانی شد.', 'ok');
+      if (!(await ask('بازنشانی حساب آزمایشی', 'همه‌ی پوزیشن‌ها، سفارش‌ها و تاریخچه‌ی این حساب پاک می‌شود و موجودی به ' + fmt(S.start, 0) + ' ' + QN + ' برمی‌گردد.', 'بازنشانی', true))) return;
+      S = E.newState(A); save(); drawAll(); toast('حساب آزمایشی بازنشانی شد.', 'ok');
     };
     $('feeOn').checked = cfg.fees; $('feeOn').onchange = () => { cfg.fees = $('feeOn').checked; E.setFees(cfg.fees); saveCfg(); drawSum(); toast(cfg.fees ? 'کارمزد روشن شد (۰٫۰۵٪ مارکت، ۰٫۰۲٪ لیمیت). برای معاملات بعدی اعمال می‌شود.' : 'کارمزد خاموش شد.'); };
     $('acctBtn').onclick = async () => {
@@ -1464,6 +1483,9 @@ const Market = (function () {
       acct.tok = null; acct.user = null; acct.sent = ''; LS.set('cc_trade_tok', null); drawAcctBtn(); toast('از حساب خارج شدید.', 'ok');
     };
     $('speed').onchange = () => M.setSpeed(+$('speed').value);
+    const sy = $('sym');
+    sy.innerHTML = [['c', 'ارزهای دیجیتال'], ['m', 'طلا و ارز']].map((g) => '<optgroup label="' + g[1] + '">' + ASSETS.filter((x) => x.g === g[0]).map((x) => '<option value="' + x.id + '">' + x.name + ' · ' + pairOf(x) + '</option>').join('') + '</optgroup>').join('');
+    sy.value = A.id; sy.onchange = () => { try { localStorage.setItem('cc_trade_sym', sy.value); } catch (e) {} location.reload(); };
     $('src').onchange = () => { try { localStorage.setItem('cc_trade_src', $('src').value); } catch (e) {} location.reload(); };
   }
 
@@ -1486,11 +1508,15 @@ const Market = (function () {
     $('src').value = pref;
     let skip; const skipped = new Promise((r) => { skip = r; });
     setTimeout(() => { const b = $('bootSkip'); if (b) b.hidden = false; }, 3500); $('bootSkip').onclick = () => skip();
-    const savedSim = LS.get('cc_trade_v2_sim', null);
+    const savedSim = LS.get('cc_trade_v2_' + symKey('sim'), null);
     await M.start(pref, savedSim && savedSim.price, (t) => { $('bootLog').textContent = t; }, skipped);
     failedLive = pref !== 'sim' && M.mode === 'sim';
-    KEY = 'cc_trade_v2_' + M.mode;
-    const sv = LS.get(KEY, null); S = sv && sv.state && Array.isArray(sv.state.positions) ? sv.state : E.newState();
+    KEY = 'cc_trade_v2_' + symKey(M.mode);
+    const sv = LS.get(KEY, null); S = sv && sv.state && Array.isArray(sv.state.positions) ? sv.state : E.newState(A);
+    S.unit = A.unit; S.dec = A.dec; S.quote = QN; if (S.start == null) S.start = E.START;
+    document.querySelectorAll('.un').forEach((e) => { e.textContent = A.unit; }); document.querySelectorAll('.qn').forEach((e) => { e.textContent = QN; }); document.querySelectorAll('.pr').forEach((e) => { e.textContent = pairOf(A); }); $('pairTxt').textContent = pairOf(A);
+    $('limitPx').step = String(A.tick);
+    if (A.start) { $('margin').placeholder = 'مثلاً ' + fmt(A.start / 50, 0); $('margin').step = '1000'; }
     $('speed').hidden = M.mode !== 'sim';
     $('boot').remove(); S.src = M.label; drawAcctBtn(); await syncAccount(true);
     prevPx = M.last; chartEvents(); formEvents(); drawAll();
