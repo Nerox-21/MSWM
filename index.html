@@ -116,6 +116,23 @@ button{cursor:pointer;border:0}
 #settingsBody input[type=range]{width:100%;accent-color:var(--lake)}
 #settingsBody label.sw{display:flex;gap:10px;align-items:center;color:var(--mist);font-size:.95rem;cursor:pointer}
 #settingsBody label.sw input{width:18px;height:18px;accent-color:var(--lake)}
+.ruler{position:relative;height:50px;border-radius:8px;background:linear-gradient(#26384a,#1a2a39);border:1px solid rgba(255,255,255,.12);direction:ltr;overflow:hidden}
+.ruler .ri{position:absolute;left:16px;right:16px;top:0;bottom:0}
+.ruler .rt{position:absolute;inset:0}
+.ruler .rt s{position:absolute;bottom:0;width:1px;height:8px;background:rgba(255,255,255,.45)}
+.ruler .rt s.t5{height:12px}.ruler .rt s.t10{height:18px;background:rgba(255,255,255,.75)}
+.ruler .rt em{position:absolute;top:3px;transform:translateX(-50%);font-style:normal;font-size:.62rem;color:var(--mute)}
+.ruler b{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#ffb454;left:23%;z-index:2}
+.ruler u{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.35);left:0;z-index:1}
+#rMark{position:absolute;top:2px;bottom:2px;width:12px;margin-left:-6px;left:0;z-index:3;transition:left .06s linear;pointer-events:none}
+#rMark::before{content:"";position:absolute;left:5px;top:3px;bottom:3px;width:2px;background:#fff}
+#rMark::after{content:"";position:absolute;left:1px;right:1px;top:0;bottom:0;border-top:3px solid #fff;border-bottom:3px solid #fff;box-sizing:border-box}
+.testrow{display:flex;align-items:center;gap:10px;margin:10px 0 4px;direction:rtl}
+.testrow button{padding:7px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:var(--lift);color:var(--mist);cursor:pointer;white-space:nowrap}
+.testrow button.on{background:#5b2a2a;border-color:#d46a6a}
+.led{width:16px;height:16px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#8a8f94,#4c5156);box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+.led.on{background:radial-gradient(circle at 35% 30%,#b8ffd0,#22c55e);box-shadow:0 0 10px #22c55e}
+#testMsg{font-size:.8rem;color:var(--mute);line-height:1.5}
 .meter{position:relative;height:10px;border-radius:99px;background:var(--lift);overflow:hidden;direction:ltr}
 .meter i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lake);transition:width .08s}
 .meter b{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:23%}
@@ -803,12 +820,14 @@ html.redir body>*:not(#redirBox){display:none!important}
       <label for="micSel">دستگاه</label>
       <select id="micSel"></select>
       <label>بلندی صدای شما</label>
-      <div class="meter"><i id="lvl"></i><b id="thrMark"></b></div>
+      <div class="ruler" id="ruler"><div class="ri"><div class="rt" id="rTicks"></div><b id="thrMark" title="مرز صحبت کردن"></b><u id="rHold"></u><div id="rMark"></div></div></div>
+      <div class="testrow"><button id="micTest" type="button">شروع تست</button><span class="led" id="micLed"></span><span id="testMsg">برای امتحان، دکمه را بزنید و حرف بزنید.</span></div>
+      <label class="sw"><input type="checkbox" id="optHear"> شنیدن صدای خودم در تست (فقط با هدفون)</label>
       <label for="sens">حساسیت تشخیص صحبت</label>
       <input type="range" id="sens" min="0" max="100">
-      <p class="note">خط سفید روی نوار، مرز صحبت کردن است. وقتی صدای شما از آن رد شود، برای بقیه سبز می‌شوید. حساسیت را بیشتر کنید تا صدای آرام هم تشخیص داده شود.</p>
+      <p class="note">خط نارنجی روی خط‌کش، مرز صحبت کردن است. وقتی صدای شما از آن رد شود، برای بقیه سبز می‌شوید. حساسیت را بیشتر کنید تا صدای آرام هم تشخیص داده شود.</p>
       <label class="sw"><input type="checkbox" id="optGate"> قطع صدای کمتر از این مرز (نویزگیت)</label>
-      <p class="note">وقتی روشن باشد، صدایی که از خط سفید پایین‌تر است اصلاً برای بقیه فرستاده نمی‌شود. اگر آرام صحبت می‌کنید و صدایتان بریده می‌شود، حساسیت را بیشتر کنید یا این گزینه را خاموش کنید.</p>
+      <p class="note">وقتی روشن باشد، صدایی که از خط نارنجی پایین‌تر است اصلاً برای بقیه فرستاده نمی‌شود. اگر آرام صحبت می‌کنید و صدایتان بریده می‌شود، حساسیت را بیشتر کنید یا این گزینه را خاموش کنید.</p>
       <label class="sw"><input type="checkbox" id="optNs"> حذف نویز</label>
       <label class="sw"><input type="checkbox" id="optEc"> حذف اکو</label>
       <label class="sw"><input type="checkbox" id="optAgc"> تنظیم خودکار بلندی صدا</label>
@@ -1191,6 +1210,7 @@ async function flush(pc) {
 function setSettings(open) {
   if (open) { $('app').classList.remove('chat-open', 'people-open', 'music-open'); renderDevices(); }
   $('app').classList.toggle('settings-open', open);
+  if (!open && test.on) testToggle();
 }
 function setPeople(open) {
   if (open) $('app').classList.remove('chat-open', 'settings-open', 'music-open');
@@ -1645,10 +1665,11 @@ setInterval(() => {
     m.an.getByteTimeDomainData(m.data);
     let peak = 0;
     for (const x of m.data) peak = Math.max(peak, Math.abs(x - 128));
-    if (id === 'me') { const l = $('lvl'); if (l) l.style.width = Math.min(100, peak / 60 * 100) + '%'; }
+    if (id === 'me') drawRuler(peak);
     if (peak > thr(id)) m.last = now;
     const on = now - m.last < 500;
     if (on !== m.on) { m.on = on; setSpeaking(id, on); }
+    if (id === 'me') ledUpdate(on);
   }
 }, 120);
 
@@ -1703,6 +1724,51 @@ setInterval(() => {
     }
   }
 }, 1500);
+
+// ---------- Mic test: a ruler that shows the loudness, a "Begin test" button and a lamp that lights when you are heard ----------
+(function buildRuler() {
+  const box = $('rTicks'); let h = '';
+  for (let v = -50; v <= 50; v++) {
+    const l = (v + 50), cls = v % 10 === 0 ? 't10' : v % 5 === 0 ? 't5' : '';
+    h += '<s class="' + cls + '" style="left:' + l + '%"></s>';
+    if (v % 10 === 0) h += '<em style="left:' + l + '%">' + v + '</em>';
+  }
+  box.innerHTML = h;
+})();
+const test = { on: false, max: 0, hold: 0, holdAt: 0, loop: null };
+const lvlPct = (peak) => Math.min(100, peak / 60 * 100);
+function drawRuler(peak) {
+  const p = lvlPct(peak);
+  $('rMark').style.left = p + '%';
+  if (p >= test.hold || Date.now() - test.holdAt > 1200) { test.hold = p; test.holdAt = Date.now(); }
+  $('rHold').style.left = test.hold + '%';
+  if (test.on) test.max = Math.max(test.max, p);
+}
+function ledUpdate(on) { $('micLed').classList.toggle('on', test.on && on && !micMuted); }
+function hearSync() {
+  if (test.loop) { try { test.loop.src.disconnect(); } catch {} test.loop = null; }
+  if (!test.on || !$('optHear').checked || !AC || !local) return;
+  const tr = local.getAudioTracks()[0]; if (!tr) return;
+  const c = getCtx(), src = c.createMediaStreamSource(new MediaStream([sendTrack(tr)]));
+  src.connect(c.destination); test.loop = { src };
+}
+function testToggle() {
+  test.on = !test.on;
+  const b = $('micTest'); b.classList.toggle('on', test.on); b.textContent = test.on ? 'پایان تست' : 'شروع تست';
+  if (test.on) {
+    test.max = 0; $('testMsg').textContent = micMuted ? 'میکروفون شما بسته است؛ اول آن را باز کنید.' : 'حرف بزنید… وقتی لامپ سبز شد، صدای شما شنیده می‌شود.';
+    hearSync();
+  } else {
+    hearSync(); $('micLed').classList.remove('on');
+    const m = Math.round(test.max), t = Math.round(lvlPct(thr('me')));
+    $('testMsg').textContent = m < 3 ? 'صدایی دریافت نشد. میکروفون درست را انتخاب کنید و بسته نبودن آن را بررسی کنید.'
+      : m < t ? 'بلندترین صدای شما (' + m + '٪) از مرز (' + t + '٪) پایین‌تر بود و شنیده نمی‌شد. حساسیت را بیشتر کنید.'
+      : 'عالی؛ بلندترین صدای شما ' + m + '٪ بود و از مرز (' + t + '٪) رد شد.';
+  }
+}
+$('micTest').onclick = testToggle;
+$('optHear').onchange = hearSync;
+$('closeSettings').addEventListener('click', () => { if (test.on) testToggle(); });
 
 function renderPeople() {
   if (!ch) return;
