@@ -179,6 +179,11 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
 #auth .box{width:min(400px,100%);background:#13232f;border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:10px}
 #auth p{color:var(--mut);font-size:.85rem}#auth input{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--tx)}
 #auth .row{display:flex;gap:10px}#auth .row button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--field)}#auth .aerr{color:var(--dn);min-height:1.1em;font-size:.85rem}#auth a{color:var(--lake);text-align:center;font-size:.85rem}
+#tvBox{position:fixed;inset:0;z-index:65;background:#0b141c;display:flex;flex-direction:column}
+#tvBox[hidden]{display:none}
+#tvBox .tvh{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}
+#tvBox .tvh .mut{font-size:.8rem;flex:1;min-width:200px}#tvBox .tvh a{color:var(--lake);font-size:.85rem}
+#tvc{flex:1;min-height:0}#tvMsg{padding:10px 14px;font-size:.9rem}#tvMsg:empty{display:none}
 #modal{position:fixed;inset:0;z-index:70;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}
 #modal.on{display:grid}
 #modal .box{width:min(400px,100%);background:#13232f;border:1px solid var(--line);border-radius:20px;padding:20px}
@@ -213,6 +218,7 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
     <select id="src" aria-label="منبع قیمت"><option value="auto">منبع: خودکار</option><option value="binance">Binance</option><option value="nobitex">نوبیتکس</option><option value="sim">آزمایشی (ساختگی)</option></select>
     <select id="speed" aria-label="سرعت شبیه‌سازی" hidden><option value="1">سرعت ×۱</option><option value="5">سرعت ×۵</option><option value="20">سرعت ×۲۰</option></select>
     <button class="btn" id="acctBtn">👤 ورود / ثبت‌نام</button>
+    <button class="btn" id="tvBtn" title="نمودار کامل TradingView (فقط برای تحلیل)">📈 TradingView</button>
     <button class="btn danger" id="resetBtn">بازنشانی حساب</button>
   </div>
 </header>
@@ -283,6 +289,7 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
     <div class="tw" id="tabBody"></div>
   </section>
 </main>
+<div id="tvBox" hidden><div class="tvh"><b>نمودار TradingView</b><span class="mut">فقط برای دیدن و تحلیل؛ معاملات مجازی روی نمودار خودِ صفحه ثبت می‌شود.</span><a id="tvLink" target="_blank" rel="noopener">باز کردن در سایت TradingView ↗</a><button id="tvClose" class="btn">بستن</button></div><div id="tvMsg" class="mut"></div><div id="tvc"></div></div>
 <div id="toast" aria-live="polite"></div>
 <div id="auth"><div class="box"><h3 id="aTitle">ورود به حساب</h3>
   <p>با حساب کاربری، معاملات و تنظیمات شما روی سرور ذخیره می‌شود و در هر دستگاه در دسترس است. (پول همچنان مجازی است.)</p>
@@ -300,16 +307,16 @@ td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:no
 <script>
 // The markets you can trade. bin = Binance symbol, nob = Nobitex symbol, sc = multiplier for the price (Nobitex quotes Rial; x0.1 = Toman)
 const ASSETS = [
-  { id: 'BTC', g: 'c', name: 'بیت‌کوین', unit: 'BTC', bin: 'BTCUSDT', nob: 'BTCUSDT', dec: 2, tick: 0.5, price: 65000 },
-  { id: 'ETH', g: 'c', name: 'اتریوم', unit: 'ETH', bin: 'ETHUSDT', nob: 'ETHUSDT', dec: 2, tick: 0.01, price: 2600 },
-  { id: 'BNB', g: 'c', name: 'بایننس‌کوین', unit: 'BNB', bin: 'BNBUSDT', nob: 'BNBUSDT', dec: 2, tick: 0.01, price: 600 },
-  { id: 'SOL', g: 'c', name: 'سولانا', unit: 'SOL', bin: 'SOLUSDT', nob: 'SOLUSDT', dec: 2, tick: 0.01, price: 150 },
-  { id: 'XRP', g: 'c', name: 'ریپل', unit: 'XRP', bin: 'XRPUSDT', nob: 'XRPUSDT', dec: 4, tick: 0.0001, price: 0.55 },
-  { id: 'DOGE', g: 'c', name: 'دوج‌کوین', unit: 'DOGE', bin: 'DOGEUSDT', nob: 'DOGEUSDT', dec: 5, tick: 0.00001, price: 0.15 },
-  { id: 'ADA', g: 'c', name: 'کاردانو', unit: 'ADA', bin: 'ADAUSDT', nob: 'ADAUSDT', dec: 4, tick: 0.0001, price: 0.45 },
-  { id: 'XAU', g: 'm', name: 'طلا (PAXG)', unit: 'PAXG', bin: 'PAXGUSDT', nob: null, dec: 2, tick: 0.1, price: 3500 },
-  { id: 'EUR', g: 'm', name: 'یورو / دلار', unit: 'EUR', bin: 'EURUSDT', nob: null, dec: 4, tick: 0.0001, price: 1.1 },
-  { id: 'USDIRT', g: 'm', name: 'دلار (تتر) به تومان', unit: 'USDT', bin: null, nob: 'USDTIRT', sc: 0.1, dec: 0, tick: 10, price: 100000, quote: 'تومان', start: 500000000 }
+  { id: 'BTC', tv: 'BINANCE:BTCUSDT', g: 'c', name: 'بیت‌کوین', unit: 'BTC', bin: 'BTCUSDT', nob: 'BTCUSDT', dec: 2, tick: 0.5, price: 65000 },
+  { id: 'ETH', tv: 'BINANCE:ETHUSDT', g: 'c', name: 'اتریوم', unit: 'ETH', bin: 'ETHUSDT', nob: 'ETHUSDT', dec: 2, tick: 0.01, price: 2600 },
+  { id: 'BNB', tv: 'BINANCE:BNBUSDT', g: 'c', name: 'بایننس‌کوین', unit: 'BNB', bin: 'BNBUSDT', nob: 'BNBUSDT', dec: 2, tick: 0.01, price: 600 },
+  { id: 'SOL', tv: 'BINANCE:SOLUSDT', g: 'c', name: 'سولانا', unit: 'SOL', bin: 'SOLUSDT', nob: 'SOLUSDT', dec: 2, tick: 0.01, price: 150 },
+  { id: 'XRP', tv: 'BINANCE:XRPUSDT', g: 'c', name: 'ریپل', unit: 'XRP', bin: 'XRPUSDT', nob: 'XRPUSDT', dec: 4, tick: 0.0001, price: 0.55 },
+  { id: 'DOGE', tv: 'BINANCE:DOGEUSDT', g: 'c', name: 'دوج‌کوین', unit: 'DOGE', bin: 'DOGEUSDT', nob: 'DOGEUSDT', dec: 5, tick: 0.00001, price: 0.15 },
+  { id: 'ADA', tv: 'BINANCE:ADAUSDT', g: 'c', name: 'کاردانو', unit: 'ADA', bin: 'ADAUSDT', nob: 'ADAUSDT', dec: 4, tick: 0.0001, price: 0.45 },
+  { id: 'XAU', tv: 'OANDA:XAUUSD', g: 'm', name: 'طلا (PAXG)', unit: 'PAXG', bin: 'PAXGUSDT', nob: null, dec: 2, tick: 0.1, price: 3500 },
+  { id: 'EUR', tv: 'FX:EURUSD', g: 'm', name: 'یورو / دلار', unit: 'EUR', bin: 'EURUSDT', nob: null, dec: 4, tick: 0.0001, price: 1.1 },
+  { id: 'USDIRT', tv: 'FX_IDC:USDIRR', g: 'm', name: 'دلار (تتر) به تومان', unit: 'USDT', bin: null, nob: 'USDTIRT', sc: 0.1, dec: 0, tick: 10, price: 100000, quote: 'تومان', start: 500000000 }
 ];
 const A = (function () { let id = 'BTC'; try { id = localStorage.getItem('cc_trade_sym') || 'BTC'; } catch (e) {} return ASSETS.find((x) => x.id === id) || ASSETS[0]; })();
 </script>
@@ -1483,6 +1490,22 @@ const Market = (function () {
       acct.tok = null; acct.user = null; acct.sent = ''; LS.set('cc_trade_tok', null); drawAcctBtn(); toast('از حساب خارج شدید.', 'ok');
     };
     $('speed').onchange = () => M.setSpeed(+$('speed').value);
+    const tvOpen = () => {
+      const sym = A.tv, url = 'https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym);
+      $('tvBox').hidden = false; $('tvLink').href = url; $('tvMsg').textContent = 'در حال بارگذاری نمودار…';
+      const fail = () => { $('tvMsg').innerHTML = 'نمودار TradingView بارگذاری نشد (احتمالاً از اینترنت شما قابل دسترس نیست). از لینک «باز کردن در سایت TradingView» بالای صفحه استفاده کنید یا فیلترشکن روشن کنید.'; };
+      const build = () => {
+        try {
+          $('tvc').innerHTML = '<div id="tvw" style="height:100%"></div>';
+          new window.TradingView.widget({ container_id: 'tvw', autosize: true, symbol: sym, interval: '240', timezone: 'Asia/Tehran', theme: 'dark', style: '1', locale: 'fa_IR', toolbar_bg: '#0b141c', enable_publishing: false, withdateranges: true, hide_side_toolbar: false, allow_symbol_change: true, details: false, studies: [] });
+          $('tvMsg').textContent = '';
+        } catch (e) { fail(); }
+      };
+      if (window.TradingView && window.TradingView.widget) return build();
+      const sc = document.createElement('script'); sc.src = 'https://s3.tradingview.com/tv.js'; sc.onload = build; sc.onerror = fail; document.head.appendChild(sc);
+      setTimeout(() => { if (!(window.TradingView && window.TradingView.widget)) fail(); }, 12000);
+    };
+    $('tvBtn').onclick = tvOpen; $('tvClose').onclick = () => { $('tvBox').hidden = true; $('tvc').innerHTML = ''; };
     const sy = $('sym');
     sy.innerHTML = [['c', 'ارزهای دیجیتال'], ['m', 'طلا و ارز']].map((g) => '<optgroup label="' + g[1] + '">' + ASSETS.filter((x) => x.g === g[0]).map((x) => '<option value="' + x.id + '">' + x.name + ' · ' + pairOf(x) + '</option>').join('') + '</optgroup>').join('');
     sy.value = A.id; sy.onchange = () => { try { localStorage.setItem('cc_trade_sym', sy.value); } catch (e) {} location.reload(); };
