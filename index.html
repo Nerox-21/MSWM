@@ -673,6 +673,7 @@ html.redir body>*:not(#redirBox){display:none!important}
 .redir-fail .redir-spin{display:none}
 @keyframes rspin{to{transform:rotate(360deg)}}
 #redirHome{color:var(--lake);display:inline-block;margin-top:12px}
+.cap{margin-top:10px}.cap label{display:block;font-size:.8rem;color:var(--mute);margin-bottom:4px}.cap{margin-bottom:12px}.cap select{width:100%;padding:9px 10px;border-radius:10px;border:0;background:var(--lift);color:var(--mist)}
 </style>
 </head>
 <body>
@@ -702,7 +703,7 @@ html.redir body>*:not(#redirBox){display:none!important}
       <div class="brand"><i><svg class="ic"><use href="#i-cam"/></svg></i>تماس و چت</div>
       <h1>با هر کسی، از هر جا، <span class="grad">رو در رو</span> حرف بزنید</h1>
       <p>یک نام برای اتاق انتخاب کنید و لینکش را بفرستید. بدون ثبت‌نام.</p>
-      <div class="chips"><span>بدون ثبت‌نام</span><span>تماس گروهی تا ۸ نفر</span><span>اشتراک صفحه</span></div>
+      <div class="chips"><span>بدون ثبت‌نام</span><span>تماس گروهی تا ۳۰ نفر</span><span>اشتراک صفحه</span></div>
       <div class="faces" aria-hidden="true"><i style="background:#2ec4b6">ن</i><i style="background:#ffb454">ر</i><i style="background:#ff8fa3">س</i><i style="background:#9b8cff">م</i></div>
     </div>
     <div class="side">
@@ -713,6 +714,8 @@ html.redir body>*:not(#redirBox){display:none!important}
         <div><label for="room">نام اتاق</label><input id="room" type="text" maxlength="40" dir="ltr" placeholder="my-room"></div>
         <div><label for="pw">رمز (اختیاری)</label><input id="pw" type="password" maxlength="40" dir="ltr" autocomplete="new-password" placeholder="بدون رمز"></div>
       </div>
+      <div class="cap"><label for="cap">ظرفیت اتاق (فقط وقتی اتاق را می‌سازید اثر دارد)</label>
+        <select id="cap"><option value="8">۸ نفر (پیش‌فرض)</option><option value="12">۱۲ نفر</option><option value="16">۱۶ نفر · بهتر است فقط صوتی</option><option value="20">۲۰ نفر · فقط صوتی</option><option value="30">۳۰ نفر · فقط صوتی</option></select></div>
       <p class="hint">میکروفون الزامی است. دوربین را بعد از ورود می‌توانید روشن کنید. فقط کسانی که نام اتاق و رمز یکسان بزنند هم‌اتاق می‌شوند.</p>
       <button class="primary" id="go">ورود به اتاق</button>
       <div id="err" role="alert"></div>
@@ -978,7 +981,9 @@ html.redir body>*:not(#redirBox){display:none!important}
 const SUPABASE_URL = 'https://oeehbcttertgewkhfzes.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable__6iqYESMfzjNeukvnh_Zww_THGAbnKB';
 // =====================================================================
-const MAX_PER_ROOM = 8;
+const MAX_PER_ROOM = 8;                 // default room size; the person who creates a room can choose a bigger one (up to MAX_CAP)
+const MAX_CAP = 30;
+let roomCap = MAX_PER_ROOM;
 
 // ---- Short file links: #f/code opens the file, #d/code downloads it ----
 (() => {
@@ -1356,6 +1361,7 @@ async function join() {
     return;
   }
   localStorage.setItem('cc-name', myName);
+  roomCap = Math.min(MAX_CAP, Math.max(MAX_PER_ROOM, +$('cap').value || MAX_PER_ROOM));
   // With a password the room's channel name includes a hash of it, so a different password is simply a different room
   let roomKey = '';
   const pw = $('pw').value;
@@ -1446,9 +1452,15 @@ async function join() {
     const state = ch.presenceState();
     if (!state[myId]) return; // wait until our own presence is registered, otherwise the room list is incomplete
     checked = true;
-    if (Object.keys(state).length > MAX_PER_ROOM) {
-      alert('ظرفیت این اتاق پر است.'); location.reload(); return;
+    // The room's size is the one chosen by the person who has been in it the longest
+    const meta = Object.entries(state).filter(([k]) => k !== myId).map(([, v]) => v[0] || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+    const founder = meta.find((m) => typeof m.cap === 'number');
+    roomCap = Math.min(MAX_CAP, Math.max(MAX_PER_ROOM, founder ? founder.cap : (meta.length ? MAX_PER_ROOM : roomCap)));
+    if (Object.keys(state).length > roomCap) {
+      alert('ظرفیت این اتاق پر است (' + roomCap + ' نفر).'); location.reload(); return;
     }
+    if (roomCap > MAX_PER_ROOM) setTimeout(() => toast('اتاق بزرگ (تا ' + roomCap + ' نفر): برای روان بودن تماس، بهتر است دوربین‌ها خاموش باشند.'), 1500);
+    trackMe();
     // Everyone in the room shares one session id. The first person creates it;
     // if two people start at the same moment, the smallest id wins.
     const sessions = Object.values(state).flat().map((m) => m.session).filter(Boolean).sort();
@@ -1611,7 +1623,7 @@ async function stopShare() {
   await setVideo();
 }
 
-const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens, adm: iAmAdmin, nomusic: noMusic, joinedAt });
+const trackMe = () => ch && ch.track({ name: myName, session: mySession, muted: micMuted, sens: S.sens, adm: iAmAdmin, nomusic: noMusic, joinedAt, cap: roomCap });
 
 // Marks who has their microphone muted (shared through presence)
 function applyStates() {
@@ -1779,6 +1791,7 @@ function renderPeople() {
   list.sort((a, b) => (b.id === 'me') - (a.id === 'me') || a.name.localeCompare(b.name, 'fa'));
   $('app').classList.toggle('is-admin', iAmAdmin);
   $('pcount').textContent = $('pbadge').textContent = list.length;
+  if (roomCap > MAX_PER_ROOM) $('pcount').textContent = list.length + '/' + roomCap;
   $('people').replaceChildren(...list.map((p) => {
     const row = document.createElement('div'); row.className = 'p'; row.dataset.id = p.id;
     if (meters[p.id] && meters[p.id].on) row.classList.add('speaking');
@@ -2124,14 +2137,14 @@ $('send').onsubmit = (e) => {
     // keep the password box that is open (and what was typed) when the list refreshes
     const typed = askKey && document.querySelector('#rList .r-item.ask input') ? document.querySelector('#rList .r-item.ask input').value : '';
     $('rList').innerHTML = rooms.map((r, i) => {
-      const full = r.n >= FULL;
+      const full = false;   // rooms can be bigger than the default, so the list never blocks; the room itself checks its size
       const who = r.locked
         ? '<p class="k-sub">این روم رمز دارد و نام افراد آن دیده نمی‌شود.</p>'
         : '<div class="r-who">' + (r.names || []).map((n) => `<span><i style="background:${colorOf(n)}">${esc(String(n).trim().charAt(0) || '?')}</i>${esc(n)}</span>`).join('') + '</div>';
-      const pct = Math.min(100, Math.round(r.n / FULL * 100));
+      const pct = Math.min(100, Math.round(r.n / Math.max(FULL, r.n) * 100));
       return `<div class="r-item${askKey === key(r) ? ' ask' : ''}${full ? ' full' : ''}" data-i="${i}">
         <div class="r-top"><span class="r-dot" aria-hidden="true"></span><span class="r-name" dir="auto">${esc(r.room)}</span>${r.locked ? '<span class="r-lock" title="رمزدار" aria-label="رمزدار"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>' : ''}</div>
-        <div class="r-cap"><div class="r-bar"><i style="width:${pct}%"></i></div><span>${fa(r.n)} از ${fa(FULL)} نفر</span></div>
+        <div class="r-cap"><div class="r-bar"><i style="width:${pct}%"></i></div><span>${fa(r.n)} نفر</span></div>
         ${who}
         <button class="r-go" data-a="go"${full ? ' disabled' : ''}>${full ? 'ظرفیت پر است' : r.locked ? 'ورود با رمز' : 'اتصال به روم'}</button>
         <div class="r-pw"><input type="password" dir="ltr" maxlength="40" placeholder="رمز روم" autocomplete="off"><button class="r-go" data-a="pw">ورود</button></div></div>`;
