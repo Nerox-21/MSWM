@@ -674,6 +674,21 @@ html.redir body>*:not(#redirBox){display:none!important}
 @keyframes rspin{to{transform:rotate(360deg)}}
 #redirHome{color:var(--lake);display:inline-block;margin-top:12px}
 .cap{margin-top:10px}.cap label{display:block;font-size:.8rem;color:var(--mute);margin-bottom:4px}.cap{margin-bottom:12px}.cap select{width:100%;padding:9px 10px;border-radius:10px;border:0;background:var(--lift);color:var(--mist)}
+
+/* ===== small effects (press, hover, pop-in); off for people who prefer less motion ===== */
+button{transition:background-color .16s,color .16s,transform .1s,box-shadow .2s,opacity .16s}
+button:not(:disabled):active{transform:scale(.95)}
+.rb{transition:transform .12s,background-color .16s,box-shadow .2s}
+.rb:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.rb:active{transform:scale(.92)}
+.rb.leave:hover{box-shadow:0 8px 22px rgba(239,91,91,.45)}
+#settingsPanel,#chat,#peoplePanel,#musicPanel{animation:slidein .22s ease-out}
+@keyframes slidein{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@media(max-width:760px){@keyframes slidein{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}}
+.tile{animation:tilein .3s ease-out}
+@keyframes tilein{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.testrow button:hover{background:#2f4a5e}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
