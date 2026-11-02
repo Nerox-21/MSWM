@@ -261,6 +261,36 @@ main{gap:6px;margin:6px;grid-template-columns:minmax(0,1fr) 310px;grid-template-
 #posBar .w{color:var(--sun);border-color:rgba(255,152,0,.4);direction:rtl}
 #tvIn{height:clamp(460px,64vh,700px)}#tvIn[hidden]{display:none}#tvIn .msg{padding:24px;color:var(--mut)}
 #pChart.tvmode #chartBox,#pChart.tvmode #topBar,#pChart.tvmode #indBar,#pChart.tvmode #hint{display:none}
+
+/* ===== fullscreen for the TradingView view ===== */
+#fsBtn2{font-size:.72rem;padding:2px 10px;border-radius:6px;color:var(--mut);margin-inline-start:auto}#fsBtn2+a{margin-inline-start:12px}
+#pChart.fs #tvIn{flex:1;height:auto;min-height:0}
+#pChart.fs .vw{padding:6px 12px}
+/* ===== small effects (hover, press, flash, pop-in); switched off for people who prefer less motion ===== */
+button,.btn,select,.seg button,.pct button,.tabs button,.bk button,.vw button,.go,.mini,a{transition:background-color .16s,border-color .16s,color .16s,box-shadow .2s,transform .1s,opacity .16s,filter .16s}
+button:not(:disabled):active,.btn:active,.go:active{transform:scale(.97)}
+.go.l:hover{box-shadow:0 6px 22px rgba(38,166,154,.38);transform:translateY(-1px)}
+.go.s:hover{box-shadow:0 6px 22px rgba(239,83,80,.38);transform:translateY(-1px)}
+.go.l:active,.go.s:active{transform:scale(.98)}
+.seg button:hover:not(.on){color:var(--tx);background:rgba(255,255,255,.04)}
+.pct button:hover{transform:translateY(-1px)}
+.tabs button:hover:not(.on),.bk button:hover:not(.on){color:var(--tx)}
+.vw button:hover:not(.on){color:var(--tx);background:rgba(255,255,255,.05)}
+.mini:hover{transform:translateY(-1px)}
+tbody tr{transition:background-color .15s}tbody tr:hover{background:rgba(255,255,255,.035)}
+#lastPx{border-radius:6px;padding:0 6px}
+#lastPx.fu{animation:fu .6s ease-out}#lastPx.fd{animation:fd .6s ease-out}
+@keyframes fu{from{background:rgba(38,166,154,.4)}to{background:transparent}}
+@keyframes fd{from{background:rgba(239,83,80,.4)}to{background:transparent}}
+#toast div{animation:tin .28s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes tin{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+#modal.on .box,#auth.on .box,#dlg.on .box{animation:pop .2s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(6px)}to{opacity:1;transform:none}}
+#moreMenu:not([hidden]){animation:pop .16s ease-out}
+.acct b{transition:color .25s}
+.src.live i{box-shadow:0 0 0 0 rgba(38,166,154,.6);animation:bl 1.6s infinite,ring 1.6s infinite}
+@keyframes ring{70%{box-shadow:0 0 0 6px rgba(38,166,154,0)}100%{box-shadow:0 0 0 0 rgba(38,166,154,0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -293,7 +323,7 @@ main{gap:6px;margin:6px;grid-template-columns:minmax(0,1fr) 310px;grid-template-
 <main>
   <section class="panel" id="pChart">
     <div class="ph"><span>نمودار <span class="pr">BTC/USDT</span> <span class="tag" id="tagChart">…</span></span></div>
-    <div class="vw" id="vwBar"><button data-v="tv">TradingView</button><button data-v="in">نمودار ساده</button><span id="posBar"></span><a id="tvLink2" target="_blank" rel="noopener">باز کردن در سایت TradingView ↗</a></div>
+    <div class="vw" id="vwBar"><button data-v="tv">TradingView</button><button data-v="in">نمودار ساده</button><span id="posBar"></span><button id="fsBtn2" title="تمام‌صفحه" aria-label="تمام‌صفحه">⛶ تمام‌صفحه</button><a id="tvLink2" target="_blank" rel="noopener">باز کردن در سایت TradingView ↗</a></div>
     <div id="tvIn" hidden></div>
     <div class="ctl" id="topBar">
       <span id="tfBar"><button data-tf="1h">۱ ساعت</button><button data-tf="2h">۲ ساعت</button><button data-tf="4h" class="on">۴ ساعت</button><button data-tf="1d">۱ روز</button><button data-tf="1w">۱ هفته</button></span>
@@ -820,7 +850,7 @@ const Market = (function () {
   // ---------- header, notice, account ----------
   function drawHeader(px) {
     const live = M.mode === 'live', ok = M.alive();
-    const el = $('lastPx'); el.textContent = P(px); el.className = 'last num ' + (dirUp ? 'up' : 'dn');
+    const el = $('lastPx'); el.textContent = P(px); el.className = 'last num ' + (dirUp ? 'up' : 'dn') + (el._p !== undefined && el._p !== px ? (dirUp ? ' fu' : ' fd') : ''); el._p = px;
     const st = M.stats();
     $('st-chg').textContent = sgn(st.chg) + '٪'; $('st-chg').className = 'num ' + cls(st.chg);
     $('st-hi').textContent = P(st.hi); $('st-lo').textContent = P(st.lo); $('st-vol').textContent = fmt(st.vol, 0);
@@ -1414,7 +1444,7 @@ const Market = (function () {
   function setFs(on) {
     pchart.classList.toggle('fs', on); document.body.classList.toggle('nos', on);
     (on ? pchart : document.body).append($('toast'), $('modal'));                 // the toast and the confirm box must live inside the full-screen element
-    $('fsBtn').innerHTML = svg(on ? 'unfull' : 'full'); $('fsBtn').classList.toggle('on', on); closePop();
+    $('fsBtn').innerHTML = svg(on ? 'unfull' : 'full'); $('fsBtn').classList.toggle('on', on); $('fsBtn2').textContent = on ? '⛶ خروج از تمام‌صفحه' : '⛶ تمام‌صفحه'; closePop();
     if (chart) { chart.resize(); setTimeout(() => chart && chart.resize(), 120); }
   }
   async function toggleFs() {
@@ -1603,6 +1633,7 @@ const Market = (function () {
     if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; }
   }
   function initView() {
+    $('fsBtn2').onclick = toggleFs;
     $('vwBar').onclick = (e) => { const b = e.target.closest('[data-v]'); if (b) setView(b.dataset.v); };
     $('tfBar').addEventListener('click', () => { if (view === 'tv') setTimeout(tvBuild, 0); });
     const saved = LS.get('cc_trade_view', 'tv');
