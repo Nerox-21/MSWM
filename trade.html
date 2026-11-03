@@ -291,6 +291,23 @@ tbody tr{transition:background-color .15s}tbody tr:hover{background:rgba(255,255
 .src.live i{box-shadow:0 0 0 0 rgba(38,166,154,.6);animation:bl 1.6s infinite,ring 1.6s infinite}
 @keyframes ring{70%{box-shadow:0 0 0 6px rgba(38,166,154,0)}100%{box-shadow:0 0 0 0 rgba(38,166,154,0)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.risk{font-size:.78rem;border-radius:8px;padding:6px 9px;background:var(--field);color:var(--mut);display:none}
+.risk.on{display:block}.risk.ok{color:var(--up)}.risk.warn{color:#ffb454}.risk.bad{color:var(--dn);background:rgba(246,70,93,.1)}
+.risk button{margin-inline-start:6px;border:1px solid var(--line);background:transparent;color:var(--tx);border-radius:6px;padding:1px 8px;font-size:.74rem}
+.jf{display:grid;gap:6px}.jf textarea,.jf input{background:var(--field);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--tx);font:inherit;font-size:.82rem;resize:vertical}
+.jl{font-size:.8rem;color:var(--mut)}.req{color:var(--dn)}
+.go:disabled{opacity:.45;cursor:not-allowed}
+#rv{position:fixed;inset:0;z-index:72;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}#rv.on{display:grid}
+#rv .box{width:min(420px,100%);background:#1e222d;border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:9px;max-height:92vh;overflow:auto}
+#rv p{color:var(--mut);font-size:.85rem;white-space:pre-line}#rv .rq{font-size:.82rem;margin-top:4px}
+#rv textarea{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:9px;color:var(--tx);font:inherit}
+.chips2{display:flex;flex-wrap:wrap;gap:6px}.chips2 button{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--field);color:var(--tx);font-size:.82rem}
+.chips2 button.on{background:var(--lake);color:#0b1117;border-color:var(--lake)}
+#rv .row{display:flex;gap:10px;margin-top:4px}#rv .row button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--tx)}#rv .row .ok{background:var(--lake);color:#0b1117;border-color:var(--lake)}
+.jsum{display:flex;flex-wrap:wrap;gap:8px 16px;padding:8px 4px 10px;font-size:.8rem;color:var(--mut)}.jsum b{color:var(--tx)}
+td.why{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td [data-review]{border:1px solid var(--line);background:var(--field);color:var(--tx);border-radius:6px;padding:2px 8px;font-size:.74rem}
 </style>
 </head>
 <body>
@@ -312,6 +329,8 @@ tbody tr{transition:background-color .15s}tbody tr:hover{background:rgba(255,255
       <div id="moreMenu" hidden>
         <label>منبع قیمت<select id="src" aria-label="منبع قیمت"><option value="auto">خودکار</option><option value="binance">Binance</option><option value="nobitex">نوبیتکس</option><option value="sim">آزمایشی (ساختگی)</option></select></label>
         <label id="speedRow">سرعت شبیه‌سازی<select id="speed" aria-label="سرعت شبیه‌سازی" hidden><option value="1">×۱</option><option value="5">×۵</option><option value="20">×۲۰</option></select></label>
+        <label class="feeSw"><input type="checkbox" id="needWhy"> دلیل ورود اجباری باشد</label>
+        <label>سقف ریسک هر معامله (٪ از موجودی)<input id="riskCap" type="number" min="0.1" max="100" step="0.5"></label>
         <button class="btn danger" id="resetBtn">بازنشانی حساب</button>
       </div></span>
   </div>
@@ -368,6 +387,13 @@ tbody tr{transition:background-color .15s}tbody tr:hover{background:rgba(255,255
         <div class="f"><label><span>حد ضرر (SL)</span><span class="mut">اختیاری</span></label><input id="sl" type="number" step="0.5" min="0" inputmode="decimal"></div>
       </div>
       <div class="sum" id="sum"></div>
+      <div class="risk" id="riskBox"></div>
+      <div class="jf">
+        <label class="jl"><span>چرا وارد می‌شوم؟ <b id="jReq" class="req">*</b></span></label>
+        <textarea id="jWhy" rows="2" maxlength="300" placeholder="مثلاً: قیمت به حمایت رسید و واکنش نشان داد"></textarea>
+        <input id="jSlWhy" maxlength="120" placeholder="چرا حد ضرر همین‌جاست؟ (اختیاری)">
+        <input id="jRule" maxlength="120" placeholder="کی خارج می‌شوم؟ (اختیاری)">
+      </div>
       <label class="feeSw"><input type="checkbox" id="feeOn"> کارمزد معاملات (مثل صرافی واقعی)</label>
       <div class="err" id="ferr" role="alert"></div>
       <button class="go l" id="goBtn">باز کردن لانگ</button>
@@ -386,6 +412,13 @@ tbody tr{transition:background-color .15s}tbody tr:hover{background:rgba(255,255
   </section>
 </main>
 <div id="toast" aria-live="polite"></div>
+<div id="rv"><div class="box">
+  <h3 id="rvTitle">مرور معامله</h3><p id="rvText"></p>
+  <div class="rq">طبق برنامه عمل کردی؟</div><div class="chips2" id="rvPlan"><button data-v="1">بله</button><button data-v="0">نه</button></div>
+  <div class="rq">حس غالبت چی بود؟</div><div class="chips2" id="rvFeel"><button>آرام</button><button>ترس</button><button>طمع</button><button>هیجان</button><button>پشیمانی</button><button>بی‌تفاوت</button></div>
+  <div class="rq">یک درس کوتاه (اختیاری)</div><textarea id="rvLesson" rows="2" maxlength="300"></textarea>
+  <div class="row"><button id="rvNo">بعداً</button><button id="rvYes" class="ok">تأیید</button></div>
+</div></div>
 <div id="auth"><div class="box"><h3 id="aTitle">ورود به حساب</h3>
   <p>با حساب کاربری، معاملات و تنظیمات شما روی سرور ذخیره می‌شود و در هر دستگاه در دسترس است. (پول همچنان مجازی است.)</p>
   <input id="aUser" placeholder="نام کاربری (انگلیسی)" autocomplete="username" dir="ltr"><input id="aPass" type="password" placeholder="رمز عبور (حداقل ۶ نویسه)" autocomplete="current-password" dir="ltr">
@@ -482,7 +515,7 @@ const Engine = (function () {
     s.balance -= fee;
     const p = { id: s.nextId++, side: o.side, entry: price, qty, margin: o.margin, lev: o.lev, tp: o.tp ?? null, sl: o.sl ?? null, liq: liqPrice(o.side, price, o.lev), time: now, fee };
     s.positions.push(p);
-    (s.journal = s.journal || []).unshift({ id: p.id, side: o.side, type: o.type === 'limit' ? 'limit' : 'market', entry: price, qty, lev: o.lev, margin: o.margin, tp: p.tp, sl: p.sl, src: s.src || '', sym: s.sym || '', openT: now, closeT: null, exit: null, reason: null, pnl: null });
+    (s.journal = s.journal || []).unshift({ id: p.id, side: o.side, type: o.type === 'limit' ? 'limit' : 'market', entry: price, qty, lev: o.lev, margin: o.margin, tp: p.tp, sl: p.sl, src: s.src || '', sym: s.sym || '', openT: now, closeT: null, exit: null, reason: null, pnl: null, why: o.why || '', whySl: o.whySl || '', rule: o.rule || '', risk: p.sl != null ? Math.abs(price - p.sl) * qty : null, plan: null, feel: '', lesson: '' });
     if (s.journal.length > 500) s.journal.length = 500;
     s.tradeHist.unshift({ id: p.id, time: now, side: o.side, action: 'open', reason: o.type === 'limit' ? 'لیمیت' : 'مارکت', price, qty, fee, pnl: null });
     if (s.tradeHist.length > 300) s.tradeHist.length = 300;
@@ -776,6 +809,7 @@ const Market = (function () {
   const QN = A.quote || 'USDT', P = (n) => fmt(n, A.dec), symKey = (k) => (A.id === 'BTC' ? '' : A.id + '_') + k, pairOf = (a) => a.bin ? a.unit + '/USDT' : a.unit + '/' + (a.quote || 'USDT');
   const fmt = (n, d = 2) => (isFinite(n) ? n : 0).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
   const sgn = (n, d = 2) => (n > 0 ? '+' : '') + fmt(n, d);
+  const esc = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const cls = (n) => n > 0 ? 'up' : n < 0 ? 'dn' : '';
   const clock = (t) => new Date(t).toLocaleTimeString('en-GB');
   const stamp = (t) => { const d = new Date(t); return d.toLocaleDateString('en-GB').slice(0, 5) + ' ' + d.toLocaleTimeString('en-GB'); };
@@ -783,7 +817,7 @@ const Market = (function () {
 
   let S = null, KEY = '';                                   // the virtual account (one for live prices, one for made-up prices)
   const ui = { side: 'long', type: 'market', tab: 'pos', off: 0, hover: null };
-  const cfg = Object.assign({ tf: '4h', n: 100, color: '#ffb454', fees: false }, LS.get('cc_trade_chart', {}));
+  const cfg = Object.assign({ tf: '4h', n: 100, color: '#ffb454', fees: false, needWhy: true, riskCap: 2 }, LS.get('cc_trade_chart', {}));
   E.setFees(cfg.fees);
     let trades = [], prevPx = 0, dirUp = true, pref = 'auto', failedLive = false;
   // ---------- account (Supabase functions in trade-setup.sql; passwords never leave as plain text in the table) ----------
@@ -836,6 +870,21 @@ const Market = (function () {
     const d = document.createElement('div'); d.textContent = msg; if (kind) d.className = kind;
     $('toast').appendChild(d); setTimeout(() => d.remove(), 4200);
     while ($('toast').children.length > 3) $('toast').firstChild.remove();
+  }
+  function applyReview(id, r) { const j = (S.journal || []).find((x) => x.id === id); if (j) { j.plan = r.plan; j.feel = r.feel; j.lesson = r.lesson; } }
+  function reviewDialog(d) {
+    return new Promise((res) => {
+      let plan = null, feel = '';
+      $('rvTitle').textContent = d.title; $('rvText').textContent = d.text; $('rvYes').textContent = d.ok || 'تأیید'; $('rvLesson').value = '';
+      const sync = () => { $('rvPlan').querySelectorAll('button').forEach((b) => b.classList.toggle('on', plan !== null && b.dataset.v === (plan ? '1' : '0'))); $('rvFeel').querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.textContent === feel)); };
+      sync();
+      $('rvPlan').onclick = (e) => { const b = e.target.closest('button'); if (b) { const v = b.dataset.v === '1'; plan = plan === v ? null : v; sync(); } };
+      $('rvFeel').onclick = (e) => { const b = e.target.closest('button'); if (b) { feel = feel === b.textContent ? '' : b.textContent; sync(); } };
+      const done = (v) => { $('rv').classList.remove('on'); $('rvYes').onclick = $('rvNo').onclick = $('rv').onclick = null; res(v); };
+      $('rvYes').onclick = () => done({ plan, feel, lesson: $('rvLesson').value.trim() }); $('rvNo').onclick = () => done(null);
+      $('rv').onclick = (e) => { if (e.target === $('rv')) done(null); };
+      $('rvNo').textContent = d.ok === 'ثبت' ? 'بعداً' : 'انصراف'; $('rv').classList.add('on');
+    });
   }
   function ask(title, text, okLabel, danger) {
     return new Promise((res) => {
@@ -1515,7 +1564,7 @@ const Market = (function () {
   const stName = { filled: 'انجام شد', cancelled: 'لغو شد', open: 'باز' };
   function drawTabs(px_) {
     $('c-pos').textContent = S.positions.length; $('c-ord').textContent = S.orders.length; $('c-oh').textContent = S.orderHist.length; $('c-th').textContent = S.tradeHist.length; $('c-jr').textContent = (S.journal || []).length;
-    let rows = [], head = [];
+    let rows = [], head = [], jsum = '';
     if (ui.tab === 'pos') {
       head = ['جهت', 'حجم (' + A.unit + ')', 'ورود', 'قیمت فعلی', 'لیکوئید', 'مارجین', 'سود/زیان', 'TP / SL', ''];
       rows = S.positions.map((p) => { const u = E.pnl(p.side, p.entry, px_, p.qty), roe = u / p.margin * 100; return [side(p.side) + ' <span class="mut num">' + p.lev + '×</span>', fmt(p.qty, 5), P(p.entry), P(px_), P(p.liq), fmt(p.margin), '<span class="' + cls(u) + '">' + sgn(u) + ' (' + sgn(roe, 1) + '٪)</span>', (p.tp ? P(p.tp) : '—') + ' / ' + (p.sl ? P(p.sl) : '—'), '<button class="mini" data-close="' + p.id + '">بستن</button>']; });
@@ -1526,51 +1575,85 @@ const Market = (function () {
       head = ['زمان', 'نوع', 'جهت', 'قیمت', 'حجم (' + A.unit + ')', 'مارجین', 'اهرم', 'وضعیت'];
       rows = S.orderHist.map((o) => [stamp(o.time), o.type === 'limit' ? 'لیمیت' : 'مارکت', side(o.side), P(o.price), fmt(o.qty, 5), fmt(o.margin), o.lev + '×', stName[o.status] || o.status]);
     } else if (ui.tab === 'jr') {
-      head = ['باز شد', 'بسته شد', 'جهت', 'اهرم', 'ورود', 'خروج', 'TP / SL', 'نتیجه', 'سود/زیان', 'منبع قیمت'];
-      rows = (S.journal || []).map((j) => [stamp(j.openT), j.closeT ? stamp(j.closeT) : '<span class="mut">باز</span>', side(j.side), j.lev + '×', P(j.entry), j.exit != null ? P(j.exit) : '—', (j.tp ? P(j.tp) : '—') + ' / ' + (j.sl ? P(j.sl) : '—'), j.reason || '—', j.pnl == null ? '—' : '<span class="' + cls(j.pnl) + '">' + sgn(j.pnl) + '</span>', (j.src === 'آزمایشی' || !j.src ? 'آزمایشی (ساختگی)' : j.src) + (j.type === 'limit' ? ' · لیمیت' : '')]);
+      head = ['باز شد', 'جهت', 'ورود', 'خروج', 'نتیجه', 'سود/زیان', 'R', 'حس', 'طبق برنامه', 'دلیل ورود', ''];
+      const J = S.journal || [], D = J.filter((j) => j.closeT);
+      rows = J.map((j) => [stamp(j.openT) + (j.closeT ? '' : ' <span class="mut">(باز)</span>'), side(j.side) + ' <span class="mut num">' + j.lev + '×</span>', P(j.entry), j.exit != null ? P(j.exit) : '—', j.reason || '—',
+        j.pnl == null ? '—' : '<span class="' + cls(j.pnl) + '">' + sgn(j.pnl) + '</span>',
+        j.pnl != null && j.risk > 0 ? '<span class="num ' + cls(j.pnl) + '">' + (j.pnl / j.risk >= 0 ? '+' : '') + (j.pnl / j.risk).toFixed(1) + '</span>' : '—',
+        esc(j.feel) || '—', j.plan === true || j.plan === 1 ? '✅' : j.plan === false || j.plan === 0 ? '❌' : '—',
+        '<span title="' + esc([j.why, j.whySl && 'SL: ' + j.whySl, j.rule && 'خروج: ' + j.rule, j.lesson && 'درس: ' + j.lesson].filter(Boolean).join(' | ')) + '">' + (esc(j.why) || '—') + '</span>',
+        j.closeT && !j.feel && j.plan == null ? '<button data-review="' + j.id + '">ثبت درس</button>' : '']);
+      const rv = D.filter((j) => j.plan != null), fol = rv.filter((j) => j.plan === true || j.plan === 1).length;
+      const Rs = D.filter((j) => j.risk > 0 && j.pnl != null).map((j) => j.pnl / j.risk), fc = {};
+      D.forEach((j) => { if (j.feel) fc[j.feel] = (fc[j.feel] || 0) + 1; });
+      if (D.length) jsum = '<div class="jsum"><span>بسته‌شده: <b>' + D.length + '</b></span><span>برد: <b>' + Math.round(D.filter((j) => j.pnl > 0).length / D.length * 100) + '٪</b></span>' +
+        (rv.length ? '<span>طبق برنامه: <b>' + Math.round(fol / rv.length * 100) + '٪</b></span>' : '') +
+        (Rs.length ? '<span>میانگین R: <b>' + (Rs.reduce((a, b) => a + b, 0) / Rs.length).toFixed(2) + '</b></span>' : '') +
+        Object.keys(fc).map((k) => '<span>' + esc(k) + ': <b>' + fc[k] + '</b></span>').join('') + '</div>';
     } else {
       head = ['زمان', 'جهت', 'عملیات', 'قیمت', 'حجم (' + A.unit + ')', 'کارمزد', 'سود/زیان محقق'];
       rows = S.tradeHist.map((t) => [stamp(t.time), side(t.side), (t.action === 'open' ? 'باز کردن' : 'بستن') + ' · ' + t.reason, P(t.price), fmt(t.qty, 5), fmt(t.fee, 4), t.pnl == null ? '—' : '<span class="' + cls(t.pnl) + '">' + sgn(t.pnl) + '</span>']);
     }
-    $('tabBody').innerHTML = rows.length ? '<table><thead><tr>' + head.map((h) => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + r.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody></table>' : '<div class="empty">' + emptyMsg[ui.tab] + '</div>';
+    $('tabBody').innerHTML = rows.length ? jsum + '<table><thead><tr>' + head.map((h) => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + r.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody></table>' : '<div class="empty">' + emptyMsg[ui.tab] + '</div>';
   }
 
   // ---------- order form ----------
   const val = (id) => { const v = $(id).value.trim(); return v === '' ? null : Number(v); };
-  function formOrder() { return { side: ui.side, type: ui.type, margin: val('margin') ?? 0, lev: +$('lev').value, limit: val('limitPx'), tp: val('tp'), sl: val('sl') }; }
+  function formOrder() { return { side: ui.side, type: ui.type, margin: val('margin') ?? 0, lev: +$('lev').value, limit: val('limitPx'), tp: val('tp'), sl: val('sl'), why: $('jWhy').value.trim(), whySl: $('jSlWhy').value.trim(), rule: $('jRule').value.trim() }; }
+  function riskInfo(o, ref, valid, n) {
+    const b = $('riskBox'); $('jReq').style.display = cfg.needWhy ? '' : 'none';
+    if (!valid || !(o.sl > 0)) { b.className = 'risk on'; b.innerHTML = valid ? 'بدون حد ضرر، ریسک مشخص نیست. حد ضرر بگذار تا ریسک محاسبه شود.' : ''; if (!valid) b.className = 'risk'; return; }
+    const dist = Math.abs(ref - o.sl) / ref, eq = Math.max(1e-9, E.equity(S, M.last));
+    const risk = n * dist + (cfg.fees ? E.feeOf(n, E.TAKER) : 0), pc = risk / eq * 100;
+    const k = pc > cfg.riskCap ? 'bad' : pc > cfg.riskCap * 0.6 ? 'warn' : 'ok';
+    const m1 = dist > 0 ? eq * 0.01 / (dist * o.lev) : 0;
+    b.className = 'risk on ' + k;
+    b.innerHTML = 'ریسک: <b>' + fmt(risk, 2) + ' ' + QN + '</b> (' + pc.toFixed(1) + '٪ موجودی)' + (pc > cfg.riskCap ? ' · بالاتر از سقف ' + cfg.riskCap + '٪' : '') +
+      (m1 > 0 ? '<br>مارجین برای ریسک ۱٪: <b>' + fmt(m1, 2) + '</b> <button data-m1="' + m1.toFixed(2) + '">اعمال</button>' : '');
+  }
   function drawSum() {
     const o = formOrder(), sp = M.spread(), ref = ui.type === 'limit' && o.limit > 0 ? o.limit : (o.side === 'long' ? sp.ask : sp.bid);
     $('levVal').textContent = o.lev + '×';
     const valid = o.margin > 0, n = valid ? E.notional(o.margin, o.lev) : 0;
     $('sum').innerHTML = [['قیمت ورود', P(ref) + ' ' + QN], ['حجم پوزیشن', fmt(n) + ' ' + QN], ['مقدار', fmt(valid ? n / ref : 0, 5) + ' ' + A.unit], ['قیمت لیکوئید', valid ? P(E.liqPrice(o.side, ref, o.lev)) : '—']].concat(cfg.fees ? [['کارمزد تقریبی', fmt(E.feeOf(n, E.TAKER), 3) + ' ' + QN]] : []).map((r) => '<div><span>' + r[0] + '</span><b class="num">' + r[1] + '</b></div>').join('');
-    const go = $('goBtn'); go.className = 'go ' + (ui.side === 'long' ? 'l' : 's'); go.textContent = (ui.side === 'long' ? 'باز کردن لانگ' : 'باز کردن شورت') + (ui.type === 'limit' ? ' (لیمیت)' : '');
+    riskInfo(o, ref, valid, n);
+    const go = $('goBtn'); go.disabled = !!(cfg.needWhy && !o.why); go.className = 'go ' + (ui.side === 'long' ? 'l' : 's'); go.textContent = (ui.side === 'long' ? 'باز کردن لانگ' : 'باز کردن شورت') + (ui.type === 'limit' ? ' (لیمیت)' : '');
   }
   function formEvents() {
     $('sideSeg').querySelectorAll('button').forEach((b) => b.onclick = () => { ui.side = b.dataset.side; $('sideSeg').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); drawSum(); });
     $('typeSeg').querySelectorAll('button').forEach((b) => b.onclick = () => { ui.type = b.dataset.type; $('typeSeg').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); $('limitBox').hidden = ui.type !== 'limit'; if (ui.type === 'limit' && !$('limitPx').value) $('limitPx').value = M.last.toFixed(A.dec); drawSum(); });
-    ['lev', 'margin', 'limitPx', 'tp', 'sl'].forEach((id) => $(id).addEventListener('input', () => { $('ferr').textContent = ''; drawSum(); }));
+    ['lev', 'margin', 'limitPx', 'tp', 'sl', 'jWhy', 'jSlWhy', 'jRule'].forEach((id) => $(id).addEventListener('input', () => { $('ferr').textContent = ''; drawSum(); }));
+    $('riskBox').onclick = (e) => { const m = e.target.closest('[data-m1]'); if (m) { $('margin').value = Math.min(+m.dataset.m1, Math.max(0, E.available(S) / (1 + E.TAKER * +$('lev').value))).toFixed(2); drawSum(); } };
+    $('needWhy').checked = cfg.needWhy; $('needWhy').onchange = () => { cfg.needWhy = $('needWhy').checked; saveCfg(); drawSum(); };
+    $('riskCap').value = cfg.riskCap; $('riskCap').onchange = () => { const v = +$('riskCap').value; cfg.riskCap = v > 0 ? v : 2; $('riskCap').value = cfg.riskCap; saveCfg(); drawSum(); };
     $('useLast').onclick = () => { $('limitPx').value = M.last.toFixed(A.dec); drawSum(); };
     document.querySelectorAll('.pct [data-p]').forEach((b) => b.onclick = () => { const a = Math.max(0, E.available(S)) / (1 + E.TAKER * +$('lev').value); $('margin').value = (Math.floor(a * +b.dataset.p) / 100).toFixed(2); drawSum(); });
     $('goBtn').onclick = () => {
       $('ferr').textContent = '';
       if (!M.alive()) { $('ferr').textContent = 'ارتباط با قیمت زنده قطع است؛ کمی صبر کنید.'; return; }
       const o = formOrder(), sp = M.spread();
+      if (cfg.needWhy && !o.why) { $('ferr').textContent = 'اول دلیل ورود را بنویس.'; $('jWhy').focus(); return; }
       const res = E.placeOrder(S, o, sp.bid, sp.ask, Date.now());
       if (!res.ok) { $('ferr').textContent = res.msg; toast(res.msg, 'bad'); return; }
+      ['jWhy', 'jSlWhy', 'jRule'].forEach((id) => $(id).value = ''); drawSum();
       toast(res.msg, 'ok'); ui.tab = o.type === 'limit' && S.orders.length ? 'ord' : 'pos';
       $('tabBar').querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x.dataset.t === ui.tab));
       save(); drawAll();
     };
     $('tabBar').querySelectorAll('[data-t]').forEach((b) => b.onclick = () => { ui.tab = b.dataset.t; $('tabBar').querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x === b)); drawTabs(M.last); });
     $('tabBody').addEventListener('click', async (e) => {
+      const rb = e.target.closest('[data-review]');
+      if (rb) { const id = +rb.dataset.review, j = (S.journal || []).find((x) => x.id === id); if (!j) return; const rvw = await reviewDialog({ title: 'مرور معامله', text: (j.side === 'long' ? 'لانگ' : 'شورت') + ' · ' + (j.reason || '') + ' · ' + sgn(j.pnl || 0) + ' ' + QN, ok: 'ثبت' }); if (rvw) { applyReview(id, rvw); save(); drawTabs(M.last); } return; }
       const c = e.target.closest('[data-close]'), k = e.target.closest('[data-cancel]');
       if (c) {
         const p = S.positions.find((x) => x.id === +c.dataset.close); if (!p) return;
         if (!M.alive()) return toast('ارتباط با قیمت زنده قطع است؛ کمی صبر کنید.', 'bad');
         const u = E.pnl(p.side, p.entry, M.last, p.qty);
-        if (!(await ask('بستن پوزیشن', (p.side === 'long' ? 'لانگ' : 'شورت') + ' ' + fmt(p.qty, 5) + ' ' + A.unit + '\nسود/زیان فعلی: ' + sgn(u) + ' ' + QN + '\nبا قیمت بازار بسته می‌شود.', 'بستن پوزیشن', true))) return;
+        const jr0 = (S.journal || []).find((x) => x.id === p.id) || {};
+        const rvw = await reviewDialog({ title: 'بستن پوزیشن', text: (p.side === 'long' ? 'لانگ' : 'شورت') + ' ' + fmt(p.qty, 5) + ' ' + A.unit + '\nسود/زیان فعلی: ' + sgn(u) + ' ' + QN + '\nبا قیمت بازار بسته می‌شود.' + (jr0.why ? '\nدلیل ورود: ' + jr0.why : ''), ok: 'بستن پوزیشن', danger: true });
+        if (!rvw) return;
         const sp = M.spread(); if (!S.positions.find((x) => x.id === p.id)) return;
-        const res = E.closePosition(S, p.id, p.side === 'long' ? sp.bid : sp.ask, 'دستی', Date.now()); toast(res.msg, res.kind); save(); drawAll();
+        const res = E.closePosition(S, p.id, p.side === 'long' ? sp.bid : sp.ask, 'دستی', Date.now()); applyReview(p.id, rvw); toast(res.msg, res.kind); save(); drawAll();
       } else if (k) { const res = E.cancelOrder(S, +k.dataset.cancel); toast(res.msg, res.ok ? 'ok' : 'bad'); save(); drawAll(); }
     });
     $('resetBtn').onclick = async () => {
