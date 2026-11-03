@@ -1594,6 +1594,7 @@ const Market = (function () {
       head = ['زمان', 'جهت', 'عملیات', 'قیمت', 'حجم (' + A.unit + ')', 'کارمزد', 'سود/زیان محقق'];
       rows = S.tradeHist.map((t) => [stamp(t.time), side(t.side), (t.action === 'open' ? 'باز کردن' : 'بستن') + ' · ' + t.reason, P(t.price), fmt(t.qty, 5), fmt(t.fee, 4), t.pnl == null ? '—' : '<span class="' + cls(t.pnl) + '">' + sgn(t.pnl) + '</span>']);
     }
+    if (ui.tab === 'jr' && !acct.tok) jsum = '<div class="jsum" style="color:var(--dn)">⚠️ وارد حساب نشده‌ای؛ ژورنال فقط روی همین مرورگر ذخیره می‌شود. برای ذخیره در پایگاه داده روی «ورود / ثبت‌نام» بزن.</div>' + jsum;
     $('tabBody').innerHTML = rows.length ? jsum + '<table><thead><tr>' + head.map((h) => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + r.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody></table>' : '<div class="empty">' + emptyMsg[ui.tab] + '</div>';
   }
 
@@ -1636,14 +1637,14 @@ const Market = (function () {
       const res = E.placeOrder(S, o, sp.bid, sp.ask, Date.now());
       if (!res.ok) { $('ferr').textContent = res.msg; toast(res.msg, 'bad'); return; }
       ['jWhy', 'jSlWhy', 'jRule'].forEach((id) => $(id).value = ''); drawSum();
-      toast(res.msg, 'ok'); ui.tab = o.type === 'limit' && S.orders.length ? 'ord' : 'pos';
+      pushState(true); toast(res.msg, 'ok'); ui.tab = o.type === 'limit' && S.orders.length ? 'ord' : 'pos';
       $('tabBar').querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x.dataset.t === ui.tab));
       save(); drawAll();
     };
     $('tabBar').querySelectorAll('[data-t]').forEach((b) => b.onclick = () => { ui.tab = b.dataset.t; $('tabBar').querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x === b)); drawTabs(M.last); });
     $('tabBody').addEventListener('click', async (e) => {
       const rb = e.target.closest('[data-review]');
-      if (rb) { const id = +rb.dataset.review, j = (S.journal || []).find((x) => x.id === id); if (!j) return; const rvw = await reviewDialog({ title: 'مرور معامله', text: (j.side === 'long' ? 'لانگ' : 'شورت') + ' · ' + (j.reason || '') + ' · ' + sgn(j.pnl || 0) + ' ' + QN, ok: 'ثبت' }); if (rvw) { applyReview(id, rvw); save(); drawTabs(M.last); } return; }
+      if (rb) { const id = +rb.dataset.review, j = (S.journal || []).find((x) => x.id === id); if (!j) return; const rvw = await reviewDialog({ title: 'مرور معامله', text: (j.side === 'long' ? 'لانگ' : 'شورت') + ' · ' + (j.reason || '') + ' · ' + sgn(j.pnl || 0) + ' ' + QN, ok: 'ثبت' }); if (rvw) { applyReview(id, rvw); save(); drawTabs(M.last); pushState(true); } return; }
       const c = e.target.closest('[data-close]'), k = e.target.closest('[data-cancel]');
       if (c) {
         const p = S.positions.find((x) => x.id === +c.dataset.close); if (!p) return;
@@ -1653,12 +1654,12 @@ const Market = (function () {
         const rvw = await reviewDialog({ title: 'بستن پوزیشن', text: (p.side === 'long' ? 'لانگ' : 'شورت') + ' ' + fmt(p.qty, 5) + ' ' + A.unit + '\nسود/زیان فعلی: ' + sgn(u) + ' ' + QN + '\nبا قیمت بازار بسته می‌شود.' + (jr0.why ? '\nدلیل ورود: ' + jr0.why : ''), ok: 'بستن پوزیشن', danger: true });
         if (!rvw) return;
         const sp = M.spread(); if (!S.positions.find((x) => x.id === p.id)) return;
-        const res = E.closePosition(S, p.id, p.side === 'long' ? sp.bid : sp.ask, 'دستی', Date.now()); applyReview(p.id, rvw); toast(res.msg, res.kind); save(); drawAll();
+        const res = E.closePosition(S, p.id, p.side === 'long' ? sp.bid : sp.ask, 'دستی', Date.now()); applyReview(p.id, rvw); toast(res.msg, res.kind); save(); drawAll(); pushState(true);
       } else if (k) { const res = E.cancelOrder(S, +k.dataset.cancel); toast(res.msg, res.ok ? 'ok' : 'bad'); save(); drawAll(); }
     });
     $('resetBtn').onclick = async () => {
-      if (!(await ask('بازنشانی حساب آزمایشی', 'همه‌ی پوزیشن‌ها، سفارش‌ها و تاریخچه‌ی این حساب پاک می‌شود و موجودی به ' + fmt(S.start, 0) + ' ' + QN + ' برمی‌گردد.', 'بازنشانی', true))) return;
-      S = E.newState(A); save(); drawAll(); toast('حساب آزمایشی بازنشانی شد.', 'ok');
+      if (!(await ask('بازنشانی حساب آزمایشی', 'پوزیشن‌ها، سفارش‌ها و تاریخچه پاک می‌شود (ژورنال معاملات می‌ماند) و موجودی به ' + fmt(S.start, 0) + ' ' + QN + ' برمی‌گردد.', 'بازنشانی', true))) return;
+      const keepJ = S.journal || []; S = E.newState(A); S.journal = keepJ; save(); drawAll(); toast('حساب بازنشانی شد؛ ژورنال معاملات نگه داشته شد.', 'ok');
     };
     $('feeOn').checked = cfg.fees; $('feeOn').onchange = () => { cfg.fees = $('feeOn').checked; E.setFees(cfg.fees); saveCfg(); drawSum(); toast(cfg.fees ? 'کارمزد روشن شد (۰٫۰۵٪ مارکت، ۰٫۰۲٪ لیمیت). برای معاملات بعدی اعمال می‌شود.' : 'کارمزد خاموش شد.'); };
     $('acctBtn').onclick = async () => {
