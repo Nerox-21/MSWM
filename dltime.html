@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1e2b">
+<title>محاسبه زمان دانلود</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--night:#0f1e2b;--deep:#16293a;--lift:#24394b;--lake:#2ec4b6;--sun:#ffb454;--mist:#eaf1f5;--mute:#8aa0b2;--bad:#ef5b5b;--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box;margin:0}
+html{background:var(--night)}
+body{min-height:100vh;font-family:Vazirmatn,Tahoma,sans-serif;color:var(--mist);line-height:1.8;-webkit-tap-highlight-color:transparent;
+  background:radial-gradient(60% 40% at 90% 0%,rgba(46,196,182,.22),transparent 70%),radial-gradient(50% 40% at 0% 100%,rgba(255,180,84,.16),transparent 70%),var(--night);background-attachment:fixed}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px calc(56px + env(safe-area-inset-bottom));display:grid;gap:14px}
+.top{display:flex;align-items:center;gap:12px}
+.back{padding:7px 14px;border-radius:10px;background:var(--lift);color:var(--mist);text-decoration:none;font-size:.88rem;font-weight:600;transition:background .16s,transform .1s}
+.back:hover{background:#2f4a60}.back:active{transform:scale(.96)}
+.top h1{flex:1;font-size:1.35rem;font-weight:800}
+.sub{color:var(--mute);font-size:.9rem;margin-top:-6px}
+.card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:grid;gap:12px;animation:up .4s ease both}
+.card:nth-of-type(2){animation-delay:.05s}.card:nth-of-type(3){animation-delay:.1s}.card:nth-of-type(4){animation-delay:.15s}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card h2{font-size:1.02rem;font-weight:800;display:flex;align-items:center;gap:9px}
+.card h2 i{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:rgba(46,196,182,.18);color:var(--lake);font-size:.82rem}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.full{grid-column:1/-1}
+label{display:grid;gap:4px;font-size:.82rem;color:var(--mute)}
+input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.07);transition:border-color .16s,background .16s}
+input:focus,select:focus{outline:none;border-color:var(--lake);background:rgba(255,255,255,.1)}
+input{direction:ltr;text-align:left}
+select option{color:#111}
+input:disabled{opacity:.7}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--mist);font-size:.8rem;transition:background .16s,border-color .16s,transform .1s}
+.chips button:hover{background:rgba(46,196,182,.18);border-color:var(--lake)}.chips button:active{transform:scale(.95)}
+.hero{display:grid;gap:2px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(46,196,182,.2),rgba(255,180,84,.1));border:1px solid rgba(46,196,182,.3)}
+.hero .k{font-size:.8rem;color:var(--mute)}
+.hero .v{font-size:1.7rem;font-weight:800;color:var(--lake);line-height:1.4}
+.hero .v small{font-size:.9rem;font-weight:600;color:var(--mist)}
+.hero .n{font-size:.82rem;color:var(--mute)}
+.res{padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.22);border-inline-start:4px solid var(--lake);font-size:.98rem}
+.res b{color:var(--lake);font-size:1.12rem}
+.res small{display:block;color:var(--mute);margin-top:2px;font-size:.82rem}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--lake),#3fd6a6);transition:width .35s}
+.ok{color:#3fd6a6}.no{color:var(--bad)}
+.hint{color:var(--mute);font-size:.8rem}
+.err{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid rgba(255,255,255,.08)}
+th{color:var(--mute);font-weight:600;font-size:.8rem}
+tr:last-child td{border-bottom:0}
+td:last-child{font-weight:600}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.hero .v{font-size:1.45rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="./" title="بازگشت به سایت">→ سایت</a><h1>⏱️ محاسبه زمان دانلود</h1></div>
+  <p class="sub">سرعت اینترنتت را وارد کن؛ بقیه‌ی حالت‌ها خودکار حساب می‌شوند.</p>
+
+  <section class="card">
+    <h2><i>۱</i>سرعت اینترنت</h2>
+    <div class="grid">
+      <label>سرعت<input id="speed" inputmode="decimal" value="10"></label>
+      <label>واحد سرعت
+        <select id="speedUnit">
+          <option value="Kbps">کیلوبیت بر ثانیه (Kbps)</option>
+          <option value="Mbps" selected>مگابیت بر ثانیه (Mbps)</option>
+          <option value="Gbps">گیگابیت بر ثانیه (Gbps)</option>
+          <option value="KBps">کیلوبایت بر ثانیه (KB/s)</option>
+          <option value="MBps">مگابایت بر ثانیه (MB/s)</option>
+        </select></label>
+      <label>بازده واقعی اتصال
+        <select id="eff">
+          <option value="1">۱۰۰٪ (ایده‌آل)</option>
+          <option value="0.9" selected>۹۰٪ (واقعی‌تر)</option>
+          <option value="0.8">۸۰٪</option>
+          <option value="0.7">۷۰٪</option>
+          <option value="0.5">۵۰٪ (اینترنت ناپایدار)</option>
+        </select></label>
+      <label>مبنای حجم فایل
+        <select id="base">
+          <option value="1024" selected>۱۰۲۴ (مثل ویندوز)</option>
+          <option value="1000">۱۰۰۰ (مثل سازنده‌ها)</option>
+        </select></label>
+    </div>
+    <div class="chips" id="spPre" aria-label="سرعت‌های رایج"><button data-s="1" data-u="Mbps">۱ مگابیت</button><button data-s="8" data-u="Mbps">۸ مگابیت</button><button data-s="16" data-u="Mbps">۱۶ مگابیت</button><button data-s="50" data-u="Mbps">۵۰ مگابیت</button><button data-s="100" data-u="Mbps">۱۰۰ مگابیت</button><button data-s="1" data-u="Gbps">۱ گیگابیت</button></div>
+    <div class="hero"><span class="k">سرعت مؤثر</span><span class="v" id="hv">—</span><span class="n" id="hn"></span></div>
+    <p class="hint">هر ۸ بیت = ۱ بایت؛ پس ۸ مگابیت بر ثانیه ≈ ۱ مگابایت بر ثانیه. مرورگرها و برنامه‌ها معمولاً سرعت را بر حسب بایت نشان می‌دهند.</p>
+  </section>
+
+  <section class="card">
+    <h2><i>۲</i>فایل چقدر طول می‌کشد دانلود شود؟</h2>
+    <div class="grid">
+      <label>حجم فایل<input id="size" inputmode="decimal" value="1.5"></label>
+      <label>واحد
+        <select id="sizeUnit">
+          <option value="KB">کیلوبایت (KB)</option>
+          <option value="MB">مگابایت (MB)</option>
+          <option value="GB" selected>گیگابایت (GB)</option>
+          <option value="TB">ترابایت (TB)</option>
+        </select></label>
+    </div>
+    <div class="chips" id="szPre" aria-label="حجم‌های رایج"><button data-s="5" data-u="MB">آهنگ (۵ مگابایت)</button><button data-s="700" data-u="MB">فیلم کم‌حجم (۷۰۰ مگابایت)</button><button data-s="2" data-u="GB">فیلم (۲ گیگابایت)</button><button data-s="50" data-u="GB">بازی (۵۰ گیگابایت)</button><button data-s="1" data-u="TB">۱ ترابایت</button></div>
+    <div class="res" id="outTime"></div>
+  </section>
+
+  <section class="card">
+    <h2><i>۳</i>در مدت مشخص چقدر دانلود می‌شود؟</h2>
+    <div class="grid">
+      <label>مدت زمان<input id="dur" inputmode="decimal" value="20"></label>
+      <label>واحد
+        <select id="durUnit">
+          <option value="1">ثانیه</option>
+          <option value="60" selected>دقیقه</option>
+          <option value="3600">ساعت</option>
+          <option value="86400">روز</option>
+        </select></label>
+    </div>
+    <div class="res" id="outAmount"></div>
+  </section>
+
+  <section class="card">
+    <h2><i>۴</i>برای دانلود در زمان مشخص، چه سرعتی لازم است؟</h2>
+    <div class="grid">
+      <label class="full">حجم فایل (از بخش ۲)<input id="size2" disabled></label>
+      <label>باید تمام شود ظرف<input id="dl" inputmode="decimal" value="30"></label>
+      <label>واحد
+        <select id="dlUnit">
+          <option value="1">ثانیه</option>
+          <option value="60" selected>دقیقه</option>
+          <option value="3600">ساعت</option>
+        </select></label>
+    </div>
+    <div class="res" id="outNeed"></div>
+  </section>
+
+  <section class="card">
+    <h2><i>۵</i>جدول سریع</h2>
+    <p class="hint" style="margin-top:-6px">با این سرعت در هر بازه چقدر دانلود می‌شود؟</p>
+    <table>
+      <thead><tr><th>مدت</th><th>حجم دانلودشده</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+function num(id){
+  const s = $(id).value.trim()
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[٫,]/g, '.');
+  const v = parseFloat(s);
+  return isFinite(v) && v > 0 ? v : NaN;
+}
+const fa = (n, d=2) => n.toLocaleString('fa-IR', {maximumFractionDigits:d});
+function bytesPerSec(){
+  const v = num('speed'); if (isNaN(v)) return NaN;
+  const u = $('speedUnit').value, b = +$('base').value, eff = +$('eff').value;
+  const m = {Kbps:v*1e3/8, Mbps:v*1e6/8, Gbps:v*1e9/8, KBps:v*b, MBps:v*b*b};
+  return m[u] * eff;
+}
+function sizeBytes(){
+  const v = num('size'); if (isNaN(v)) return NaN;
+  return v * Math.pow(+$('base').value, {KB:1, MB:2, GB:3, TB:4}[$('sizeUnit').value]);
+}
+function fmtSize(bytes){
+  const b = +$('base').value, units = ['بایت','کیلوبایت','مگابایت','گیگابایت','ترابایت','پتابایت'];
+  let i = 0;
+  while (bytes >= b && i < units.length-1){ bytes /= b; i++; }
+  return fa(bytes, 2) + ' ' + units[i];
+}
+function fmtTime(sec){
+  if (sec < 1) return 'کمتر از ۱ ثانیه';
+  sec = Math.round(sec);
+  const d = Math.floor(sec/86400), h = Math.floor(sec%86400/3600), m = Math.floor(sec%3600/60), s = sec%60, p = [];
+  if (d) p.push(fa(d,0)+' روز');
+  if (h) p.push(fa(h,0)+' ساعت');
+  if (m) p.push(fa(m,0)+' دقیقه');
+  if (s && !d) p.push(fa(s,0)+' ثانیه');
+  return p.join(' و ');
+}
+function fmtSpeed(bps){
+  const mbps = bps*8/1e6, b = +$('base').value;
+  return fa(mbps, 2) + ' مگابیت بر ثانیه (≈ ' + fa(bps/(b*b), 2) + ' مگابایت بر ثانیه)';
+}
+function finishClock(sec){
+  const t = new Date(Date.now() + sec*1000), hm = t.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+  return t.toDateString() === new Date().toDateString() ? 'ساعت ' + hm
+    : t.toLocaleDateString('fa-IR', {weekday:'long', month:'long', day:'numeric'}) + ' ساعت ' + hm;
+}
+function update(){
+  const bps = bytesPerSec(), size = sizeBytes(), bad = '<span class="err">یک عدد معتبر وارد کن.</span>';
+  if (isNaN(bps)){
+    $('hv').textContent = '—'; $('hn').textContent = '';
+    ['outTime','outAmount','outNeed'].forEach(i => $(i).innerHTML = bad);
+    $('tbl').innerHTML = ''; return;
+  }
+  const b = +$('base').value;
+  $('hv').innerHTML = fa(bps/(b*b), 2) + ' <small>مگابایت بر ثانیه</small>';
+  $('hn').textContent = 'معادل ' + fa(bps/b, 1) + ' کیلوبایت بر ثانیه';
+
+  if (isNaN(size)) $('outTime').innerHTML = bad;
+  else {
+    const t = size / bps;
+    $('outTime').innerHTML = 'زمان دانلود: <b>' + fmtTime(t) + '</b><small>(' + fa(t, 0) + ' ثانیه) — اگر الان شروع کنی، تمام می‌شود: ' + finishClock(t) + '</small>';
+  }
+
+  const dur = num('dur');
+  if (isNaN(dur)) $('outAmount').innerHTML = bad;
+  else {
+    const secs = dur * +$('durUnit').value, got = bps*secs, pc = isNaN(size) ? null : Math.min(100, got/size*100);
+    $('outAmount').innerHTML = 'در این مدت دانلود می‌شود: <b>' + fmtSize(got) + '</b>' +
+      (pc === null ? '' : '<small>' + (got >= size ? 'فایل بخش ۲ کامل دانلود می‌شود <span class="ok">✓</span>' : 'این مقدار ' + fa(got/size*100, 1) + '٪ از فایل بخش ۲ است') + '</small><div class="bar"><i style="width:' + pc + '%"></i></div>');
+  }
+
+  $('size2').value = isNaN(size) ? '' : fmtSize(size);
+  const dl = num('dl');
+  if (isNaN(size) || isNaN(dl)) $('outNeed').innerHTML = bad;
+  else {
+    const secs = dl * +$('dlUnit').value, need = size / secs / +$('eff').value;
+    $('outNeed').innerHTML = 'حداقل سرعت اینترنت لازم: <b>' + fmtSpeed(need) + '</b><small>' +
+      (bps >= size/secs ? '<span class="ok">سرعت فعلی‌ات کافی است ✓</span>' : '<span class="no">سرعت فعلی‌ات کم است ✗</span> — زمان واقعی: ' + fmtTime(size/bps)) + '</small>';
+  }
+
+  const rows = [['۱ ثانیه',1],['۱۰ ثانیه',10],['۱ دقیقه',60],['۵ دقیقه',300],['۱۰ دقیقه',600],['۲۰ دقیقه',1200],['۳۰ دقیقه',1800],['۱ ساعت',3600],['۳ ساعت',10800],['۶ ساعت',21600],['۱۲ ساعت',43200],['۲۴ ساعت (یک شبانه‌روز)',86400]];
+  $('tbl').innerHTML = rows.map(([l,s]) => '<tr><td>' + l + '</td><td>' + fmtSize(bps*s) + '</td></tr>').join('');
+}
+document.querySelectorAll('input,select').forEach(el => { el.addEventListener('input', update); el.addEventListener('change', update); });
+$('spPre').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; $('speed').value = b.dataset.s; $('speedUnit').value = b.dataset.u; update(); };
+$('szPre').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; $('size').value = b.dataset.s; $('sizeUnit').value = b.dataset.u; update(); };
+update();
+</script>
+</body>
+</html>
