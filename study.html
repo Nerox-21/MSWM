@@ -51,7 +51,7 @@ input.n{direction:ltr;text-align:center}
 .item input[type=checkbox]{width:20px;height:20px;accent-color:var(--lake)}
 .item .t{font-weight:600}.item .d{font-size:.78rem;color:var(--mute)}
 .cd{font-weight:800;font-size:.9rem;color:var(--lake);font-variant-numeric:tabular-nums;text-align:left;direction:ltr;white-space:nowrap}.item.soon .cd{color:var(--sun)}.item.over .cd{color:var(--bad)}
-.add{display:grid;grid-template-columns:1fr 130px 175px auto;gap:8px}
+.add{display:grid;grid-template-columns:1fr 130px;gap:8px}.add .jd{grid-column:1/-1;order:2}.add .btn{grid-column:1/-1;order:3}
 .timer{display:grid;place-items:center;gap:10px;padding:8px 0}
 .ring{--p:0;width:200px;height:200px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--lake) calc(var(--p)*1%),rgba(255,255,255,.1) 0)}
 .ring.brk{background:conic-gradient(var(--sun) calc(var(--p)*1%),rgba(255,255,255,.1) 0)}
@@ -63,7 +63,13 @@ input.n{direction:ltr;text-align:center}
 .bars i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:linear-gradient(var(--lake),#1b8f85);min-height:3px}.bars .tdy i{background:linear-gradient(var(--sun),#d98a2a)}
 .empty{color:var(--mute);text-align:center;padding:14px;font-size:.88rem}
 .cfg{display:flex;gap:10px;align-items:center;justify-content:center;font-size:.82rem;color:var(--mute)}.cfg input{width:64px}
-@media(max-width:560px){.add{grid-template-columns:1fr 1fr}.add input:first-child{grid-column:1/-1}.add .btn{grid-column:1/-1}.stat b{font-size:1.2rem}}
+.crow,.chead{grid-template-columns:1fr 58px 62px 32px 32px}
+.nt{width:32px;height:32px;border-radius:8px;background:transparent;font-size:1rem;opacity:.55}.nt:hover{background:rgba(255,255,255,.08);opacity:1}.nt.has{opacity:1;background:rgba(255,180,84,.2)}
+.crw{display:grid;gap:6px}
+.note-ta{width:100%;min-height:84px;resize:vertical;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,180,84,.35);background:rgba(255,180,84,.06);color:var(--mist);font:inherit;font-size:.9rem;line-height:1.8}.note-ta:focus{outline:none;border-color:var(--sun)}
+.jd{display:grid;grid-template-columns:70px 1fr 56px 90px;gap:6px}.jd select,.jd input{padding:9px 6px}
+.today{font-size:.8rem;color:var(--mute);margin-top:-8px}
+@media(max-width:560px){.add{grid-template-columns:1fr 1fr}.add input:first-child{grid-column:1/-1}.add .btn{grid-column:1/-1}.jd{grid-template-columns:1fr 1.5fr 1fr}.jd input[type=time]{grid-column:1/-1}.stat b{font-size:1.2rem}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .note{display:none;padding:9px 13px;border-radius:12px;font-size:.84rem;background:rgba(255,180,84,.12);border:1px solid rgba(255,180,84,.35);color:var(--sun)}.note.on{display:block}.note.ok{background:rgba(63,214,166,.1);border-color:rgba(63,214,166,.35);color:var(--ok)}
 #auth{position:fixed;inset:0;z-index:71;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}#auth.on{display:grid}
@@ -76,6 +82,7 @@ input.n{direction:ltr;text-align:center}
 <div class="wrap">
   <div class="top"><a class="back" href="./">→ سایت</a><h1>🎓 همراه دانشجو</h1><button class="btn" id="acctBtn">👤 ورود / ثبت‌نام</button></div>
   <div class="note" id="note"></div>
+  <div class="today" id="today"></div>
   <nav class="tabs" id="tabs"><button data-p="gpa" class="on">معدل</button><button data-p="plan">امتحان و تکلیف</button><button data-p="focus">تمرکز</button></nav>
 
   <section class="pane on" id="p-gpa">
@@ -99,8 +106,8 @@ input.n{direction:ltr;text-align:center}
       <div class="add">
         <input id="iT" placeholder="مثلاً: امتحان ریاضی عمومی ۱" maxlength="80">
         <select id="iK"><option value="exam">امتحان</option><option value="hw">تکلیف</option></select>
-        <input id="iD" type="datetime-local" style="direction:ltr">
         <button class="btn pri" id="iA">افزودن</button>
+        <div class="jd" id="jd"><select id="jY" aria-label="سال"></select><select id="jM" aria-label="ماه"></select><select id="jDy" aria-label="روز"></select><input id="jT" type="time" value="09:00" style="direction:ltr" aria-label="ساعت"></div>
       </div>
     </div>
     <div id="items" style="display:grid;gap:8px"></div>
@@ -135,6 +142,13 @@ const save = () => { D.updated = Date.now(); try { localStorage.setItem(LSK, JSO
 const faN = (n, d = 2) => (+n).toLocaleString('fa-IR', { maximumFractionDigits: d });
 const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const parse = s => { const v = parseFloat(String(s).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٫,]/g, '.')); return isFinite(v) ? v : NaN; };
+const div = (a, b) => ~~(a / b);
+function g2j(gy, gm, gd) { const gdm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334], g2 = gm > 2 ? gy + 1 : gy; let days = 355666 + 365 * gy + div(g2 + 3, 4) - div(g2 + 99, 100) + div(g2 + 399, 400) + gd + gdm[gm - 1], jy = -1595 + 33 * div(days, 12053); days %= 12053; jy += 4 * div(days, 1461); days %= 1461; if (days > 365) { jy += div(days - 1, 365); days = (days - 1) % 365; } const jm = days < 186 ? 1 + div(days, 31) : 7 + div(days - 186, 30), jd = 1 + (days < 186 ? days % 31 : (days - 186) % 30); return [jy, jm, jd]; }
+function j2g(jy, jm, jd) { jy += 1595; let days = -355668 + 365 * jy + div(jy, 33) * 8 + div(jy % 33 + 3, 4) + jd + (jm < 7 ? (jm - 1) * 31 : (jm - 7) * 30 + 186), gy = 400 * div(days, 146097); days %= 146097; if (days > 36524) { gy += 100 * div(--days, 36524); days %= 36524; if (days >= 365) days++; } gy += 4 * div(days, 1461); days %= 1461; if (days > 365) { gy += div(days - 1, 365); days = (days - 1) % 365; } let gd = days + 1; const sa = [0, 31, (gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; let gm = 0; for (; gm < 13 && gd > sa[gm]; gm++) gd -= sa[gm]; return [gy, gm, gd]; }
+const JM = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'], WD = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+const jMonthLen = (y, m) => m <= 6 ? 31 : m <= 11 ? 30 : (g2j(...j2g(y, 12, 30)).join() === [y, 12, 30].join() ? 30 : 29);
+const toJ = (t) => { const d = new Date(t); return g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()); };
+const jFmt = (t, withTime) => { const d = new Date(t), j = toJ(t); return WD[d.getDay()] + ' ' + faN(j[2], 0).replace(/٬/g, '') + ' ' + JM[j[1] - 1] + ' ' + String(j[0]).replace(/\d/g, x => '۰۱۲۳۴۵۶۷۸۹'[x]) + (withTime ? ' ساعت ' + d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', hour12: false }) : ''); };
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 // tabs
@@ -146,6 +160,7 @@ const SUGG = [['ریاضی عمومی ۱', 3], ['فیزیک ۱', 3], ['آز فی
 function termGpa(t) { let s = 0, u = 0; t.courses.forEach(c => { if (c.u > 0 && c.g !== '' && isFinite(c.g)) { s += c.g * c.u; u += c.u; } }); return { gpa: u ? s / u : null, units: u }; }
 function overall() { let s = 0, u = 0, all = 0; D.terms.forEach(t => t.courses.forEach(c => { if (c.u > 0) all += c.u; if (c.u > 0 && c.g !== '' && isFinite(c.g)) { s += c.g * c.u; u += c.u; } })); return { gpa: u ? s / u : null, units: u, all }; }
 function gpaCls(g) { return g == null ? '' : g >= 17 ? 'ok' : g >= 12 ? '' : 'bad'; }
+const OPEN = new Set();
 function drawGpa() {
   const o = overall(), best = D.terms.map(t => termGpa(t).gpa).filter(g => g != null);
   $('gStats').innerHTML = '<div class="stat ' + gpaCls(o.gpa) + '"><b>' + (o.gpa == null ? '—' : faN(o.gpa)) + '</b><span>معدل کل</span></div><div class="stat"><b>' + faN(o.units, 1) + '</b><span>واحد گذرانده/نمره‌دار</span></div><div class="stat warn"><b>' + (best.length ? faN(Math.max(...best)) : '—') + '</b><span>بهترین ترم</span></div>';
@@ -154,8 +169,8 @@ function drawGpa() {
   D.terms.forEach((t, ti) => {
     const g = termGpa(t), el = document.createElement('div'); el.className = 'card';
     el.innerHTML = '<div class="th"><input data-t="' + ti + '" data-f="name" value="' + esc(t.name) + '" aria-label="نام ترم"><span class="tg">معدل: <b>' + (g.gpa == null ? '—' : faN(g.gpa)) + '</b> · ' + faN(g.units, 1) + ' واحد</span><button class="x" data-dt="' + ti + '" title="حذف ترم">✕</button></div>' +
-      '<div class="chead"><span>درس</span><span>واحد</span><span>نمره</span><span></span></div>' +
-      t.courses.map((c, ci) => '<div class="crow"><input data-t="' + ti + '" data-c="' + ci + '" data-f="n" value="' + esc(c.n) + '" placeholder="نام درس" aria-label="نام درس"><input class="n" data-t="' + ti + '" data-c="' + ci + '" data-f="u" inputmode="decimal" value="' + (c.u || '') + '" aria-label="واحد"><input class="n" data-t="' + ti + '" data-c="' + ci + '" data-f="g" inputmode="decimal" value="' + (c.g === '' ? '' : c.g) + '" placeholder="—" aria-label="نمره"><button class="x" data-dc="' + ti + ',' + ci + '" title="حذف درس">✕</button></div>').join('') +
+      '<div class="chead"><span>درس</span><span>واحد</span><span>نمره</span><span></span><span></span></div>' +
+      t.courses.map((c, ci) => '<div class="crw"><div class="crow"><input data-t="' + ti + '" data-c="' + ci + '" data-f="n" value="' + esc(c.n) + '" placeholder="نام درس" aria-label="نام درس"><input class="n" data-t="' + ti + '" data-c="' + ci + '" data-f="u" inputmode="decimal" value="' + (c.u || '') + '" aria-label="واحد"><input class="n" data-t="' + ti + '" data-c="' + ci + '" data-f="g" inputmode="decimal" value="' + (c.g === '' ? '' : c.g) + '" placeholder="—" aria-label="نمره"><button class="x" data-dc="' + ti + ',' + ci + '" title="حذف درس">✕</button><button class="nt' + (c.note ? ' has' : '') + '" data-nt="' + ti + ',' + ci + '" title="یادداشت و نکته‌های این درس" aria-label="یادداشت">📝</button></div>' + (c.note || OPEN.has(ti + ',' + ci) ? '<textarea class="note-ta" data-t="' + ti + '" data-c="' + ci + '" data-f="note" placeholder="هر نکته‌ای درباره‌ی این درس: سرفصل‌ها، استاد، منبع، تاریخ‌ها، نکته‌های امتحان…">' + esc(c.note || '') + '</textarea>' : '') + '</div>').join('') +
       '<div class="chips"><button class="btn" data-ac="' + ti + '" style="padding:4px 12px">+ درس</button>' + SUGG.map((s, si) => '<button data-sg="' + ti + ',' + si + '">' + s[0] + '</button>').join('') + '</div>';
     T.appendChild(el);
   });
@@ -175,7 +190,7 @@ $('addTerm').onclick = () => { D.terms.push({ id: uid(), name: 'ترم ' + faN(D
 $('terms').addEventListener('input', e => {
   const el = e.target, ti = +el.dataset.t; if (isNaN(ti) || !D.terms[ti]) return;
   if (el.dataset.f === 'name') D.terms[ti].name = el.value;
-  else { const c = D.terms[ti].courses[+el.dataset.c], f = el.dataset.f; if (!c) return; if (f === 'n') c.n = el.value; else { const v = parse(el.value); c[f] = el.value.trim() === '' ? (f === 'g' ? '' : 0) : (isNaN(v) ? c[f] : (f === 'g' ? Math.min(20, Math.max(0, v)) : Math.max(0, v))); } }
+  else { const c = D.terms[ti].courses[+el.dataset.c], f = el.dataset.f; if (!c) return; if (f === 'note') { c.note = el.value; const nb = el.closest('.crw').querySelector('.nt'); if (nb) nb.classList.toggle('has', !!el.value.trim()); } else if (f === 'n') c.n = el.value; else { const v = parse(el.value); c[f] = el.value.trim() === '' ? (f === 'g' ? '' : 0) : (isNaN(v) ? c[f] : (f === 'g' ? Math.min(20, Math.max(0, v)) : Math.max(0, v))); } }
   save(); softGpa(el);
 });
 function softGpa(el) { // update numbers without rebuilding rows (keeps focus)
@@ -186,8 +201,9 @@ function softGpa(el) { // update numbers without rebuilding rows (keeps focus)
 }
 $('terms').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.dt != null) { if (confirm('این ترم و درس‌هایش حذف شود؟')) { D.terms.splice(+b.dataset.dt, 1); save(); drawGpa(); } }
-  else if (b.dataset.dc) { const [t, c] = b.dataset.dc.split(',').map(Number); D.terms[t].courses.splice(c, 1); save(); drawGpa(); }
+  if (b.dataset.dt != null) { if (confirm('این ترم و درس‌هایش (با یادداشت‌ها) حذف شود؟')) { OPEN.clear(); D.terms.splice(+b.dataset.dt, 1); save(); drawGpa(); } }
+  else if (b.dataset.nt) { const k = b.dataset.nt; if (OPEN.has(k)) OPEN.delete(k); else OPEN.add(k); drawGpa(); if (OPEN.has(k)) { const ta = document.querySelector('.note-ta[data-t="' + k.split(',')[0] + '"][data-c="' + k.split(',')[1] + '"]'); if (ta) ta.focus(); } }
+  else if (b.dataset.dc) { OPEN.clear(); const [t, c] = b.dataset.dc.split(',').map(Number); D.terms[t].courses.splice(c, 1); save(); drawGpa(); }
   else if (b.dataset.ac != null) { D.terms[+b.dataset.ac].courses.push({ n: '', u: 3, g: '' }); save(); drawGpa(); }
   else if (b.dataset.sg) { const [t, s] = b.dataset.sg.split(',').map(Number), cs = D.terms[t].courses, last = cs[cs.length - 1]; const row = { n: SUGG[s][0], u: SUGG[s][1], g: '' }; if (last && !last.n && last.g === '') cs[cs.length - 1] = row; else cs.push(row); save(); drawGpa(); }
 });
@@ -202,16 +218,26 @@ function drawItems() {
   const now = Date.now(), L = D.items.slice().sort((a, b) => (a.done - b.done) || (a.t - b.t));
   $('items').innerHTML = L.length ? L.map(it => {
     const left = it.t - now, cl = it.done ? 'done' : left < 0 ? 'over' : left < 864e5 * 3 ? 'soon' : '';
-    return '<div class="item ' + cl + '"><input type="checkbox" data-id="' + it.id + '"' + (it.done ? ' checked' : '') + ' aria-label="انجام شد"><div><div class="t">' + (it.k === 'exam' ? '📝 ' : '📌 ') + esc(it.n) + '</div><div class="d">' + new Date(it.t).toLocaleString('fa-IR', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + '</div></div><span class="cd">' + (it.done ? '✓' : cdText(left)) + '</span><button class="x" data-del="' + it.id + '" title="حذف">✕</button></div>';
+    return '<div class="item ' + cl + '"><input type="checkbox" data-id="' + it.id + '"' + (it.done ? ' checked' : '') + ' aria-label="انجام شد"><div><div class="t">' + (it.k === 'exam' ? '📝 ' : '📌 ') + esc(it.n) + '</div><div class="d">' + jFmt(it.t, true) + '</div></div><span class="cd">' + (it.done ? '✓' : cdText(left)) + '</span><button class="x" data-del="' + it.id + '" title="حذف">✕</button></div>';
   }).join('') : '<div class="empty card">هنوز امتحان یا تکلیفی ثبت نکرده‌ای.</div>';
 }
 $('iA').onclick = () => {
-  const n = $('iT').value.trim(), d = $('iD').value; if (!n || !d) { alert('عنوان و زمان را وارد کن.'); return; }
-  D.items.push({ id: uid(), n, k: $('iK').value, t: new Date(d).getTime(), done: false }); $('iT').value = ''; save(); drawItems();
+  const n = $('iT').value.trim(); if (!n) { alert('عنوان را وارد کن.'); return; }
+  const g = j2g(+$('jY').value, +$('jM').value, +$('jDy').value), tm = ($('jT').value || '09:00').split(':');
+  D.items.push({ id: uid(), n, k: $('iK').value, t: new Date(g[0], g[1] - 1, g[2], +tm[0], +tm[1]).getTime(), done: false }); $('iT').value = ''; save(); drawItems();
 };
 $('items').addEventListener('click', e => { const x = e.target.closest('[data-del]'); if (x) { D.items = D.items.filter(i => i.id !== x.dataset.del); save(); drawItems(); } });
 $('items').addEventListener('change', e => { const c = e.target.closest('[data-id]'); if (c) { const it = D.items.find(i => i.id === c.dataset.id); if (it) { it.done = c.checked; save(); drawItems(); } } });
 
+function initJd() {
+  const tj = toJ(Date.now()); $('jY').innerHTML = [0, 1, 2].map(i => '<option value="' + (tj[0] + i) + '">' + String(tj[0] + i).replace(/\d/g, x => '۰۱۲۳۴۵۶۷۸۹'[x]) + '</option>').join('');
+  $('jM').innerHTML = JM.map((m, i) => '<option value="' + (i + 1) + '">' + m + '</option>').join('');
+  const fillDays = (keep) => { const n = jMonthLen(+$('jY').value, +$('jM').value); $('jDy').innerHTML = Array.from({ length: n }, (_, i) => '<option value="' + (i + 1) + '">' + faN(i + 1, 0) + '</option>').join(''); $('jDy').value = Math.min(keep, n); };
+  $('jY').value = tj[0]; $('jM').value = tj[1]; fillDays(tj[2]);
+  $('jY').onchange = $('jM').onchange = () => fillDays(+$('jDy').value);
+  $('today').textContent = 'امروز: ' + jFmt(Date.now());
+}
+initJd();
 // ---------- focus ----------
 const dayKey = (t = Date.now()) => { const d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 let F = { mode: 'work', run: false, end: 0, left: D.cw * 60 };
