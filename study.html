@@ -91,6 +91,13 @@ label.nt i{position:absolute;bottom:-1px;inset-inline-end:-1px;font-style:normal
 .acc.open .ahead{border-bottom:1px solid var(--line)}
 .abody{display:grid;gap:10px;padding:12px 14px 14px}
 .crw{border-radius:12px}.crw.open{background:rgba(255,255,255,.04);padding:6px;margin:0 -6px}
+.crow,.chead{grid-template-columns:1fr 46px 50px 34px 34px 28px;gap:5px}
+button.nt,label.nt{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--mute);opacity:1;display:grid;place-items:center;position:relative;cursor:pointer;transition:background .16s,color .16s,border-color .16s,transform .1s}
+.nt svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+button.nt:hover,label.nt:hover{background:rgba(255,255,255,.13);color:var(--mist)}.nt:active{transform:scale(.92)}
+button.nt.has{color:var(--sun);border-color:rgba(255,180,84,.55);background:rgba(255,180,84,.14)}
+label.nt.cam.has{color:var(--lake);border-color:rgba(46,196,182,.55);background:rgba(46,196,182,.14)}
+label.nt i{background:var(--lake)}
 </style>
 </head>
 <body>
@@ -173,6 +180,9 @@ $('tabs').onclick = e => { const b = e.target.closest('button'); if (b) tab(b.da
 function termGpa(t) { let s = 0, u = 0; t.courses.forEach(c => { if (c.u > 0 && c.g !== '' && isFinite(c.g)) { s += c.g * c.u; u += c.u; } }); return { gpa: u ? s / u : null, units: u }; }
 function overall() { let s = 0, u = 0, all = 0; D.terms.forEach(t => t.courses.forEach(c => { if (c.u > 0) all += c.u; if (c.u > 0 && c.g !== '' && isFinite(c.g)) { s += c.g * c.u; u += c.u; } })); return { gpa: u ? s / u : null, units: u, all }; }
 function gpaCls(g) { return g == null ? '' : g >= 17 ? 'ok' : g >= 12 ? '' : 'bad'; }
+const SV = p => '<svg viewBox="0 0 24 24" aria-hidden="true">' + p + '</svg>';
+const ICON_NOTE = SV('<path d="M14 3H7.5A2.5 2.5 0 0 0 5 5.5v13A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 3v4a1 1 0 0 0 1 1h4M9 12.5h6M9 16.5h4"/>');
+const ICON_CAM = SV('<path d="M4 8.5h2.6a1 1 0 0 0 .8-.4L8.6 6.4a1 1 0 0 1 .8-.4h5.2a1 1 0 0 1 .8.4l1.2 1.7a1 1 0 0 0 .8.4H20a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.2" r="3.4"/>');
 const OPEN = new Set(); let curT = 0;
 const MAXIMG = 12;
 function ensureTerm() { if (!D.terms.length) D.terms.push({ id: uid(), name: 'ترم ۱', courses: [] }); if (curT >= D.terms.length) curT = D.terms.length - 1; }
@@ -202,8 +212,8 @@ function drawGpa() {
 function courseHtml(c, ti, ci) {
   const k = ti + ',' + ci, open = OPEN.has(k), d = 'data-t="' + ti + '" data-c="' + ci + '"', n = (c.imgs || []).length;
   let h = '<div class="crw' + (open ? ' open' : '') + '"><div class="crow"><input ' + d + ' data-f="n" value="' + esc(c.n) + '" placeholder="نام درس" aria-label="نام درس"><input class="n" ' + d + ' data-f="u" inputmode="decimal" value="' + (c.u || '') + '" aria-label="واحد"><input class="n" ' + d + ' data-f="g" inputmode="decimal" value="' + (c.g === '' ? '' : c.g) + '" placeholder="—" aria-label="نمره">' +
-    '<button class="nt' + (hasNote(c) ? ' has' : '') + '" data-nt="' + k + '" title="یادداشت این درس" aria-label="یادداشت">📝</button>' +
-    '<label class="nt' + (n ? ' has' : '') + '" title="افزودن عکس برای این درس" aria-label="افزودن عکس">📷' + (n ? '<i>' + faN(n, 0) + '</i>' : '') + '<input type="file" accept="image/*" multiple hidden data-up="' + k + '"></label>' +
+    '<button class="nt' + (hasNote(c) ? ' has' : '') + '" data-nt="' + k + '" title="یادداشت این درس" aria-label="یادداشت">' + ICON_NOTE + '</button>' +
+    '<label class="nt cam' + (n ? ' has' : '') + '" title="افزودن عکس برای این درس" aria-label="افزودن عکس">' + ICON_CAM + (n ? '<i>' + faN(n, 0) + '</i>' : '') + '<input type="file" accept="image/*" multiple hidden data-up="' + k + '"></label>' +
     '<button class="x" data-dc="' + k + '" title="حذف درس">✕</button></div>';
   if (open) {
     h += '<textarea class="note-ta" ' + d + ' data-f="note" placeholder="هر نکته‌ای درباره‌ی این درس: سرفصل‌ها، استاد، منبع، نکته‌های امتحان…">' + esc(c.note || '') + '</textarea>';
