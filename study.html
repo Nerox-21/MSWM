@@ -81,6 +81,16 @@ input.n{direction:ltr;text-align:center}
 .rowbtn{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.btn.up{display:inline-block}
 .gal{display:flex;flex-wrap:wrap;gap:8px}.th2{position:relative;width:84px;height:84px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.th2 img{width:100%;height:100%;object-fit:cover;display:block}
 .th2 button{position:absolute;top:3px;inset-inline-start:3px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;font-size:.7rem}
+.crow,.chead{grid-template-columns:1fr 54px 58px 30px 30px 30px;gap:5px}
+.chead{padding-inline:0}
+label.nt{display:grid;place-items:center;position:relative;cursor:pointer;font-size:1rem}
+label.nt i{position:absolute;bottom:-1px;inset-inline-end:-1px;font-style:normal;font-size:.62rem;background:var(--sun);color:var(--night);border-radius:99px;min-width:15px;text-align:center;line-height:15px;font-weight:700}
+.acc{padding:0;gap:0;overflow:hidden}
+.ahead{width:100%;display:flex;align-items:center;gap:10px;padding:14px 16px;background:transparent;text-align:right;color:var(--mist)}
+.ahead .chev{color:var(--lake);width:14px}.ahead .an{font-size:1rem;font-weight:800;flex:none}.ahead .tg{margin-inline-start:auto;font-size:.78rem;color:var(--mute);text-align:left}.ahead .tg b{color:var(--lake)}
+.acc.open .ahead{border-bottom:1px solid var(--line)}
+.abody{display:grid;gap:10px;padding:12px 14px 14px}
+.crw{border-radius:12px}.crw.open{background:rgba(255,255,255,.04);padding:6px;margin:0 -6px}
 </style>
 </head>
 <body>
@@ -92,7 +102,6 @@ input.n{direction:ltr;text-align:center}
 
   <section class="pane on" id="p-gpa">
     <div class="stats" id="gStats"></div>
-    <div class="tchips" id="tchips"></div>
     <div id="terms" style="display:grid;gap:14px"></div>
     <div class="card">
       <h2>🎯 برای رسیدن به معدل هدف چه نمره‌ای لازم است؟</h2>
@@ -167,6 +176,7 @@ function gpaCls(g) { return g == null ? '' : g >= 17 ? 'ok' : g >= 12 ? '' : 'ba
 const OPEN = new Set(); let curT = 0;
 const MAXIMG = 12;
 function ensureTerm() { if (!D.terms.length) D.terms.push({ id: uid(), name: 'ترم ۱', courses: [] }); if (curT >= D.terms.length) curT = D.terms.length - 1; }
+const headTxt = (t) => { const g = termGpa(t); return 'معدل: <b>' + (g.gpa == null ? '—' : faN(g.gpa)) + '</b> · ' + faN(g.units, 1) + ' واحد · ' + faN(t.courses.length, 0) + ' درس'; };
 const hasNote = c => !!((c.note && c.note.trim()) || (c.imgs && c.imgs.length));
 function statsHtml() {
   const o = overall(), best = D.terms.map(t => termGpa(t).gpa).filter(g => g != null);
@@ -174,24 +184,32 @@ function statsHtml() {
 }
 function drawGpa() {
   ensureTerm(); $('gStats').innerHTML = statsHtml();
-  $('tchips').innerHTML = D.terms.map((t, i) => '<button data-ct="' + i + '" class="' + (i === curT ? 'on' : '') + '">' + esc(t.name || 'ترم') + '</button>').join('') + '<button data-addterm="1" class="plus" title="افزودن ترم">＋ ترم</button>';
-  const t = D.terms[curT], ti = curT, g = termGpa(t), T = $('terms');
-  T.innerHTML = '';
-  const el = document.createElement('div'); el.className = 'card';
-  el.innerHTML = '<div class="th"><input data-t="' + ti + '" data-f="name" value="' + esc(t.name) + '" aria-label="نام ترم"><span class="tg">معدل: <b>' + (g.gpa == null ? '—' : faN(g.gpa)) + '</b> · ' + faN(g.units, 1) + ' واحد</span>' + (D.terms.length > 1 ? '<button class="x" data-dt="' + ti + '" title="حذف این ترم">✕</button>' : '') + '</div>' +
-    (t.courses.length ? '<div class="chead"><span>درس</span><span>واحد</span><span>نمره</span><span></span><span></span></div>' : '<div class="empty">هنوز درسی اضافه نکرده‌ای. «افزودن درس» را بزن.</div>') +
-    t.courses.map((c, ci) => courseHtml(c, ti, ci)).join('') +
-    '<div class="rowbtn"><button class="btn pri" data-ac="' + ti + '">＋ افزودن درس</button>' + (D.terms.some(tt => tt.courses.some(hasNote)) ? '<button class="btn" data-pdf="all">📄 خروجی PDF همه‌ی یادداشت‌ها</button>' : '') + '</div>';
-  T.appendChild(el); drawTarget();
+  const T = $('terms'); T.innerHTML = '';
+  D.terms.forEach((t, ti) => {
+    const open = ti === curT, el = document.createElement('div'); el.className = 'card acc' + (open ? ' open' : '');
+    let h = '<button class="ahead" data-tg="' + ti + '" aria-expanded="' + open + '"><span class="chev">' + (open ? '▾' : '◂') + '</span><b class="an">' + esc(t.name || 'ترم') + '</b><span class="tg">' + headTxt(t) + '</span></button>';
+    if (open) {
+      h += '<div class="abody"><div class="th"><input data-t="' + ti + '" data-f="name" value="' + esc(t.name) + '" aria-label="نام ترم">' + (D.terms.length > 1 ? '<button class="x" data-dt="' + ti + '" title="حذف این ترم">✕</button>' : '') + '</div>' +
+        (t.courses.length ? '<div class="chead"><span>درس</span><span>واحد</span><span>نمره</span><span></span><span></span><span></span></div>' : '<div class="empty">هنوز درسی اضافه نکرده‌ای. «افزودن درس» را بزن.</div>') +
+        t.courses.map((c, ci) => courseHtml(c, ti, ci)).join('') +
+        '<div class="rowbtn"><button class="btn pri" data-ac="' + ti + '">＋ افزودن درس</button>' + (D.terms.some(tt => tt.courses.some(hasNote)) ? '<button class="btn" data-pdf="all">📄 PDF همه‌ی یادداشت‌ها</button>' : '') + '</div></div>';
+    }
+    el.innerHTML = h; T.appendChild(el);
+  });
+  const ab = document.createElement('button'); ab.className = 'btn ghost'; ab.dataset.addterm = '1'; ab.textContent = '＋ افزودن ترم'; T.appendChild(ab);
+  drawTarget();
 }
 function courseHtml(c, ti, ci) {
-  const k = ti + ',' + ci, open = OPEN.has(k) || hasNote(c), d = 'data-t="' + ti + '" data-c="' + ci + '"';
-  let h = '<div class="crw"><div class="crow"><input ' + d + ' data-f="n" value="' + esc(c.n) + '" placeholder="نام درس" aria-label="نام درس"><input class="n" ' + d + ' data-f="u" inputmode="decimal" value="' + (c.u || '') + '" aria-label="واحد"><input class="n" ' + d + ' data-f="g" inputmode="decimal" value="' + (c.g === '' ? '' : c.g) + '" placeholder="—" aria-label="نمره"><button class="x" data-dc="' + k + '" title="حذف درس">✕</button><button class="nt' + (hasNote(c) ? ' has' : '') + '" data-nt="' + k + '" title="یادداشت و عکس‌های این درس" aria-label="یادداشت">📝</button></div>';
+  const k = ti + ',' + ci, open = OPEN.has(k), d = 'data-t="' + ti + '" data-c="' + ci + '"', n = (c.imgs || []).length;
+  let h = '<div class="crw' + (open ? ' open' : '') + '"><div class="crow"><input ' + d + ' data-f="n" value="' + esc(c.n) + '" placeholder="نام درس" aria-label="نام درس"><input class="n" ' + d + ' data-f="u" inputmode="decimal" value="' + (c.u || '') + '" aria-label="واحد"><input class="n" ' + d + ' data-f="g" inputmode="decimal" value="' + (c.g === '' ? '' : c.g) + '" placeholder="—" aria-label="نمره">' +
+    '<button class="nt' + (hasNote(c) ? ' has' : '') + '" data-nt="' + k + '" title="یادداشت این درس" aria-label="یادداشت">📝</button>' +
+    '<label class="nt' + (n ? ' has' : '') + '" title="افزودن عکس برای این درس" aria-label="افزودن عکس">📷' + (n ? '<i>' + faN(n, 0) + '</i>' : '') + '<input type="file" accept="image/*" multiple hidden data-up="' + k + '"></label>' +
+    '<button class="x" data-dc="' + k + '" title="حذف درس">✕</button></div>';
   if (open) {
     h += '<textarea class="note-ta" ' + d + ' data-f="note" placeholder="هر نکته‌ای درباره‌ی این درس: سرفصل‌ها، استاد، منبع، نکته‌های امتحان…">' + esc(c.note || '') + '</textarea>';
     h += '<div class="gal">' + (c.imgs || []).map((u, ii) => '<span class="th2"><a href="' + esc(u) + '" target="_blank" rel="noopener"><img loading="lazy" src="' + esc(u) + '" alt="عکس درس"></a><button data-di="' + k + ',' + ii + '" title="حذف از یادداشت">✕</button></span>').join('') + '</div>';
-    h += '<div class="rowbtn"><label class="btn up">📷 افزودن عکس<input type="file" accept="image/*" multiple hidden data-up="' + k + '"></label>' + (hasNote(c) ? '<button class="btn" data-pdf="' + k + '">📄 PDF این درس</button>' : '') + '<span class="sub" data-upst="' + k + '"></span></div>';
-  }
+    h += '<div class="rowbtn">' + (hasNote(c) ? '<button class="btn" data-pdf="' + k + '">📄 PDF این درس</button>' : '') + '<span class="sub" data-upst="' + k + '"></span></div>';
+  } else h += '<span class="sub" data-upst="' + k + '"></span>';
   return h + '</div>';
 }
 function drawTarget() {
@@ -205,22 +223,23 @@ function drawTarget() {
 }
 $('tg').oninput = $('tu').oninput = drawTarget;
 function addTerm() { D.terms.push({ id: uid(), name: 'ترم ' + faN(D.terms.length + 1, 0), courses: [] }); curT = D.terms.length - 1; save(); drawGpa(); }
-$('tchips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.addterm) addTerm(); else { curT = +b.dataset.ct; OPEN.clear(); drawGpa(); } });
 $('terms').addEventListener('input', e => {
   const el = e.target, ti = +el.dataset.t; if (isNaN(ti) || !D.terms[ti]) return;
-  if (el.dataset.f === 'name') { D.terms[ti].name = el.value; const cb = $('tchips').querySelector('[data-ct="' + ti + '"]'); if (cb) cb.textContent = el.value || 'ترم'; }
+  if (el.dataset.f === 'name') { D.terms[ti].name = el.value; const an = $('terms').querySelector('.acc.open .an'); if (an) an.textContent = el.value || 'ترم'; }
   else { const c = D.terms[ti].courses[+el.dataset.c], f = el.dataset.f; if (!c) return; if (f === 'note') { c.note = el.value; const nb = el.closest('.crw').querySelector('.nt'); if (nb) nb.classList.toggle('has', hasNote(c)); } else if (f === 'n') c.n = el.value; else { const v = parse(el.value); c[f] = el.value.trim() === '' ? (f === 'g' ? '' : 0) : (isNaN(v) ? c[f] : (f === 'g' ? Math.min(20, Math.max(0, v)) : Math.max(0, v))); } }
   save(); softGpa();
 });
 function softGpa() {
   $('gStats').innerHTML = statsHtml();
-  const g = termGpa(D.terms[curT]), tg = $('terms').querySelector('.tg'); if (tg) tg.innerHTML = 'معدل: <b>' + (g.gpa == null ? '—' : faN(g.gpa)) + '</b> · ' + faN(g.units, 1) + ' واحد';
+  const tg = $('terms').querySelector('.acc.open .tg'); if (tg && D.terms[curT]) tg.innerHTML = headTxt(D.terms[curT]);
   drawTarget();
 }
 $('terms').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.addterm) return addTerm();
+  if (b.dataset.tg != null) { const i = +b.dataset.tg; curT = curT === i ? -1 : i; OPEN.clear(); drawGpa(); return; }
   if (b.dataset.dt != null) { if (confirm('این ترم و درس‌هایش (با یادداشت‌ها) حذف شود؟')) { OPEN.clear(); D.terms.splice(+b.dataset.dt, 1); curT = 0; save(); drawGpa(); } }
-  else if (b.dataset.nt) { const k = b.dataset.nt; if (OPEN.has(k)) OPEN.delete(k); else OPEN.add(k); drawGpa(); const [t, c] = k.split(','); const ta = document.querySelector('.note-ta[data-t="' + t + '"][data-c="' + c + '"]'); if (ta && OPEN.has(k)) ta.focus(); }
+  else if (b.dataset.nt) { const k = b.dataset.nt, was = OPEN.has(k); OPEN.clear(); if (!was) OPEN.add(k); drawGpa(); const [t, c] = k.split(','); const ta = document.querySelector('.note-ta[data-t="' + t + '"][data-c="' + c + '"]'); if (ta && OPEN.has(k)) ta.focus(); }
   else if (b.dataset.dc) { if (!confirm('این درس (با یادداشت و عکس‌هایش) حذف شود؟')) return; OPEN.clear(); const [t, c] = b.dataset.dc.split(',').map(Number); D.terms[t].courses.splice(c, 1); save(); drawGpa(); }
   else if (b.dataset.ac != null) { const cs = D.terms[+b.dataset.ac].courses; cs.push({ n: '', u: 3, g: '' }); save(); drawGpa(); const ins = $('terms').querySelectorAll('input[data-f="n"]'); if (ins.length) ins[ins.length - 1].focus(); }
   else if (b.dataset.di) { const [t, c, i] = b.dataset.di.split(',').map(Number), cc = D.terms[t].courses[c]; cc.imgs.splice(i, 1); save(); drawGpa(); }
@@ -250,7 +269,7 @@ $('terms').addEventListener('change', async e => {
     if (st) st.textContent = 'در حال آپلود ' + faN(ok + 1, 0) + ' از ' + faN(files.length, 0) + '…';
     try { c.imgs.push(await upImage(f)); ok++; save(); } catch (err) { if (st) st.textContent = 'خطا: ' + err.message; break; }
   }
-  OPEN.add(k); const keepMsg = ok && ok === files.length ? '' : (st ? st.textContent : ''); drawGpa(); const st2 = $('terms').querySelector('[data-upst="' + k + '"]'); if (st2 && keepMsg) st2.textContent = keepMsg;
+  OPEN.clear(); OPEN.add(k); const keepMsg = ok && ok === files.length ? '' : (st ? st.textContent : ''); drawGpa(); const st2 = $('terms').querySelector('[data-upst="' + k + '"]'); if (st2 && keepMsg) st2.textContent = keepMsg;
 });
 // ---------- PDF: opens a clean printable copy; choose "Save as PDF" in the print window ----------
 function makePdf(which) {
