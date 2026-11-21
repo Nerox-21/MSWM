@@ -320,6 +320,7 @@ button.pill:hover{background:#2f4a60}
 #join .t-file{--c:#2ec4b6;--cb:rgba(46,196,182,.16)}
 #join .t-rooms{--c:#ff8fa3;--cb:rgba(255,143,163,.16)}
 #join .t-trade{--c:#9b8cff;--cb:rgba(155,140,255,.16)}
+#join .t-daily{--c:#ff9e7a;--cb:rgba(255,158,122,.16)}
 #join .t-study{--c:#b8e986;--cb:rgba(184,233,134,.16)}
 #join .t-dl{--c:#5ec8ff;--cb:rgba(94,200,255,.16)}
 #join .tool small.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#3fd6a6;margin-inline-end:6px;vertical-align:middle}
@@ -743,6 +744,7 @@ button:not(:disabled):active{transform:scale(.95)}
       <button class="tool t-file" id="openUploader"><i><svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"/></svg></i><span><b>آپلود فایل</b><small>فایل را آپلود کنید و لینک کوتاه بگیرید</small></span></button>
       <button class="tool t-rooms" id="openRooms"><i><svg class="ic"><use href="#i-users"/></svg></i><span><b>روم‌های فعال</b><small id="roomsInfo">ببینید چه کسانی صحبت می‌کنند و وصل شوید</small></span></button>
       <button class="tool t-trade" id="openTrade"><i><svg class="ic" viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-6"/></svg></i><span><b>شبیه‌ساز معاملات</b><small>با پول مجازی، لانگ و شورت را تمرین کنید</small></span></button>
+      <button class="tool t-daily" id="openDaily"><i><svg class="ic" viewBox="0 0 24 24"><path d="M21 3L10 14M21 3l-6.5 18-3.5-7-7-3.5z"/></svg></i><span><b>کانال روزانه</b><small>هر چه خواستی بنویس؛ مثل کانال شخصی تلگرام</small></span></button>
       <button class="tool t-study" id="openStudy"><i><svg class="ic" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5L2 9zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg></i><span><b>همراه دانشجو</b><small>معدل، امتحان و تکلیف، تایمر مطالعه</small></span></button>
       <button class="tool t-dl" id="openDl"><i><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg></i><span><b>محاسبه زمان دانلود</b><small>ببینید دانلود فایل با اینترنتتان چقدر طول می‌کشد</small></span></button>
     </div>
@@ -2206,6 +2208,7 @@ $('send').onsubmit = (e) => {
   function close() { $('rooms').classList.remove('open'); clearInterval(timer); askKey = ''; }
   $('openRooms').onclick = open;
   $('openTrade').onclick = () => { location.href = 'trade.html'; };
+  $('openDaily').onclick = () => { location.href = 'daily.html'; };
   $('openStudy').onclick = () => { location.href = 'study.html'; };
   $('openDl').onclick = () => { location.href = 'dltime.html'; };
   $('rBack').onclick = close;
