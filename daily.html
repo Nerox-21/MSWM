@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1e2b">
+<title>کانال روزانه</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--night:#0f1e2b;--deep:#16293a;--lift:#24394b;--lake:#2ec4b6;--sun:#ffb454;--mist:#eaf1f5;--mute:#8aa0b2;--bad:#ef5b5b;--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--night)}
+body{font-family:Vazirmatn,Tahoma,sans-serif;color:var(--mist);line-height:1.8;-webkit-tap-highlight-color:transparent;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:760px;margin:0 auto;background:radial-gradient(60% 30% at 90% 0%,rgba(46,196,182,.16),transparent 70%),radial-gradient(50% 30% at 0% 100%,rgba(255,180,84,.1),transparent 70%),var(--night)}
+header{display:flex;align-items:center;gap:8px;padding:max(10px,env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid var(--line);background:rgba(15,30,43,.9);backdrop-filter:blur(12px)}
+.back{padding:7px 12px;border-radius:10px;background:var(--lift);color:var(--mist);text-decoration:none;font-size:.86rem;font-weight:600}
+.ttl{flex:1;min-width:0}.ttl b{display:block;font-size:1.05rem;font-weight:800;line-height:1.4}.ttl span{display:block;font-size:.72rem;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--mute);transition:background .16s,color .16s,transform .1s}.ib:hover{background:rgba(255,255,255,.08);color:var(--mist)}.ib:active{transform:scale(.92)}
+.acct{padding:6px 11px;border-radius:10px;background:var(--lift);font-size:.78rem;font-weight:600;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#searchBar{display:none;padding:8px 12px;border-bottom:1px solid var(--line)}#searchBar.on{display:block}
+#searchBar input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.07)}#searchBar input:focus{outline:none;border-color:var(--lake)}
+#note{display:none;padding:8px 14px;font-size:.8rem;background:rgba(255,180,84,.12);color:var(--sun);border-bottom:1px solid rgba(255,180,84,.3)}#note.on{display:block}#note.ok{background:rgba(63,214,166,.1);color:#3fd6a6}
+#feed{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px 12px 8px;display:flex;flex-direction:column;gap:4px}
+.day{align-self:center;margin:12px 0 6px;padding:2px 14px;border-radius:99px;background:rgba(255,255,255,.09);font-size:.74rem;color:var(--mute)}
+.msg{align-self:flex-start;max-width:min(88%,560px);position:relative;animation:pop .2s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+.bub{background:linear-gradient(160deg,#1c4a52,#17383f);border:1px solid rgba(46,196,182,.22);border-radius:16px 16px 16px 5px;padding:8px 12px 5px;cursor:pointer;word-break:break-word;transition:border-color .16s}
+.msg.sel .bub{border-color:var(--lake)}
+.tx{white-space:pre-wrap;font-size:.95rem}
+.tx a{color:#7fe3d8}.tag{color:var(--sun);cursor:pointer}
+.meta{font-size:.68rem;color:rgba(234,241,245,.55);text-align:left;margin-top:1px;direction:ltr}
+.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:4px;margin:2px 0 6px}.imgs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+.imgs.one{grid-template-columns:1fr}.imgs.one img{aspect-ratio:auto;max-height:340px}
+.acts{display:none;gap:6px;margin-top:5px}.msg.sel .acts{display:flex}
+.acts button{padding:4px 12px;border-radius:99px;background:var(--lift);font-size:.76rem;font-weight:600}.acts button.d{color:var(--bad)}
+.empty{margin:auto;text-align:center;color:var(--mute);padding:20px;font-size:.9rem;max-width:300px}
+.empty svg{width:46px;height:46px;stroke:var(--lake);opacity:.7;margin-bottom:8px}
+#editBar{display:none;align-items:center;gap:8px;padding:6px 14px;font-size:.78rem;color:var(--sun);border-top:1px solid var(--line);background:rgba(255,180,84,.06)}#editBar.on{display:flex}#editBar span{flex:1}
+#pend{display:none;gap:6px;padding:6px 12px 0;flex-wrap:wrap}#pend.on{display:flex}
+#pend .p{position:relative;width:56px;height:56px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}#pend img{width:100%;height:100%;object-fit:cover}
+#pend button{position:absolute;top:2px;inset-inline-start:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:.6rem}
+#pst{padding:0 14px;font-size:.72rem;color:var(--mute);min-height:0}
+#comp{display:flex;align-items:flex-end;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(15,30,43,.95)}
+#txt{flex:1;resize:none;max-height:140px;padding:10px 14px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.07);line-height:1.6;min-height:42px}#txt:focus{outline:none;border-color:var(--lake)}
+#send{width:42px;height:42px;border-radius:50%;background:var(--lake);color:var(--night);display:grid;place-items:center;transition:transform .1s,filter .16s;flex:none}#send:active{transform:scale(.92)}#send:hover{filter:brightness(1.08)}
+#send svg{transform:scaleX(-1)}
+label.ib{cursor:pointer}
+#auth{position:fixed;inset:0;z-index:71;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}#auth.on{display:grid}
+#auth .box{width:min(400px,100%);background:#16293a;border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:10px}
+#auth p{color:var(--mute);font-size:.85rem}#auth input{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.07)}#auth .aerr{color:var(--bad);min-height:1.1em;font-size:.85rem}#auth a{color:var(--lake);font-size:.85rem}
+#auth .row{display:flex;gap:10px}#auth .row button{flex:1;padding:10px;border-radius:12px;background:var(--lift)}#auth .row .ok{background:var(--lake);color:var(--night);font-weight:800}
+#menu{position:absolute;top:56px;inset-inline-end:10px;z-index:30;min-width:190px;background:#1b3144;border:1px solid var(--line);border-radius:12px;padding:6px;display:none;box-shadow:0 12px 30px rgba(0,0,0,.4)}#menu.on{display:block}
+#menu button{display:block;width:100%;text-align:right;padding:9px 12px;border-radius:8px;font-size:.88rem}#menu button:hover{background:rgba(255,255,255,.08)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a class="back" href="./">→ سایت</a>
+    <div class="ttl"><b>کانال روزانه</b><span id="sub">فقط خودت می‌بینی</span></div>
+    <button class="ib" id="sBtn" aria-label="جستجو"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button>
+    <button class="ib" id="mBtn" aria-label="منو"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+    <button class="acct" id="acctBtn">ورود</button>
+  </header>
+  <div id="menu"><button id="mExport">دانلود همه‌ی پیام‌ها (متن)</button><button id="mClear">پاک کردن همه‌ی پیام‌ها</button></div>
+  <div id="searchBar"><input id="q" placeholder="جستجو در پیام‌ها… (مثلاً #درس)" aria-label="جستجو"></div>
+  <div id="note"></div>
+  <div id="feed" aria-live="polite"></div>
+  <div id="editBar"><span>در حال ویرایش پیام</span><button class="ib" id="editX" aria-label="لغو ویرایش" style="width:28px;height:28px">✕</button></div>
+  <div id="pend"></div><div id="pst"></div>
+  <div id="comp">
+    <label class="ib" aria-label="افزودن عکس"><svg class="i" viewBox="0 0 24 24"><path d="M4 8.5h2.6a1 1 0 0 0 .8-.4L8.6 6.4a1 1 0 0 1 .8-.4h5.2a1 1 0 0 1 .8.4l1.2 1.7a1 1 0 0 0 .8.4H20a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.2" r="3.4"/></svg><input type="file" id="file" accept="image/*" multiple hidden></label>
+    <textarea id="txt" rows="1" placeholder="بنویس…" aria-label="پیام"></textarea>
+    <button id="send" aria-label="ارسال"><svg class="i" viewBox="0 0 24 24"><path d="M21 3L10 14M21 3l-6.5 18-3.5-7-7-3.5z"/></svg></button>
+  </div>
+</div>
+<div id="auth"><div class="box"><h3 id="aTitle">ورود به حساب</h3>
+  <p>با حساب کاربری، پیام‌هایت روی سرور ذخیره می‌شود و در هر دستگاه در دسترس است. این همان حساب ترید و همراه دانشجو است.</p>
+  <input id="aUser" placeholder="نام کاربری (انگلیسی)" autocomplete="username" dir="ltr"><input id="aPass" type="password" placeholder="رمز عبور (حداقل ۶ نویسه)" autocomplete="current-password" dir="ltr">
+  <div class="aerr" id="aErr"></div>
+  <div class="row"><button id="aGo" class="ok">ورود</button><button id="aClose">بستن</button></div>
+  <a href="#" id="aSwitch">حساب ندارید؟ ثبت‌نام</a></div></div>
+<script>
+const $ = id => document.getElementById(id);
+const LSK = 'cc_daily', SB = 'https://oeehbcttertgewkhfzes.supabase.co', SBK = 'sb_publishable__6iqYESMfzjNeukvnh_Zww_THGAbnKB', MODE = 'DAILY:live', TK = 'cc_trade_tok';
+let D; try { D = JSON.parse(localStorage.getItem(LSK) || 'null'); } catch (e) {}
+D = Object.assign({ msgs: [], owner: '', updated: 0 }, D || {});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fd = s => String(s).replace(/\d/g, x => '۰۱۲۳۴۵۶۷۸۹'[x]);
+const div = (a, b) => ~~(a / b);
+function g2j(gy, gm, gd) { const gdm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334], g2 = gm > 2 ? gy + 1 : gy; let days = 355666 + 365 * gy + div(g2 + 3, 4) - div(g2 + 99, 100) + div(g2 + 399, 400) + gd + gdm[gm - 1], jy = -1595 + 33 * div(days, 12053); days %= 12053; jy += 4 * div(days, 1461); days %= 1461; if (days > 365) { jy += div(days - 1, 365); days = (days - 1) % 365; } const jm = days < 186 ? 1 + div(days, 31) : 7 + div(days - 186, 30), jd = 1 + (days < 186 ? days % 31 : (days - 186) % 30); return [jy, jm, jd]; }
+const JM = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'], WD = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+const toJ = t => { const d = new Date(t); return g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()); };
+const jDay = t => { const d = new Date(t), j = toJ(t); return WD[d.getDay()] + ' ' + fd(j[2]) + ' ' + JM[j[1] - 1] + ' ' + fd(j[0]); };
+const dayKey = t => { const d = new Date(t); return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); };
+const hm = t => new Date(t).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', hour12: false });
+const saveLocal = () => { try { localStorage.setItem(LSK, JSON.stringify(D)); } catch (e) {} };
+function change() { D.updated = Date.now(); saveLocal(); schedPush(); }
+let editing = null, pend = [], sel = null, query = '';
+
+// ---------- text rendering ----------
+function rich(t) {
+  return esc(t).split(/(https?:\/\/[^\s<]+)/g).map((p, i) => i % 2 ? '<a href="' + p + '" target="_blank" rel="noopener">' + p + '</a>' : p.replace(/#[\w؀-ۿ]+/g, m => '<span class="tag" data-tag="' + m + '">' + m + '</span>')).join('');
+}
+function draw(stick) {
+  const f = $('feed'), near = f.scrollHeight - f.scrollTop - f.clientHeight < 120;
+  const q = query.trim().toLowerCase(), L = D.msgs.filter(m => !m.del && (!q || (m.text || '').toLowerCase().includes(q)));
+  $('sub').textContent = q ? faN(L.length) + ' نتیجه' : (D.msgs.filter(m => !m.del).length ? faN(D.msgs.filter(m => !m.del).length) + ' پیام · فقط خودت می‌بینی' : 'فقط خودت می‌بینی');
+  if (!L.length) { f.innerHTML = '<div class="empty"><svg class="i" viewBox="0 0 24 24"><path d="M21 3L10 14M21 3l-6.5 18-3.5-7-7-3.5z"/></svg><div>' + (q ? 'چیزی پیدا نشد.' : 'اینجا هر چه خواستی بنویس: ایده، یادآوری، لینک، عکس. فقط خودت می‌بینی.') + '</div></div>'; return; }
+  let h = '', last = '', today = dayKey(Date.now());
+  L.forEach(m => {
+    const k = dayKey(m.t); if (k !== last) { last = k; h += '<div class="day">' + (k === today ? 'امروز · ' : '') + jDay(m.t) + '</div>'; }
+    const im = m.img || [];
+    h += '<div class="msg' + (sel === m.id ? ' sel' : '') + '" data-id="' + m.id + '"><div class="bub">' + (im.length ? '<div class="imgs' + (im.length === 1 ? ' one' : '') + '">' + im.map(u => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img loading="lazy" src="' + esc(u) + '" alt=""></a>').join('') + '</div>' : '') + (m.text ? '<div class="tx">' + rich(m.text) + '</div>' : '') + '<div class="meta">' + (m.u && m.u - m.t > 60000 ? 'ویرایش‌شده · ' : '') + hm(m.t) + '</div></div>' +
+      '<div class="acts"><button data-a="copy">کپی</button><button data-a="edit">ویرایش</button><button class="d" data-a="del">حذف</button></div></div>';
+  });
+  f.innerHTML = h; if (stick || near) f.scrollTop = f.scrollHeight;
+}
+const faN = n => (+n).toLocaleString('fa-IR');
+$('feed').addEventListener('click', e => {
+  const tg = e.target.closest('[data-tag]'); if (tg) { $('searchBar').classList.add('on'); $('q').value = query = tg.dataset.tag; draw(); return; }
+  if (e.target.closest('a')) return;
+  const ab = e.target.closest('[data-a]'), mg = e.target.closest('.msg'); if (!mg) return;
+  const m = D.msgs.find(x => x.id === mg.dataset.id); if (!m) return;
+  if (ab) {
+    const a = ab.dataset.a;
+    if (a === 'copy') { (navigator.clipboard ? navigator.clipboard.writeText(m.text || '') : Promise.reject()).catch(() => { const t = document.createElement('textarea'); t.value = m.text || ''; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (x) {} t.remove(); }); sel = null; draw(); }
+    else if (a === 'edit') { editing = m.id; $('txt').value = m.text || ''; pend = (m.img || []).slice(); drawPend(); $('editBar').classList.add('on'); sel = null; draw(); grow(); $('txt').focus(); }
+    else if (a === 'del') { if (confirm('این پیام حذف شود؟')) { m.del = true; m.u = Date.now(); m.text = ''; m.img = []; sel = null; change(); draw(); } }
+    return;
+  }
+  sel = sel === m.id ? null : m.id; draw();
+});
+$('editX').onclick = () => { editing = null; pend = []; $('txt').value = ''; $('editBar').classList.remove('on'); drawPend(); grow(); };
+
+// ---------- composer ----------
+function grow() { const t = $('txt'); t.style.height = 'auto'; t.style.height = Math.min(140, t.scrollHeight) + 'px'; }
+$('txt').addEventListener('input', grow);
+$('txt').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !('ontouchstart' in window)) { e.preventDefault(); sendMsg(); } });
+$('send').onclick = sendMsg;
+function sendMsg() {
+  const text = $('txt').value.trim(); if (!text && !pend.length) return;
+  if (editing) { const m = D.msgs.find(x => x.id === editing); if (m) { m.text = text; m.img = pend.slice(); m.u = Date.now(); } editing = null; $('editBar').classList.remove('on'); }
+  else { const t = Date.now(); D.msgs.push({ id: uid(), t, u: t, text, img: pend.slice() }); }
+  pend = []; $('txt').value = ''; grow(); drawPend(); change(); draw(true);
+}
+function drawPend() { $('pend').classList.toggle('on', pend.length > 0); $('pend').innerHTML = pend.map((u, i) => '<span class="p"><img src="' + esc(u) + '" alt=""><button data-rp="' + i + '" aria-label="حذف">✕</button></span>').join(''); }
+$('pend').onclick = e => { const b = e.target.closest('[data-rp]'); if (b) { pend.splice(+b.dataset.rp, 1); drawPend(); } };
+function shrink(file, max = 1600, q = 0.78) { return new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image(); im.onload = () => { const r = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * r); c.height = Math.round(im.height * r); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u); c.toBlob(b => b ? res(b) : rej(new Error('x')), 'image/jpeg', q); }; im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('bad')); }; im.src = u; }); }
+async function upImage(file) {
+  const blob = await shrink(file), path = 'daily/' + (crypto.randomUUID ? crypto.randomUUID() : uid() + uid()) + '.jpg';
+  const r = await fetch(SB + '/storage/v1/object/uploads/' + path, { method: 'POST', headers: { apikey: SBK, Authorization: 'Bearer ' + SBK, 'Content-Type': 'image/jpeg', 'x-upsert': 'false', 'cache-control': 'max-age=31536000' }, body: blob });
+  if (!r.ok) throw new Error(r.status === 403 || r.status === 400 ? 'آپلود مجاز نیست (uploader-setup.sql اجرا شده؟)' : 'خطا ' + r.status);
+  return SB + '/storage/v1/object/public/uploads/' + path;
+}
+$('file').onchange = async e => {
+  const files = [...e.target.files].filter(f => /^image\//.test(f.type)); e.target.value = '';
+  for (let i = 0; i < files.length; i++) {
+    if (pend.length >= 10) { $('pst').textContent = 'حداکثر ۱۰ عکس در هر پیام'; break; }
+    $('pst').textContent = 'در حال آپلود ' + faN(i + 1) + ' از ' + faN(files.length) + '…';
+    try { pend.push(await upImage(files[i])); drawPend(); $('pst').textContent = ''; } catch (err) { $('pst').textContent = 'خطا: ' + err.message; break; }
+  }
+};
+
+// ---------- search & menu ----------
+$('sBtn').onclick = () => { const b = $('searchBar'); b.classList.toggle('on'); if (b.classList.contains('on')) $('q').focus(); else { $('q').value = query = ''; draw(); } };
+$('q').oninput = () => { query = $('q').value; draw(); };
+$('mBtn').onclick = e => { e.stopPropagation(); $('menu').classList.toggle('on'); };
+document.addEventListener('click', e => { if (!e.target.closest('#menu')) $('menu').classList.remove('on'); });
+$('mExport').onclick = () => {
+  const L = D.msgs.filter(m => !m.del); if (!L.length) { alert('پیامی نیست.'); return; }
+  let out = 'کانال روزانه\n', last = '';
+  L.forEach(m => { const k = dayKey(m.t); if (k !== last) { last = k; out += '\n── ' + jDay(m.t) + ' ──\n'; } out += '[' + hm(m.t) + '] ' + (m.text || '') + ((m.img || []).length ? '\n' + m.img.join('\n') : '') + '\n'; });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + out], { type: 'text/plain;charset=utf-8' })); a.download = 'daily-channel.txt'; document.body.appendChild(a); a.click(); a.remove();
+};
+$('mClear').onclick = () => { if (!confirm('همه‌ی پیام‌ها حذف شود؟ این کار برگشت ندارد.')) return; const t = Date.now(); D.msgs.forEach(m => { m.del = true; m.u = t; m.text = ''; m.img = []; }); change(); draw(); };
+
+// ---------- account (same accounts as trade / study) ----------
+const rpc = (fn, args, keep) => fetch(SB + '/rest/v1/rpc/' + fn, { method: 'POST', keepalive: !!keep, headers: { apikey: SBK, 'Content-Type': 'application/json' }, body: JSON.stringify(args) }).then(r => r.json());
+const acct = { tok: null, user: null, sent: '', timer: 0 };
+try { acct.tok = JSON.parse(localStorage.getItem(TK) || 'null'); } catch (e) {}
+const setTok = t => { acct.tok = t; try { localStorage.setItem(TK, JSON.stringify(t)); } catch (e) {} };
+function note(msg, ok) { const n = $('note'); n.textContent = msg || ''; n.className = (msg ? 'on' : '') + (ok ? ' ok' : ''); }
+function drawAcct() { $('acctBtn').textContent = acct.user ? acct.user : 'ورود'; $('acctBtn').title = acct.user ? 'خروج از حساب' : 'ورود / ثبت‌نام'; if (!acct.user && !acct.tok) note('وارد حساب نشده‌ای؛ پیام‌ها فقط روی همین مرورگر می‌مانند. با «ورود» روی سرور ذخیره می‌شوند.'); }
+function schedPush() { if (!acct.tok || !acct.user) return; clearTimeout(acct.timer); acct.timer = setTimeout(() => push(false), 1000); }
+const merge = (a, b) => { const m = new Map(); a.concat(b).forEach(x => { const o = m.get(x.id); if (!o || (x.u || x.t) > (o.u || o.t)) m.set(x.id, x); }); return [...m.values()].sort((p, q) => p.t - q.t); };
+async function push(keep) {
+  if (!acct.tok || !acct.user) return; const js = JSON.stringify(D); if (js === acct.sent) return;
+  try { const r = await rpc('trade_save', { tok: acct.tok, m: MODE, st: D }, keep); if (r && r.ok) acct.sent = js; else if (r && r.error === 'auth') { setTok(null); acct.user = null; drawAcct(); note('نشست منقضی شد؛ دوباره وارد شو.'); } else if (r && r.error === 'size') note('حجم ذخیره‌سازی پر شد؛ پیام‌های قدیمی را پاک کن.'); } catch (e) { note('ذخیره روی سرور نشد؛ اتصال را بررسی کن. پیام‌ها روی مرورگر هست.'); }
+}
+async function syncAcct(quiet) {
+  if (!acct.tok) return;
+  try {
+    const r = await rpc('trade_load', { tok: acct.tok });
+    if (!r || !r.ok) { if (r && r.error === 'auth') { setTok(null); drawAcct(); } return; }
+    acct.user = r.username; const sv = r.states && r.states[MODE];
+    if (D.owner && D.owner !== acct.user) D = { msgs: [], owner: '', updated: 0 };
+    if (sv && Array.isArray(sv.msgs)) D.msgs = merge(D.msgs, sv.msgs);
+    D.owner = acct.user; D.updated = Date.now(); saveLocal(); drawAcct(); draw(!quiet);
+    if (!quiet) { note('وارد شدی: «' + acct.user + '». پیام‌هایت روی سرور ذخیره می‌شوند.', true); setTimeout(() => note(''), 4000); } else note('');
+    await push(false);
+  } catch (e) { if (!quiet) note('اتصال به سرور حساب برقرار نشد؛ پیام‌ها فعلاً روی مرورگر است.'); }
+}
+function authDialog() {
+  let reg = false;
+  const set = () => { $('aTitle').textContent = reg ? 'ثبت‌نام' : 'ورود به حساب'; $('aGo').textContent = reg ? 'ساخت حساب' : 'ورود'; $('aSwitch').textContent = reg ? 'حساب داری؟ ورود' : 'حساب نداری؟ ثبت‌نام'; $('aErr').textContent = ''; };
+  set(); $('auth').classList.add('on'); $('aUser').focus();
+  const close = () => $('auth').classList.remove('on');
+  $('aClose').onclick = close; $('auth').onclick = e => { if (e.target === $('auth')) close(); };
+  $('aSwitch').onclick = e => { e.preventDefault(); reg = !reg; set(); };
+  $('aGo').onclick = async () => {
+    $('aErr').textContent = ''; $('aGo').disabled = true;
+    try { const r = await rpc(reg ? 'trade_register' : 'trade_login', { u: $('aUser').value, p: $('aPass').value }); if (!r || !r.ok) $('aErr').textContent = (r && r.error) || 'خطا در ارتباط با سرور.'; else { setTok(r.token); $('aPass').value = ''; close(); await syncAcct(false); } }
+    catch (e) { $('aErr').textContent = 'اتصال به سرور برقرار نشد. اینترنت یا فیلترشکن را بررسی کن.'; }
+    $('aGo').disabled = false;
+  };
+}
+$('acctBtn').onclick = async () => {
+  if (!acct.user) return authDialog();
+  if (!confirm('از حساب «' + acct.user + '» خارج می‌شوی؟ پیام‌هایت روی سرور می‌ماند و از این مرورگر پاک می‌شود.')) return;
+  await push(true); try { rpc('trade_logout', { tok: acct.tok }); } catch (e) {}
+  setTok(null); acct.user = null; acct.sent = ''; D = { msgs: [], owner: '', updated: 0 }; try { localStorage.removeItem(LSK); } catch (e) {}
+  drawAcct(); draw(true);
+};
+addEventListener('pagehide', () => push(true));
+document.addEventListener('visibilitychange', () => { if (!document.hidden && acct.user) syncAcct(true); });
+draw(true); drawAcct(); syncAcct(false); grow();
+</script>
+</body>
+</html>
