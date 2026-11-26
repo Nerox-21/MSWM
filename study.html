@@ -18,7 +18,7 @@ button,input,select{font:inherit;color:inherit}button{cursor:pointer;border:0}
 .top{display:flex;align-items:center;gap:12px}
 .back{padding:7px 14px;border-radius:10px;background:var(--lift);color:var(--mist);text-decoration:none;font-size:.88rem;font-weight:600}.back:hover{background:#2f4a60}
 .top h1{flex:1;font-size:1.35rem;font-weight:800}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:5px;position:sticky;top:6px;z-index:5;backdrop-filter:blur(12px)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:5px;position:sticky;top:6px;z-index:5;backdrop-filter:blur(12px)}
 .tabs button{padding:9px 4px;border-radius:10px;background:transparent;color:var(--mute);font-weight:600;font-size:.9rem;transition:background .16s,color .16s,transform .1s}
 .tabs button.on{background:var(--lake);color:var(--night)}.tabs button:active{transform:scale(.96)}
 section.pane{display:none;gap:14px}section.pane.on{display:grid;animation:up .3s ease both}
@@ -98,6 +98,20 @@ button.nt:hover,label.nt:hover{background:rgba(255,255,255,.13);color:var(--mist
 button.nt.has{color:var(--sun);border-color:rgba(255,180,84,.55);background:rgba(255,180,84,.14)}
 label.nt.cam.has{color:var(--lake);border-color:rgba(46,196,182,.55);background:rgba(46,196,182,.14)}
 label.nt i{background:var(--lake)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.seg button{padding:7px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid var(--line);font-size:.84rem;font-weight:600;color:var(--mute)}.seg button.on{background:var(--lake);color:var(--night);border-color:var(--lake)}
+.pbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:.84rem}.pbar .seg{width:150px}
+.warn{margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(255,180,84,.12);border:1px solid rgba(255,180,84,.35);color:var(--sun);font-size:.82rem}
+.dcard{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:11px 12px;display:grid;gap:7px}.dcard.today{border-color:var(--lake);background:rgba(46,196,182,.07)}
+.dcard h3{font-size:.92rem;display:flex;gap:8px;align-items:baseline}.dcard h3 small{color:var(--mute);font-weight:400;font-size:.76rem}.dcard h3 b.tg2{margin-inline-start:auto;font-size:.68rem;background:var(--lake);color:var(--night);padding:0 8px;border-radius:99px}
+.cls{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.2);border-inline-start:4px solid var(--c,var(--lake));cursor:pointer;text-align:right;width:100%;color:var(--mist)}
+.cls:hover{background:rgba(0,0,0,.3)}.cls.off{opacity:.45}.cls.now{outline:2px solid var(--sun)}
+.cls .tm{font-weight:700;font-size:.84rem;direction:ltr;color:var(--mist);white-space:nowrap}.cls .nm{font-weight:600;font-size:.9rem}.cls .mt{font-size:.72rem;color:var(--mute)}
+.badge{font-size:.68rem;padding:1px 8px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--mute);white-space:nowrap}
+.free{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:.72rem;color:var(--mute)}.free span{padding:1px 9px;border-radius:99px;border:1px dashed rgba(46,196,182,.5);color:var(--lake);direction:ltr}
+.sblk{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(46,196,182,.08);border:1px solid rgba(46,196,182,.25)}.sblk .tm{font-weight:700;font-size:.84rem;direction:ltr}.sblk .btn{padding:5px 12px;font-size:.76rem}
+#ed{position:fixed;inset:0;z-index:72;display:none;place-items:center;background:rgba(3,8,13,.65);padding:16px}#ed.on{display:grid}
+#ed .box{width:min(420px,100%);background:#16293a;border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:10px;max-height:92vh;overflow:auto}
+#ed .aerr{color:var(--bad);min-height:1.1em;font-size:.85rem}#ed .row{display:flex;gap:8px}#ed .row button{flex:1;padding:10px;border-radius:12px;background:var(--lift)}#ed .row .ok{background:var(--lake);color:var(--night);font-weight:800}#ed .row .del{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -105,7 +119,7 @@ label.nt i{background:var(--lake)}
   <div class="top"><a class="back" href="./">→ سایت</a><h1>🎓 همراه دانشجو</h1><button class="btn" id="acctBtn">👤 ورود / ثبت‌نام</button></div>
   <div class="note" id="note"></div>
   <div class="today" id="today"></div>
-  <nav class="tabs" id="tabs"><button data-p="gpa" class="on">معدل</button><button data-p="plan">امتحان و تکلیف</button><button data-p="focus">تمرکز</button></nav>
+  <nav class="tabs" id="tabs"><button data-p="gpa" class="on">معدل</button><button data-p="sch">برنامه</button><button data-p="plan">امتحان</button><button data-p="focus">تمرکز</button></nav>
 
   <section class="pane on" id="p-gpa">
     <div class="stats" id="gStats"></div>
@@ -119,6 +133,21 @@ label.nt i{background:var(--lake)}
       <div class="res" id="tRes"></div>
     </div>
     <p class="sub">معدل = مجموع (نمره × واحد) ÷ مجموع واحدها، روی مقیاس ۲۰. درس‌های بدون نمره حساب نمی‌شوند. حدود رایج: زیر ۱۲ مشروط، ۱۷ به بالا ممتاز. قوانین دقیق را از آموزش دانشگاه خودت بپرس.</p>
+  </section>
+
+  <section class="pane" id="p-sch">
+    <div class="card" id="sNext"></div>
+    <div class="card">
+      <div class="seg" id="sView"><button data-v="0" class="on">این هفته</button><button data-v="1">هفته‌ی بعد</button><button data-v="a">همه</button></div>
+      <div id="sPar"></div>
+    </div>
+    <div id="sDays" style="display:grid;gap:10px"></div>
+    <div class="card" id="sStudy"></div>
+    <div class="rowbtn"><button class="btn pri" id="sAdd">＋ افزودن کلاس</button><button class="btn" id="sReset">بازگرداندن برنامه‌ی پیش‌فرض</button></div>
+    <div class="card"><h2>تنظیم زمان مطالعه</h2>
+      <div class="grid2"><label class="sub">شروع روز مطالعه<input id="sWs" type="time" style="direction:ltr"></label><label class="sub">پایان روز مطالعه<input id="sWe" type="time" style="direction:ltr"></label></div>
+      <label class="sub">هدف مطالعه‌ی روزانه (ساعت)<input class="n" id="sGoal" inputmode="decimal"></label>
+      <p class="sub">پیشنهاد مطالعه از ساعت‌های آزاد بین کلاس‌ها ساخته می‌شود و امتحان‌های نزدیک‌تر و درس‌های پرواحدتر زمان بیشتری می‌گیرند.</p></div>
   </section>
 
   <section class="pane" id="p-plan">
@@ -147,6 +176,13 @@ label.nt i{background:var(--lake)}
   </section>
 </div>
 
+<div id="ed"><div class="box"><h3 id="eTitle">افزودن کلاس</h3>
+  <label class="sub">نام درس<input id="eN" list="eList" maxlength="60" placeholder="مثلاً فیزیک ۱"></label><datalist id="eList"></datalist>
+  <div class="grid2"><label class="sub">روز<select id="eD"></select></label><label class="sub">هفته‌ها<select id="eW"><option value="all">هر هفته</option><option value="odd">فقط هفته‌های فرد</option><option value="even">فقط هفته‌های زوج</option></select></label></div>
+  <div class="grid2"><label class="sub">شروع<input id="eS" type="time" style="direction:ltr"></label><label class="sub">پایان<input id="eE" type="time" style="direction:ltr"></label></div>
+  <label class="sub">مکان (اختیاری)<input id="eP" maxlength="40" placeholder="مثلاً کلاس ۲۰۵"></label>
+  <div class="aerr" id="eErr"></div>
+  <div class="row"><button id="eOk" class="ok">ذخیره</button><button id="eDel" class="del">حذف</button><button id="eNo">انصراف</button></div></div></div>
 <div id="auth"><div class="box"><h3 id="aTitle">ورود به حساب</h3>
   <p>با حساب کاربری، معدل، امتحان‌ها و آمار مطالعه‌ات روی سرور ذخیره می‌شود و در هر دستگاه در دسترس است. این همان حساب شبیه‌ساز معاملات است.</p>
   <input id="aUser" placeholder="نام کاربری (انگلیسی)" autocomplete="username" dir="ltr"><input id="aPass" type="password" placeholder="رمز عبور (حداقل ۶ نویسه)" autocomplete="current-password" dir="ltr">
@@ -378,11 +414,13 @@ async function syncAcct() {
     if (!r || !r.ok) { if (r && r.error === 'auth') { setTok(null); drawAcct(); } return; }
     acct.user = r.username; const sv = r.states && r.states[MODE], has = sv && Array.isArray(sv.terms);
     const localEmpty = !D.terms.some(t => t.courses.length) && !D.items.length && !Object.keys(D.log).length;
-    if (has && ((D.owner && D.owner !== acct.user) || localEmpty || (sv.updated || 0) >= (D.updated || 0))) { D = Object.assign({ terms: [], items: [], log: {}, cw: 25, cb: 5 }, sv); }
+    let bak = false;
+    if (has && (!D.owner || D.owner !== acct.user || localEmpty || (sv.updated || 0) >= (D.updated || 0))) { if (!localEmpty && D.updated) { try { localStorage.setItem('cc_study_bak', JSON.stringify(D)); bak = true; } catch (e) {} } D = Object.assign({ terms: [], items: [], log: {}, cw: 25, cb: 5 }, sv); }
     D.owner = acct.user; if (has && D.updated === sv.updated) acct.sent = JSON.stringify(D);
     try { localStorage.setItem(LSK, JSON.stringify(D)); } catch (e) {}
-    $('cW').value = D.cw; $('cB').value = D.cb; drawAcct(); curT = 0; drawGpa(); drawItems(); drawStats(); F.left = total(); drawFocus();
-    note('وارد شدی: «' + acct.user + '». اطلاعاتت روی سرور ذخیره می‌شود.', true); setTimeout(() => note(''), 4000);
+    $('cW').value = D.cw; $('cB').value = D.cb; drawAcct(); curT = 0; drawGpa(); drawItems(); drawStats(); drawSch(); F.left = total(); drawFocus();
+    note(bak ? 'وارد شدی: «' + acct.user + '». اطلاعات حساب جایگزین اطلاعات قبلی این مرورگر شد (نسخه‌ی پشتیبان روی همین مرورگر مانده).' : 'وارد شدی: «' + acct.user + '». اطلاعاتت روی سرور ذخیره می‌شود.', true); setTimeout(() => note(''), bak ? 9000 : 4000);
+    maybeSeed();
     await push(false);
   } catch (e) { note('اتصال به سرور حساب برقرار نشد؛ اطلاعات فعلاً روی مرورگر است.'); }
 }
@@ -409,13 +447,128 @@ $('acctBtn').onclick = async () => {
   await push(true); try { rpc('trade_logout', { tok: acct.tok }); } catch (e) {}
   setTok(null); acct.user = null; acct.sent = '';
   D = { terms: [], items: [], log: {}, cw: 25, cb: 5 }; try { localStorage.removeItem(LSK); } catch (e) {}
-  $('cW').value = 25; $('cB').value = 5; drawGpa(); drawItems(); drawStats(); F.run = false; F.mode = 'work'; F.left = total(); drawFocus(); drawAcct();
+  $('cW').value = 25; $('cB').value = 5; drawGpa(); drawItems(); drawStats(); drawSch(); F.run = false; F.mode = 'work'; F.left = total(); drawFocus(); drawAcct();
 };
 addEventListener('pagehide', () => push(true));
-setInterval(() => { tickF(); if ($('p-plan').classList.contains('on')) drawItems(); }, 1000);
+// ---------- class schedule + study suggestions ----------
+const fdg = x => String(x).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+const DAYN = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+const dIdx = d => (d.getDay() + 1) % 7;
+const weekStart = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - dIdx(d)); return d.getTime(); };
+const toMin = v => { const m = /^(\d{1,2}):(\d{2})/.exec(v || ''); return m ? +m[1] * 60 + +m[2] : NaN; };
+const fmtM = m => fdg(String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
+const COLORS = ['#2ec4b6', '#ffb454', '#9b8cff', '#ff8fa3', '#5ec8ff', '#b8e986', '#ff9e7a', '#e8c547'];
+const colorOf = n => { let h = 0; for (const ch of String(n)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return COLORS[h % COLORS.length]; };
+function defSched() {
+  const c = (n, d, s, e, w) => ({ id: uid(), n, d, s, e, w: w || 'all', p: '' });
+  return { par: 'odd', wk0: weekStart(Date.now()), set: false, ws: '08:00', we: '21:00', goal: 180, items: [
+    c('فیزیک ۱', 0, '08:00', '10:00'), c('نقشه‌کشی صنعتی', 0, '10:00', '12:00', 'odd'), c('ریاضیات ۱', 0, '14:00', '16:00'), c('ریاضیات ۱', 0, '16:00', '18:00', 'odd'),
+    c('شیمی عمومی', 1, '11:30', '13:00'), c('معارف دفاع مقدس', 1, '14:00', '16:00'),
+    c('نقشه‌کشی صنعتی', 2, '08:00', '12:00', 'even'), c('برنامه‌نویسی رایانه', 2, '14:00', '16:00'),
+    c('برنامه‌نویسی رایانه', 3, '08:00', '12:00'), c('شیمی عمومی', 4, '11:40', '13:00')] };
+}
+const SEED_COURSES = [['شیمی عمومی', 3], ['برنامه‌نویسی رایانه', 3], ['نقشه‌کشی صنعتی', 2], ['ریاضیات ۱', 3], ['فیزیک ۱', 2], ['معارف دفاع مقدس', 2]];
+const SEED_EXAMS = [['معارف دفاع مقدس', 10, 20, 8, 0], ['فیزیک ۱', 10, 22, 8, 0], ['برنامه‌نویسی رایانه', 10, 24, 8, 0], ['نقشه‌کشی صنعتی', 10, 28, 8, 0], ['شیمی عمومی', 11, 5, 10, 0], ['ریاضیات ۱', 11, 11, 8, 0]];
+function maybeSeed() {
+  if (D.seed1) return; D.seed1 = true; if (!D.sched) D.sched = defSched();
+  if (!D.terms.length) D.terms.push({ id: uid(), name: 'ترم ۱', courses: [] });
+  const have = D.terms.flatMap(t => t.courses.map(c => (c.n || '').trim())).filter(Boolean);
+  SEED_COURSES.forEach(([n, u]) => { if (!have.some(x => x.includes(n) || n.includes(x))) D.terms[0].courses.push({ n, u, g: '' }); });
+  SEED_EXAMS.forEach(([n, m, d, h, mi]) => { if (!D.items.some(i => i.n.includes(n))) { const g = j2g(1405, m, d); D.items.push({ id: uid(), n: 'امتحان ' + n, k: 'exam', c: n, t: new Date(g[0], g[1] - 1, g[2], h, mi).getTime(), done: false }); } });
+  if (acct.tok) save(); else { try { localStorage.setItem(LSK, JSON.stringify(D)); } catch (e) {} }
+  drawGpa(); drawItems(); drawSch();
+}
+const SC = () => D.sched || (D.sched = defSched());
+const parOf = t => { const S = SC(), diff = Math.round((weekStart(t) - S.wk0) / 6048e5), same = ((diff % 2) + 2) % 2 === 0; return same ? S.par : (S.par === 'odd' ? 'even' : 'odd'); };
+const occurs = (it, wkTs) => it.w === 'all' || it.w === parOf(wkTs);
+let sView = '0';
+function dayItems(i, wkTs) { return SC().items.filter(x => x.d === i && (wkTs == null || occurs(x, wkTs))).sort((a, b) => toMin(a.s) - toMin(b.s)); }
+function freeSlots(list, ws, we, from) {
+  const out = []; let cur = Math.max(ws, from || 0);
+  list.forEach(x => { const a = toMin(x.s), b = toMin(x.e); if (a > cur) out.push([cur, Math.min(a, we)]); cur = Math.max(cur, b); });
+  if (cur < we) out.push([cur, we]);
+  return out.filter(([a, b]) => b - a >= 40);
+}
+function nextClass() {
+  const now = Date.now(); let best = null;
+  for (let off = 0; off < 15; off++) {
+    const d = new Date(now); d.setDate(d.getDate() + off); d.setHours(0, 0, 0, 0); const wk = weekStart(d.getTime());
+    dayItems(dIdx(d), wk).forEach(x => { const st = new Date(d).setHours(0, toMin(x.s), 0, 0), en = new Date(d).setHours(0, toMin(x.e), 0, 0); if (en > now && (!best || st < best.st)) best = { x, st, en, run: st <= now }; });
+    if (best) break;
+  }
+  return best;
+}
+function drawSch() {
+  const S = SC(), now = Date.now(), todayWk = weekStart(now), todayI = dIdx(new Date());
+  $('sWs').value = S.ws; $('sWe').value = S.we; $('sGoal').value = (S.goal / 60) || 3;
+  // next class
+  const nx = nextClass();
+  $('sNext').innerHTML = nx ? '<h2>' + (nx.run ? '🔴 الان در کلاسی' : 'کلاس بعدی') + '</h2><div class="res"><b>' + esc(nx.x.n) + '</b><small>' + (nx.run ? 'تا ساعت ' + fmtM(toMin(nx.x.e)) : DAYN[dIdx(new Date(nx.st))] + ' ساعت ' + fmtM(toMin(nx.x.s)) + ' · ' + cdText(nx.st - now).replace(' گذشته', '') + ' دیگر') + (nx.x.p ? ' · ' + esc(nx.x.p) : '') + '</small></div>' : '<h2>کلاس بعدی</h2><div class="empty">کلاسی در برنامه نیست.</div>';
+  // parity
+  const cur = parOf(now);
+  $('sPar').innerHTML = '<div class="pbar"><span>این هفته (' + fdg(toJ(now)[2]) + ' ' + JM[toJ(now)[1] - 1] + ') :</span><div class="seg" id="sParSeg"><button data-par="odd" class="' + (cur === 'odd' ? 'on' : '') + '">فرد</button><button data-par="even" class="' + (cur === 'even' ? 'on' : '') + '">زوج</button></div></div>' + (S.set ? '' : '<div class="warn">مشخص کن این هفته «فرد» است یا «زوج» تا کلاس‌های هفته‌های فرد و زوج درست نشان داده شوند. (با همان دکمه‌ها)</div>');
+  document.querySelectorAll('#sView button').forEach(b => b.classList.toggle('on', b.dataset.v === sView));
+  // days
+  const base = sView === '1' ? todayWk + 7 * 864e5 : todayWk, wkTs = sView === 'a' ? null : base, ws = toMin(S.ws) || 480, we = toMin(S.we) || 1260;
+  let h = '';
+  for (let i = 0; i < 7; i++) {
+    const L = dayItems(i, wkTs); if (i === 6 && !L.length) continue;
+    const dd = new Date(base); dd.setDate(dd.getDate() + i); const j = toJ(dd.getTime()), isToday = sView === '0' && i === todayI;
+    let free = '';
+    if (wkTs != null) { const fr = freeSlots(L, ws, we, 0); free = L.length ? (fr.length ? '<div class="free">آزاد: ' + fr.slice(0, 4).map(([a, b]) => '<span>' + fmtM(a) + '–' + fmtM(b) + '</span>').join('') + '</div>' : '') : '<div class="free">کلاس ندارد · کل روز آزاد</div>'; }
+    h += '<div class="dcard' + (isToday ? ' today' : '') + '"><h3>' + DAYN[i] + (wkTs != null ? ' <small>' + fdg(j[2]) + ' ' + JM[j[1] - 1] + '</small>' : '') + (isToday ? '<b class="tg2">امروز</b>' : '') + '</h3>' +
+      L.map(x => { const nowMin = new Date().getHours() * 60 + new Date().getMinutes(), run = isToday && toMin(x.s) <= nowMin && nowMin < toMin(x.e); return '<button class="cls' + (run ? ' now' : '') + '" style="--c:' + colorOf(x.n) + '" data-ed="' + x.id + '"><span class="tm">' + fmtM(toMin(x.s)) + '–' + fmtM(toMin(x.e)) + '</span><span><span class="nm">' + esc(x.n) + '</span>' + (x.p ? '<span class="mt"> · ' + esc(x.p) + '</span>' : '') + '</span>' + (x.w !== 'all' ? '<span class="badge">' + (x.w === 'odd' ? 'فرد' : 'زوج') + '</span>' : '<span></span>') + '</button>'; }).join('') + free + '</div>';
+  }
+  $('sDays').innerHTML = h || '<div class="empty card">هنوز کلاسی ثبت نکرده‌ای.</div>';
+  drawStudy();
+}
+function subjUnits(sub) { for (const t of D.terms) for (const c of t.courses) { const n = (c.n || '').trim(); if (n && (n.includes(sub) || sub.includes(n))) return c.u || 2; } return 2; }
+function drawStudy() {
+  const S = SC(), now = Date.now(), ex = D.items.filter(i => i.k === 'exam' && !i.done && i.t > now);
+  if (!ex.length) { $('sStudy').innerHTML = '<h2>📚 مطالعه‌ی امروز</h2><div class="empty">امتحانی ثبت نشده. در تب «امتحان» اضافه کن تا پیشنهاد مطالعه بسازم.</div>'; return; }
+  const subs = ex.map(i => { const nm = i.c || i.n.replace(/^امتحان\s*/, ''), days = (i.t - now) / 864e5; return { nm, days, t: i.t, sc: subjUnits(nm) * (60 / Math.max(7, days)) }; }).sort((a, b) => b.sc - a.sc).slice(0, 3);
+  const tot = subs.reduce((a, b) => a + b.sc, 0), goal = Math.round(S.goal), need = {}; subs.forEach(x => need[x.nm] = Math.max(45, Math.round(goal * x.sc / tot / 10) * 10));
+  const d0 = new Date(now), nowMin = d0.getHours() * 60 + d0.getMinutes(), from = Math.ceil(nowMin / 5) * 5, ws = toMin(S.ws) || 480, we = toMin(S.we) || 1260;
+  const fr = freeSlots(dayItems(dIdx(d0), weekStart(now)), ws, we, from), blocks = []; let left = goal;
+  fr.forEach(([a, b]) => { let cur = a; while (b - cur >= 45 && left > 0) { const sub = subs.slice().sort((p, q) => need[q.nm] - need[p.nm])[0]; if (need[sub.nm] <= 0) break; const dur = Math.min(90, b - cur, Math.max(45, need[sub.nm]), left); blocks.push({ a: cur, b: cur + dur, sub }); need[sub.nm] -= dur; left -= dur; cur += dur + 10; } });
+  const planned = blocks.reduce((a, x) => a + x.b - x.a, 0);
+  $('sStudy').innerHTML = '<h2>📚 مطالعه‌ی امروز (پیشنهادی)</h2>' + (blocks.length ? blocks.map((x, i) => '<div class="sblk"><span class="tm">' + fmtM(x.a) + '–' + fmtM(x.b) + '</span><span><b>' + esc(x.sub.nm) + '</b><span class="mt" style="display:block">امتحان ' + (x.sub.days < 1 ? 'امروز/فردا' : fdg(Math.round(x.sub.days)) + ' روز دیگر') + '</span></span><button class="btn" data-fs="' + esc(x.sub.nm) + '">شروع تمرکز</button></div>').join('') + '<p class="sub">جمع: ' + faN(planned / 60, 1) + ' ساعت از هدف ' + faN(goal / 60, 1) + ' ساعت. هر بلوک بعدش ۱۰ دقیقه استراحت.</p>' : '<div class="empty">برای باقی‌ماندهٔ امروز زمان آزاد کافی (حداقل ۴۰ دقیقه) نیست. فردا برنامه‌ی تازه می‌سازم.</div>') +
+    '<p class="sub">اولویت درس‌ها: ' + subs.map(x => esc(x.nm)).join('، ') + ' (امتحان نزدیک‌تر و واحد بیشتر، اولویت بالاتر).</p>';
+}
+$('sView').onclick = e => { const b = e.target.closest('button'); if (b) { sView = b.dataset.v; drawSch(); } };
+$('sPar').onclick = e => { const b = e.target.closest('[data-par]'); if (!b) return; const S = SC(); S.par = b.dataset.par; S.wk0 = weekStart(Date.now()); S.set = true; save(); drawSch(); };
+$('sStudy').onclick = e => { const b = e.target.closest('[data-fs]'); if (!b) return; $('fT').value = b.dataset.fs; tab('focus'); drawFocus(); };
+$('sDays').onclick = e => { const b = e.target.closest('[data-ed]'); if (b) openEd(b.dataset.ed); };
+$('sAdd').onclick = () => openEd(null);
+$('sReset').onclick = () => { if (confirm('برنامه‌ی کلاسی به حالت پیش‌فرض برگردد؟ تغییرهای خودت پاک می‌شود.')) { const o = SC(); D.sched = defSched(); D.sched.par = o.par; D.sched.wk0 = o.wk0; D.sched.set = o.set; save(); drawSch(); } };
+$('sWs').onchange = () => { SC().ws = $('sWs').value || '08:00'; save(); drawSch(); };
+$('sWe').onchange = () => { SC().we = $('sWe').value || '21:00'; save(); drawSch(); };
+$('sGoal').onchange = () => { const v = parse($('sGoal').value); SC().goal = v > 0 ? Math.min(12, v) * 60 : 180; save(); drawSch(); };
+let edId = null;
+function openEd(id) {
+  edId = id; const it = id ? SC().items.find(x => x.id === id) : null;
+  $('eTitle').textContent = it ? 'ویرایش کلاس' : 'افزودن کلاس'; $('eErr').textContent = '';
+  $('eD').innerHTML = DAYN.map((n, i) => '<option value="' + i + '">' + n + '</option>').join('');
+  const names = [...new Set(D.terms.flatMap(t => t.courses.map(c => (c.n || '').trim())).concat(SC().items.map(x => x.n)).filter(Boolean))];
+  $('eList').innerHTML = names.map(n => '<option value="' + esc(n) + '">').join('');
+  $('eN').value = it ? it.n : ''; $('eD').value = it ? it.d : 0; $('eW').value = it ? it.w : 'all'; $('eS').value = it ? it.s : '08:00'; $('eE').value = it ? it.e : '10:00'; $('eP').value = it ? it.p || '' : '';
+  $('eDel').style.display = it ? '' : 'none'; $('ed').classList.add('on'); $('eN').focus();
+}
+$('eNo').onclick = () => $('ed').classList.remove('on');
+$('ed').onclick = e => { if (e.target === $('ed')) $('ed').classList.remove('on'); };
+$('eDel').onclick = () => { if (!confirm('این کلاس حذف شود؟')) return; SC().items = SC().items.filter(x => x.id !== edId); save(); $('ed').classList.remove('on'); drawSch(); };
+$('eOk').onclick = () => {
+  const n = $('eN').value.trim(), s = $('eS').value, e = $('eE').value;
+  if (!n) { $('eErr').textContent = 'نام درس را بنویس.'; return; }
+  if (!(toMin(s) >= 0) || !(toMin(e) > toMin(s))) { $('eErr').textContent = 'ساعت پایان باید بعد از شروع باشد.'; return; }
+  const v = { n, d: +$('eD').value, w: $('eW').value, s, e, p: $('eP').value.trim() };
+  if (edId) Object.assign(SC().items.find(x => x.id === edId), v); else SC().items.push(Object.assign({ id: uid() }, v));
+  save(); $('ed').classList.remove('on'); drawSch();
+};
+setInterval(() => { tickF(); if (Math.floor(Date.now() / 1000) % 60 === 0 && $('p-sch').classList.contains('on')) drawSch(); if ($('p-plan').classList.contains('on')) drawItems(); }, 1000);
 drawGpa(); drawItems(); drawFocus(); drawStats();
-drawAcct(); syncAcct();
-const h = location.hash.slice(1); if (['gpa', 'plan', 'focus'].includes(h)) tab(h);
+drawAcct(); if (!acct.tok) maybeSeed(); drawSch(); syncAcct();
+const h = location.hash.slice(1); if (['gpa', 'sch', 'plan', 'focus'].includes(h)) tab(h);
 </script>
 </body>
 </html>
